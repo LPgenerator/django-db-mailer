@@ -42,7 +42,8 @@ Usage examples
         slug='welcome',
 
         # recipient can be list, or separated with comma or simple string
-        # 'user1@example.com' or 'user1@example.com, user2@example.com' or ['user1@example.com', 'user2@example.com'] or Mail group slug
+        # 'user1@example.com' or 'user1@example.com, user2@example.com' or
+        # ['user1@example.com', 'user2@example.com'] or Mail group slug
         recipient='user1@example.com',
 
         # All *args params will be accessible on template context
