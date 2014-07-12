@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-12 13:09+0400\n"
-"PO-Revision-Date: 2014-07-12 13:19+0230\n"
-"Last-Translator:   <gotlium@gmail.com>\n"
+"PO-Revision-Date: 2014-07-12 21:51+0230\n"
+"Last-Translator:   <g@g.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -90,3 +90,18 @@ msgstr "Тип сообщения"
 
 msgid "Priority"
 msgstr "Приоритет"
+
+msgid "Group name"
+msgstr "Название группы"
+
+msgid "Mail group"
+msgstr "Группа"
+
+msgid "Mail groups"
+msgstr "Группы"
+
+msgid "Mail group email"
+msgstr "Адреса"
+
+msgid "Mail group emails"
+msgstr "Email адреса"
