@@ -30,4 +30,9 @@ Installation for development
             slug="welcome",
             is_html=False,
         )
+    >>> # simple string
     >>> send_db_mail('welcome', 'root@localhost')
+    >>> # list
+    >>> send_db_mail('welcome', ['user1@example.com', 'user2@example.com'])
+    >>> # internal groups
+    >>> send_db_mail('welcome', 'administrators')
