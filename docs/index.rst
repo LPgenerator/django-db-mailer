@@ -26,8 +26,8 @@ Feel free to submit issues_, pull requests are also welcome.
 
 Good contributions follow :ref:`simple guidelines <contributing>`
 
-.. _Github: https://github.com/gotlium/django-db-mailer
-.. _issues: https://github.com/gotlium/django-db-mailer/issues
+.. _Github: https://github.com/LPgenerator/django-db-mailer
+.. _issues: https://github.com/LPgenerator/django-db-mailer/issues
 
 .. |br| raw:: html
 

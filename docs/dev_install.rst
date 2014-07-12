@@ -5,7 +5,7 @@ Installation for development
 
     $ apt-get install virtualenvwrapper redis-server
     $ mkvirtualenv django-db-mailer
-    $ git clone https://github.com/gotlium/django-db-mailer.git
+    $ git clone https://github.com/LPgenerator/django-db-mailer.git
     $ cd django-db-mailer
     $ python setup.py develop
     $ cd demo

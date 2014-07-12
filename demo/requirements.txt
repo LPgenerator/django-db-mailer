@@ -19,3 +19,4 @@ django-tinymce>=1.5.2
 python-memcached==1.53
 django-pylibmc==0.5.0
 redis==2.10.1
+wheel
