@@ -98,7 +98,6 @@ INSTALLED_APPS = (
 
 try:
     import djcelery
-    from dbmail.defaults import PRIORITY_STEPS
 
     INSTALLED_APPS += ('djcelery',)
 
@@ -107,7 +106,14 @@ try:
     BROKER_URL = 'redis://127.0.0.1:6379/5'
 
     BROKER_TRANSPORT_OPTIONS = {
-        'priority_steps': PRIORITY_STEPS,
+        'priority_steps': range(10),
+    }
+
+    CELERY_QUEUES = {
+        'default': {
+            "exchange": "default",
+            "binding_key": "default",
+        },
     }
 except ImportError:
     pass
