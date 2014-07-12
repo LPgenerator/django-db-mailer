@@ -47,7 +47,7 @@ class MailTemplate(models.Model):
     def save(self, *args, **kwargs):
         if not self.is_html:
             self.message = strip_tags(self.message)
-        cache.delete(self.slug)
+        cache.delete(self.slug, version=1)
         return super(MailTemplate, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -59,12 +59,12 @@ class MailTemplate(models.Model):
 
     @classmethod
     def get_template(cls, slug):
-        obj = cache.get(slug)
+        obj = cache.get(slug, version=1)
         if obj is not None:
             return obj
         else:
             obj = cls.objects.get(slug=slug)
-            cache.set(slug, obj)
+            cache.set(slug, obj, version=1)
             return obj
 
 
@@ -120,3 +120,48 @@ class MailLogEmail(models.Model):
     class Meta:
         verbose_name = _('Mail log email')
         verbose_name_plural = _('Mail log emails')
+
+
+class MailGroup(models.Model):
+    name = models.CharField(_('Group name'), max_length=100)
+    slug = models.SlugField(_('Slug'), unique=True)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail group')
+        verbose_name_plural = _('Mail groups')
+
+    def save(self, *args, **kwargs):
+        cache.delete(self.slug, version=2)
+        return super(MailGroup, self).save(*args, **kwargs)
+
+    @classmethod
+    def get_template(cls, slug):
+        obj = cache.get(slug, version=2)
+        if obj is not None:
+            return obj
+
+        obj = MailGroupEmail.objects.filter(group__slug=slug)
+        cache.set(slug, obj, version=2)
+        return obj
+
+
+class MailGroupEmail(models.Model):
+    name = models.CharField(_('Username'), max_length=100)
+    email = models.EmailField(_('Email'))
+    group = models.ForeignKey(MailGroup, verbose_name=_('Group'))
+
+    def __unicode__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = _('Mail group email')
+        verbose_name_plural = _('Mail group emails')
+
+    def save(self, *args, **kwargs):
+        cache.delete(self.group.slug, version=2)
+        return super(MailGroupEmail, self).save(*args, **kwargs)

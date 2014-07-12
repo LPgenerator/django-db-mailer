@@ -8,7 +8,7 @@ from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.contrib.sites.models import Site
 from django.template import Template, Context
 
-from dbmail.models import MailTemplate, MailLog
+from dbmail.models import MailTemplate, MailLog, MailGroup
 from dbmail.defaults import RETRY_INTERVAL
 
 
@@ -16,7 +16,7 @@ class SendMail(object):
     def __init__(self, slug, recipient, *args, **kwargs):
         self._slug = slug
 
-        self._recipient_list = self.__format_email_list(recipient)
+        self._recipient_list = self.__get_recipient_list(recipient)
         self._cc = self.__format_email_list(kwargs.pop('cc', None))
         self._bcc = self.__format_email_list(kwargs.pop('bcc', None))
         self._user = kwargs.pop('user', None)
@@ -61,6 +61,18 @@ class SendMail(object):
             self._subject, self._message, to=self._recipient_list,
             cc=self._cc, bcc=self._bcc, **self._kwargs)
         msg.send()
+
+    def __get_recipient_list(self, recipient):
+        if not isinstance(recipient, list) and '@' not in recipient:
+            return self.__group_emails(recipient)
+        return self.__format_email_list(recipient)
+
+    @staticmethod
+    def __group_emails(slug):
+        email_list = []
+        for obj in MailGroup.get_emails(slug):
+            email_list.append(obj.email.strip())
+        return email_list
 
     @staticmethod
     def __format_email_list(recipient):

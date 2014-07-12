@@ -6,7 +6,9 @@ from django.shortcuts import redirect
 
 from django.contrib import admin
 
-from dbmail.models import MailCategory, MailTemplate, MailLog, MailLogEmail
+from dbmail.models import (
+    MailCategory, MailTemplate, MailLog,
+    MailLogEmail, MailGroup, MailGroupEmail)
 from dbmail import send_db_mail
 
 
@@ -97,6 +99,18 @@ class MailLogAdmin(admin.ModelAdmin):
         return request.method != 'POST'
 
 
+class MailGroupEmailInline(admin.TabularInline):
+    model = MailGroupEmail
+    extra = 1
+
+
+class MailGroupAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'created', 'updated', 'id',)
+    list_filter = ('updated', 'created',)
+    inlines = [MailGroupEmailInline]
+
+
 admin.site.register(MailCategory, MailCategoryAdmin)
 admin.site.register(MailTemplate, MailTemplateAdmin)
 admin.site.register(MailLog, MailLogAdmin)
+admin.site.register(MailGroup, MailGroupAdmin)
