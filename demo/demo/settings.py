@@ -153,8 +153,9 @@ EMAIL_PORT = 1025
 DEFAULT_FROM_EMAIL = 'Django <no_reply@local.host>'
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+    "default": {
+        "BACKEND": "redis_cache.cache.RedisCache",
+        "LOCATION": "127.0.0.1:6379:1",
     }
 }
 
