@@ -29,9 +29,10 @@ class MailTemplateAdmin(admin.ModelAdmin):
         'name', 'subject', 'slug', 'message',)
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('-id',)
-    list_editable = ('is_admin', 'is_html', 'priority',)
+    list_editable = ('category', 'priority',)
     list_display_links = ('name',)
     date_hierarchy = 'created'
+    list_per_page = 20
 
     class Media:
         js = (
