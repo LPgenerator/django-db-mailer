@@ -43,6 +43,12 @@ class MailTemplate(models.Model):
         verbose_name=_('Category'))
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
+    context_note = models.TextField(
+        _('Context note'), null=True, blank=True,
+        help_text=_(
+            'This is simple note field for context variables with description'
+        )
+    )
 
     def save(self, *args, **kwargs):
         if not self.is_html:

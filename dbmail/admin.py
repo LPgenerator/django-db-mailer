@@ -63,7 +63,7 @@ class MailTemplateAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj is not None:
-            return ['slug']
+            return ['slug', 'context_note']
         return self.readonly_fields
 
     def get_prepopulated_fields(self, request, obj=None):
