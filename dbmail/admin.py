@@ -61,6 +61,16 @@ class MailTemplateAdmin(admin.ModelAdmin):
         )
         return admin_urls + urls
 
+    def get_readonly_fields(self, request, obj=None):
+        if obj is not None:
+            return ['slug']
+        return self.readonly_fields
+
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj is not None:
+            return {}
+        return self.prepopulated_fields
+
 
 class MailLogEmailInline(admin.TabularInline):
     readonly_fields = [field.name for field in MailLogEmail._meta.fields]
@@ -108,7 +118,18 @@ class MailGroupEmailInline(admin.TabularInline):
 class MailGroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'created', 'updated', 'id',)
     list_filter = ('updated', 'created',)
+    prepopulated_fields = {'slug': ('name',)}
     inlines = [MailGroupEmailInline]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is not None:
+            return ['slug']
+        return self.readonly_fields
+
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj is not None:
+            return {}
+        return self.prepopulated_fields
 
 
 admin.site.register(MailCategory, MailCategoryAdmin)
