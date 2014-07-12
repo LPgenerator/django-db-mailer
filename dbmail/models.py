@@ -140,7 +140,7 @@ class MailGroup(models.Model):
         return super(MailGroup, self).save(*args, **kwargs)
 
     @classmethod
-    def get_template(cls, slug):
+    def get_emails(cls, slug):
         obj = cache.get(slug, version=2)
         if obj is not None:
             return obj
