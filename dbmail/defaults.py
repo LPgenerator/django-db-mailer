@@ -10,3 +10,4 @@ def get_settings(key, default):
 PRIORITY_STEPS = get_settings('DB_MAILER_PRIORITY_STEPS', range(10))
 RETRY_INTERVAL = get_settings('DB_MAILER_RETRY_INTERVAL', 3)
 CELERY_QUEUE = get_settings('DB_MAILER_CELERY_QUEUE', 'default')
+SHOW_CONTEXT = get_settings('DB_MAILER_SHOW_CONTEXT', False)

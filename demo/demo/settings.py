@@ -163,6 +163,7 @@ CACHES = {
 }
 
 AUTH_USER_MODEL = 'auth.User'
+DB_MAILER_SHOW_CONTEXT = True
 
 try:
     from local_settings import *

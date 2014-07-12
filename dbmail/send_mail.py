@@ -1,15 +1,17 @@
 # -*- encoding: utf-8 -*-
 
 import traceback
+import pprint
 import time
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.contrib.sites.models import Site
 from django.template import Template, Context
+from django.conf import settings
 
 from dbmail.models import MailTemplate, MailLog, MailGroup
-from dbmail.defaults import RETRY_INTERVAL
+from dbmail.defaults import RETRY_INTERVAL, SHOW_CONTEXT
 
 
 class SendMail(object):
@@ -35,12 +37,16 @@ class SendMail(object):
 
     def __get_context(self, context_list):
         data = self.__model_to_dict(Site.objects.get_current())
+
         for context in context_list:
             if isinstance(context, dict):
                 data.update(context)
             else:
                 data.update(self.__model_to_dict(context))
                 data.update({context._meta.module_name: context})
+
+        if settings.DEBUG and SHOW_CONTEXT:
+            pprint.pprint(data)
         return data
 
     def __get_subject(self):
