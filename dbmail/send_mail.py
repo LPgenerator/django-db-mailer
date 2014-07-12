@@ -74,10 +74,11 @@ class SendMail(object):
         return self.__format_email_list(recipient)
 
     @staticmethod
-    def __group_emails(slug):
+    def __group_emails(recipient):
         email_list = []
-        for obj in MailGroup.get_emails(slug):
-            email_list.append(obj.email.strip())
+        for slug in recipient.split(','):
+            for obj in MailGroup.get_emails(slug):
+                email_list.append(obj.email.strip())
         return email_list
 
     @staticmethod
