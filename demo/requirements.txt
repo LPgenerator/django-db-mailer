@@ -2,9 +2,8 @@ django==1.4.13
 django-bootstrap-static==2.3.2
 django-debug-toolbar==1.2
 django-extensions==1.3.8
-django-grappelli==2.4.10
-django-celery==3.1.10
 django-rosetta==0.7.4
+django-redis>=3.6.2
 MySQL-python==1.2.5
 Werkzeug==0.9.6
 ipython==2.1.0
@@ -15,7 +14,10 @@ Jinja2==2.7.2
 flake8==2.2.0
 Sphinx==1.2.2
 South==0.8.4
-django-tinymce>=1.5.2
 redis==2.10.1
 wheel>=0.24.0
-django-redis>=3.6.2
+
+django-grappelli==2.4.10
+django-celery==3.1.10
+django-tinymce>=1.5.2
+django-reversion==1.6.6
