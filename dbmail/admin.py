@@ -10,6 +10,7 @@ from dbmail.models import (
     MailCategory, MailTemplate, MailLog,
     MailLogEmail, MailGroup, MailGroupEmail)
 from dbmail import send_db_mail
+from dbmail import defaults
 
 
 class MailCategoryAdmin(admin.ModelAdmin):
@@ -62,7 +63,7 @@ class MailTemplateAdmin(admin.ModelAdmin):
         return admin_urls + urls
 
     def get_readonly_fields(self, request, obj=None):
-        if obj is not None:
+        if obj is not None and defaults.READ_ONLY_ENABLED:
             return ['slug', 'context_note']
         return self.readonly_fields
 
@@ -122,7 +123,7 @@ class MailGroupAdmin(admin.ModelAdmin):
     inlines = [MailGroupEmailInline]
 
     def get_readonly_fields(self, request, obj=None):
-        if obj is not None:
+        if obj is not None and defaults.READ_ONLY_ENABLED:
             return ['slug']
         return self.readonly_fields
 
