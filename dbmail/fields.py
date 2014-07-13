@@ -1,9 +1,13 @@
 # -*- encoding: utf-8 -*-
 
-try:
-    from tinymce.models import HTMLField
+from django.conf import settings
+from django.db import models
 
-except ImportError:
-    from django.db import models
+HTMLField = models.TextField
 
-    HTMLField = models.TextField
+if 'tinymce' in settings.INSTALLED_APPS:
+    try:
+        from tinymce.models import HTMLField
+
+    except ImportError:
+        pass
