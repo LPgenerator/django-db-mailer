@@ -19,8 +19,8 @@ class SendMail(object):
         self._slug = slug
 
         self._recipient_list = self.__get_recipient_list(recipient)
-        self._cc = self.__format_email_list(kwargs.pop('cc', None))
-        self._bcc = self.__format_email_list(kwargs.pop('bcc', None))
+        self._cc = self.__email_to_list(kwargs.pop('cc', None))
+        self._bcc = self.__email_to_list(kwargs.pop('bcc', None))
         self._user = kwargs.pop('user', None)
 
         self._template = self.__get_template()
@@ -71,7 +71,7 @@ class SendMail(object):
     def __get_recipient_list(self, recipient):
         if not isinstance(recipient, list) and '@' not in recipient:
             return self.__group_emails(recipient)
-        return self.__format_email_list(recipient)
+        return self.__email_to_list(recipient)
 
     @staticmethod
     def __group_emails(recipient):
@@ -82,7 +82,7 @@ class SendMail(object):
         return email_list
 
     @staticmethod
-    def __format_email_list(recipient):
+    def __email_to_list(recipient):
         if recipient is None:
             return None
         elif not isinstance(recipient, list):
