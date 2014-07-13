@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-12 13:09+0400\n"
-"PO-Revision-Date: 2014-07-13 02:20+0230\n"
+"PO-Revision-Date: 2014-07-14 00:22+0230\n"
 "Last-Translator:   <g@g.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -111,3 +111,15 @@ msgstr "Описание переменных"
 
 msgid "This is simple note field for context variables with description"
 msgstr "Необязатаельное поле с переменными и их описанием"
+
+msgid "Mail file"
+msgstr "Файл"
+
+msgid "Mail files"
+msgstr "Файлы"
+
+msgid "Name"
+msgstr "Название"
+
+msgid "File"
+msgstr "Файл"
