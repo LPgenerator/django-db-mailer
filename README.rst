@@ -1,9 +1,9 @@
 What's that
 -----------
-Django module to easily send emails using django templates stored on database.
-From box you can use it with django-celery for send background messages.
-Also you have opportunity create reports from logs by mail categories and slug.
-That app very simple to install and use on your projects.
+| Django module to easily send emails using django templates stored on database.
+| From box you can use it with django-celery for send background messages.
+| Also you have opportunity create reports from logs by mail categories and slug.
+| That app very simple to install and use on your projects.
 
 
 Installation:
@@ -82,6 +82,27 @@ Local demo installation
     $ python manage.py syncdb
     $ python manage.py migrate
     $ python manage.py runserver
+
+
+Additional information
+----------------------
+
+**Reversion**
+
+| For support template revisions, you can install ``django-reversion``.
+| Find information about compatibility with your Django versions `here <http://django-reversion.readthedocs.org/en/latest/django-versions.html>`_.
+
+**Editor**
+
+To enable editor, you may install and configure ``django-tinymce`` app.
+
+**Theme**
+
+``django-db-mailer`` supported from box ``django-grappelli`` skin. Information about compatibility available `here <https://pypi.python.org/pypi/django-grappelli/2.5.3>`_.
+
+**Queue**
+
+Install and configure ``django-celery`` for background message sending with priorities. You can find celery settings examples on demo project.
 
 
 Screenshots
