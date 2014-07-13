@@ -28,6 +28,7 @@ class SendMail(object):
 
         self._subject = self.__get_subject()
         self._message = self.__get_message()
+        self._files = kwargs.pop('files', [])
         self._kwargs = kwargs
         self._num = 1
         self._err_msg = None
@@ -58,6 +59,9 @@ class SendMail(object):
     def __attach_files(self, mail):
         for file_object in self._template.files.all():
             mail.attach_file(file_object.filename.path)
+
+        for filename in self._files:
+            mail.attach_file(filename)
 
     def __send_html_message(self):
         msg = EmailMultiAlternatives(

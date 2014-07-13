@@ -63,6 +63,7 @@ Usage examples
         # user=User.objects.get(pk=1),
         # from_email='bcc@example.com',
         # attachments=[(filename, content, mimetype)],
+        # files=['hello.jpg', 'world.png'],
         # headers={'Custom-Header':'Some value'},
     )
 
