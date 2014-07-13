@@ -1,13 +1,22 @@
 # -*- encoding: utf-8 -*-
 
+import uuid
+import os
+
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
 from django.core.cache import cache
 from django.conf import settings
 from django.db import models
 
-from dbmail.defaults import PRIORITY_STEPS
+from dbmail.defaults import PRIORITY_STEPS, UPLOAD_TO
 from dbmail.fields import HTMLField
+
+
+def _upload_mail_file(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (str(uuid.uuid4()), ext)
+    return os.path.join(UPLOAD_TO, filename)
 
 
 class MailCategory(models.Model):
@@ -72,6 +81,20 @@ class MailTemplate(models.Model):
             obj = cls.objects.get(slug=slug)
             cache.set(slug, obj, version=1)
             return obj
+
+
+class MailFile(models.Model):
+    template = models.ForeignKey(
+        MailTemplate, verbose_name=_('Template'), related_name='files')
+    name = models.CharField(_('Name'), max_length=100)
+    filename = models.FileField(_('File'), upload_to=_upload_mail_file)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail file')
+        verbose_name_plural = _('Mail files')
 
 
 class MailLog(models.Model):

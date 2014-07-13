@@ -55,17 +55,23 @@ class SendMail(object):
     def __get_message(self):
         return self.__render_template(self._template.message, self._context)
 
+    def __attach_files(self, mail):
+        for file_object in self._template.files.all():
+            mail.attach_file(file_object.filename.path)
+
     def __send_html_message(self):
         msg = EmailMultiAlternatives(
             self._subject, self._message, to=self._recipient_list,
             cc=self._cc, bcc=self._bcc, **self._kwargs)
         msg.attach_alternative(self._message, "text/html")
+        self.__attach_files(msg)
         msg.send()
 
     def __send_plain_message(self):
         msg = EmailMessage(
             self._subject, self._message, to=self._recipient_list,
             cc=self._cc, bcc=self._bcc, **self._kwargs)
+        self.__attach_files(msg)
         msg.send()
 
     def __get_recipient_list(self, recipient):

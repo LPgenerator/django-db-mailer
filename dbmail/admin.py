@@ -7,8 +7,8 @@ from django.contrib import admin
 from django.conf import settings
 
 from dbmail.models import (
-    MailCategory, MailTemplate, MailLog,
-    MailLogEmail, MailGroup, MailGroupEmail)
+    MailCategory, MailTemplate, MailLog, MailLogEmail,
+    MailGroup, MailGroupEmail, MailFile)
 from dbmail import send_db_mail
 from dbmail import defaults
 
@@ -30,6 +30,11 @@ class MailCategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class MailTemplateFileAdmin(admin.TabularInline):
+    model = MailFile
+    extra = 1
+
+
 class MailTemplateAdmin(ModelAdmin):
     list_display = (
         'name', 'category', 'subject', 'slug', 'is_admin', 'is_html',
@@ -45,6 +50,7 @@ class MailTemplateAdmin(ModelAdmin):
     list_display_links = ('name',)
     date_hierarchy = 'created'
     list_per_page = 20
+    inlines = [MailTemplateFileAdmin]
 
     class Media:
         js = (
