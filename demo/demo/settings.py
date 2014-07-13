@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'djcelery',
 
     'django_extensions',
+    'reversion',
     'dbmail',
     'south',
     'rosetta',

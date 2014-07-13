@@ -3,8 +3,8 @@
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
 from django.shortcuts import redirect
-
 from django.contrib import admin
+from django.conf import settings
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog,
@@ -13,13 +13,24 @@ from dbmail import send_db_mail
 from dbmail import defaults
 
 
+ModelAdmin = admin.ModelAdmin
+
+if 'reversion' in settings.INSTALLED_APPS:
+    try:
+        from reversion import VersionAdmin
+
+        ModelAdmin = VersionAdmin
+    except ImportError:
+        pass
+
+
 class MailCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'created', 'updated', 'id',)
     list_filter = ('created', 'updated',)
     search_fields = ('name',)
 
 
-class MailTemplateAdmin(admin.ModelAdmin):
+class MailTemplateAdmin(ModelAdmin):
     list_display = (
         'name', 'category', 'subject', 'slug', 'is_admin', 'is_html',
         'num_of_retries', 'priority', 'created', 'updated', 'id',
