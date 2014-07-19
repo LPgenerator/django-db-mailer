@@ -83,24 +83,21 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'grappelli',
     'django.contrib.admin',
-    'djcelery',
-
     'django_extensions',
-    'reversion',
-    'dbmail',
-    'south',
     'rosetta',
+    'south',
+
+    'reversion',
+    'djcelery',
     'tinymce',
-    'preferences',
+
+    'dbmail',
 )
 
 try:
     import djcelery
-
-    INSTALLED_APPS += ('djcelery',)
 
     djcelery.setup_loader()
 
