@@ -8,6 +8,7 @@ from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.contrib.sites.models import Site
 from django.template import Template, Context
+from django.utils import translation
 from django.conf import settings
 
 from dbmail.models import MailTemplate, MailLog, MailGroup
@@ -65,16 +66,18 @@ class SendMail(object):
 
     def __send_html_message(self):
         msg = EmailMultiAlternatives(
-            self._subject, self._message, to=self._recipient_list,
-            cc=self._cc, bcc=self._bcc, **self._kwargs)
+            self._subject, self._message, from_email=self.__get_from_email(),
+            to=self._recipient_list, cc=self._cc, bcc=self._bcc, **self._kwargs
+        )
         msg.attach_alternative(self._message, "text/html")
         self.__attach_files(msg)
         msg.send()
 
     def __send_plain_message(self):
         msg = EmailMessage(
-            self._subject, self._message, to=self._recipient_list,
-            cc=self._cc, bcc=self._bcc, **self._kwargs)
+            self._subject, self._message, from_email=self.__get_from_email(),
+            to=self._recipient_list, cc=self._cc, bcc=self._bcc, **self._kwargs
+        )
         self.__attach_files(msg)
         msg.send()
 
@@ -82,6 +85,13 @@ class SendMail(object):
         if not isinstance(recipient, list) and '@' not in recipient:
             return self.__group_emails(recipient)
         return self.__email_to_list(recipient)
+
+    def __get_from_email(self):
+        if self._kwargs.get('from_email'):
+            return self._kwargs['from_email']
+        elif not self._template.from_email:
+            return settings.DEFAULT_FROM_EMAIL
+        return self._template.from_email.get_mail_from
 
     @staticmethod
     def __group_emails(recipient):
@@ -101,6 +111,7 @@ class SendMail(object):
 
     @staticmethod
     def __render_template(template, context):
+        translation.activate(settings.LANGUAGE_CODE)
         return Template(template).render(Context(context))
 
     @staticmethod
@@ -136,6 +147,7 @@ class SendMail(object):
         for self._num in range(1, self._template.num_of_retries + 1):
             try:
                 self.__send()
+                break
             except Exception, msg:
                 if self._template.num_of_retries == self._num:
                     self._err_msg = traceback.format_exc()

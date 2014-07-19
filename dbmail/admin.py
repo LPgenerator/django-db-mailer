@@ -8,7 +8,7 @@ from django.conf import settings
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail,
-    MailGroup, MailGroupEmail, MailFile)
+    MailGroup, MailGroupEmail, MailFile, MailFromEmail)
 from dbmail import send_db_mail
 from dbmail import defaults
 
@@ -37,11 +37,12 @@ class MailTemplateFileAdmin(admin.TabularInline):
 
 class MailTemplateAdmin(ModelAdmin):
     list_display = (
-        'name', 'category', 'subject', 'slug', 'is_admin', 'is_html',
+        'name', 'category', 'from_email', 'slug', 'is_admin', 'is_html',
         'num_of_retries', 'priority', 'created', 'updated', 'id',
     )
     list_filter = (
-        'category', 'is_admin', 'is_html', 'priority', 'created', 'updated',)
+        'category', 'is_admin', 'is_html', 'priority',
+        'from_email', 'created', 'updated',)
     search_fields = (
         'name', 'subject', 'slug', 'message',)
     prepopulated_fields = {'slug': ('name',)}
@@ -49,7 +50,7 @@ class MailTemplateAdmin(ModelAdmin):
     list_editable = ('category', 'priority',)
     list_display_links = ('name',)
     date_hierarchy = 'created'
-    list_per_page = 20
+    list_per_page = defaults.TEMPLATES_PER_PAGE
     inlines = [MailTemplateFileAdmin]
 
     class Media:
@@ -150,6 +151,12 @@ class MailGroupAdmin(admin.ModelAdmin):
         return self.prepopulated_fields
 
 
+class MailFromEmailAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'created', 'updated', 'id',)
+    list_filter = ('updated', 'created',)
+
+
+admin.site.register(MailFromEmail, MailFromEmailAdmin)
 admin.site.register(MailCategory, MailCategoryAdmin)
 admin.site.register(MailTemplate, MailTemplateAdmin)
 admin.site.register(MailLog, MailLogAdmin)

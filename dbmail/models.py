@@ -9,7 +9,9 @@ from django.core.cache import cache
 from django.conf import settings
 from django.db import models
 
-from dbmail.defaults import PRIORITY_STEPS, UPLOAD_TO
+from dbmail.defaults import (
+    PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY,
+    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY)
 from dbmail.fields import HTMLField
 
 
@@ -20,7 +22,7 @@ def _upload_mail_file(instance, filename):
 
 
 class MailCategory(models.Model):
-    name = models.CharField(_('Category'), max_length=25)
+    name = models.CharField(_('Category'), max_length=25, unique=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
@@ -32,24 +34,51 @@ class MailCategory(models.Model):
         verbose_name_plural = _('Categories')
 
 
+class MailFromEmail(models.Model):
+    name = models.CharField(_('Name'), max_length=100)
+    email = models.EmailField(_('Email'), unique=True)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def get_mail_from(self):
+        return u'%s <%s>' % (self.name, self.email)
+
+    class Meta:
+        verbose_name = _('Mail from')
+        verbose_name_plural = _('Mail from')
+
+    def save(self, *args, **kwargs):
+        templates = MailTemplate.objects.filter(from_email__email=self.email)
+        for template in templates:
+            cache.delete(template.slug, version=1)
+        return super(MailFromEmail, self).save(*args, **kwargs)
+
+
 class MailTemplate(models.Model):
     name = models.CharField(_('Template name'), max_length=100)
     subject = models.CharField(_('Subject'), max_length=100)
+    from_email = models.ForeignKey(
+        MailFromEmail, null=True, blank=True,
+        verbose_name=_('From email'), default=DEFAULT_FROM_EMAIL)
     message = HTMLField(_('Body'))
     slug = models.SlugField(_('Slug'), unique=True)
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
     priority = models.SmallIntegerField(
-        _('Priority'),  default=0,
+        _('Priority'),  default=DEFAULT_PRIORITY,
         choices=zip(reversed(PRIORITY_STEPS), PRIORITY_STEPS),
         help_text=_(
             'A number between 0 and 9, where 9 is the highest priority.'
         ))
-    is_html = models.BooleanField(_('Is html'), default=False)
+    is_html = models.BooleanField(_('Is html'), default=True)
     is_admin = models.BooleanField(_('For admin'), default=False)
     category = models.ForeignKey(
         MailCategory, null=True, blank=True,
-        verbose_name=_('Category'))
+        verbose_name=_('Category'), default=DEFAULT_CATEGORY)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
     context_note = models.TextField(
@@ -78,7 +107,7 @@ class MailTemplate(models.Model):
         if obj is not None:
             return obj
         else:
-            obj = cls.objects.get(slug=slug)
+            obj = cls.objects.select_related('from_email').get(slug=slug)
             cache.set(slug, obj, version=1)
             return obj
 
@@ -190,6 +219,8 @@ class MailGroupEmail(models.Model):
     class Meta:
         verbose_name = _('Mail group email')
         verbose_name_plural = _('Mail group emails')
+
+        unique_together = (('email', 'group',),)
 
     def save(self, *args, **kwargs):
         cache.delete(self.group.slug, version=2)
