@@ -34,7 +34,7 @@ run_server:
 	cd demo && python manage.py runserver --traceback
 
 run_celery:
-	cd demo && python manage.py celeryd --loglevel=info -Q default
+	cd demo && python manage.py celeryd --loglevel=debug
 
 run_shell:
 	cd demo && python manage.py shell_plus --print-sql

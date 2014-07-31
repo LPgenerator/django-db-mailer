@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import re
+
+from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
-from django.shortcuts import redirect
 from django.contrib import admin
 from django.conf import settings
 
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import get_model
+
 from dbmail.models import (
-    MailCategory, MailTemplate, MailLog, MailLogEmail,
+    MailCategory, MailTemplate, MailLog, MailLogEmail, Signal,
     MailGroup, MailGroupEmail, MailFile, MailFromEmail)
 from dbmail import send_db_mail
 from dbmail import defaults
@@ -59,14 +64,34 @@ class MailTemplateAdmin(ModelAdmin):
         )
 
     def send_mail_view(self, request, pk):
-        slug = MailTemplate.objects.get(pk=pk).slug
-        send_db_mail(slug, request.user.email, request.user)
+        template = MailTemplate.objects.get(pk=pk)
+        slug = template.slug
+        var_list = re.findall('\{\{\s?(\w+)\s?\}\}', template.message)
+        context = {}
+        for var in var_list:
+            context[var] = '"%s"' % var.upper().replace('_', '-')
+        send_db_mail(slug, request.user.email, request.user, context)
         return redirect(
             reverse(
                 'admin:dbmail_mailtemplate_change', args=(pk,),
                 current_app=self.admin_site.name
             )
         )
+
+    def get_apps_view(self, request, pk):
+        apps_list = {}
+        for ct in ContentType.objects.all():
+            if ct.app_label not in apps_list:
+                apps_list[ct.app_label] = [ct]
+            else:
+                apps_list[ct.app_label].append(ct)
+        return render(request, 'dbmail/apps.html', {'apps_list': apps_list})
+
+    def browse_model_fields_view(self, request, pk, app, model):
+        fields = dict()
+        for f in get_model(app, model)._meta.fields:
+            fields[f.name] = unicode(f.verbose_name)
+        return render(request, 'dbmail/browse.html', {'fields_list': fields})
 
     def get_urls(self):
         urls = super(MailTemplateAdmin, self).get_urls()
@@ -76,6 +101,15 @@ class MailTemplateAdmin(ModelAdmin):
                 r'^(\d+)/sendmail/$',
                 self.admin_site.admin_view(self.send_mail_view),
                 name='send_mail_view'
+            ),
+            url(
+                r'^(\d+)/sendmail/apps/(.*?)/(.*?)/',
+                self.admin_site.admin_view(self.browse_model_fields_view),
+                name='browse_model_fields_view'),
+            url(
+                r'^(\d+)/sendmail/apps/',
+                self.admin_site.admin_view(self.get_apps_view),
+                name='send_mail_apps_view'
             ),
         )
         return admin_urls + urls
@@ -156,8 +190,16 @@ class MailFromEmailAdmin(admin.ModelAdmin):
     list_filter = ('updated', 'created',)
 
 
+class SignalAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'model', 'signal', 'template', 'interval', 'receive_once',
+        'updated', 'created', 'id',)
+    list_filter = ('signal', 'receive_once', 'updated', 'created',)
+
+
 admin.site.register(MailFromEmail, MailFromEmailAdmin)
 admin.site.register(MailCategory, MailCategoryAdmin)
 admin.site.register(MailTemplate, MailTemplateAdmin)
 admin.site.register(MailLog, MailLogAdmin)
 admin.site.register(MailGroup, MailGroupAdmin)
+admin.site.register(Signal, SignalAdmin)

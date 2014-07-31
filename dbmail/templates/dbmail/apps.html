@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% for app, data in apps_list.items %}
+    <strong>{{app|upper}}</strong><br/>
+    <ul>
+        {% for obj in data %}
+            <li><a href="./{{app}}/{{ obj.model }}/">{{ obj.name|capfirst }}</a><br/></li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+</body>
+</html>

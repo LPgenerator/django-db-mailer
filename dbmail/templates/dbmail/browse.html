@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<a href="javascript:history.back()">Back</a>
+<hr>
+{% for field,description in fields_list.items %}
+    <strong>&#123;&#123;{{ field }}&#125;&#125;</strong> - {{description|capfirst}}<br/>
+{% endfor %}
+</body>
+</html>

@@ -41,9 +41,9 @@ Usage examples
         # slug was defined on db template
         slug='welcome',
 
-        # recipient can be list, or separated with comma or simple string
+        # recipient can be list, or str separated with comma or simple string
         # 'user1@example.com' or 'user1@example.com, user2@example.com' or
-        # ['user1@example.com', 'user2@example.com'] or Mail group slug
+        # ['user1@example.com', 'user2@example.com'] or string Mail group slug
         recipient='user1@example.com',
 
         # All *args params will be accessible on template context
@@ -61,10 +61,17 @@ Usage examples
         # cc=['cc@example.com'],
         # bcc=['bcc@example.com'],
         # user=User.objects.get(pk=1),
-        # from_email='bcc@example.com',
+        #
         # attachments=[(filename, content, mimetype)],
         # files=['hello.jpg', 'world.png'],
         # headers={'Custom-Header':'Some value'},
+        #
+        # queue='default',
+        # retry_delay=300,
+        # max_retries=3,
+        # retry=True,
+        # time_limit=30,
+        # send_after=60,
     )
 
 
@@ -105,6 +112,10 @@ To enable editor, you may install and configure ``django-tinymce`` app.
 
 Install and configure ``django-celery`` for background message sending with priorities. You can find celery settings examples on demo project.
 
+**Note**
+
+All app features available only with ``django-celery`` and with ``Redis``.
+
 
 Screenshots
 -----------
@@ -114,6 +125,10 @@ Screenshots
 .. image:: /screenshots/template_log_changelist.jpg
 .. image:: /screenshots/template_log_view.jpg
 .. image:: /screenshots/group_change.jpg
+.. image:: /screenshots/signal_edit.jpg
+.. image:: /screenshots/signals_changelist.jpg
+.. image:: /screenshots/apps_view.jpg
+.. image:: /screenshots/apps_browse_vars.jpg
 
 
 Compatibility:

@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'rosetta',
     'south',
 
+    'admin_jqueryui',
     'reversion',
     'djcelery',
     'tinymce',
@@ -113,6 +114,8 @@ try:
             "binding_key": "default",
         },
     }
+
+    CELERY_IGNORE_RESULT = True
 except ImportError:
     pass
 

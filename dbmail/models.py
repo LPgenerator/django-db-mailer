@@ -63,17 +63,16 @@ class MailTemplate(models.Model):
     subject = models.CharField(_('Subject'), max_length=100)
     from_email = models.ForeignKey(
         MailFromEmail, null=True, blank=True,
-        verbose_name=_('From email'), default=DEFAULT_FROM_EMAIL)
+        verbose_name=_('From email'), default=DEFAULT_FROM_EMAIL,
+        help_text=_('If not specified, then used default.'))
     message = HTMLField(_('Body'))
-    slug = models.SlugField(_('Slug'), unique=True)
+    slug = models.SlugField(
+        _('Slug'), unique=True,
+        help_text=_('Unique slug to use in code.'))
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
     priority = models.SmallIntegerField(
-        _('Priority'),  default=DEFAULT_PRIORITY,
-        choices=zip(reversed(PRIORITY_STEPS), PRIORITY_STEPS),
-        help_text=_(
-            'A number between 0 and 9, where 9 is the highest priority.'
-        ))
+        _('Priority'),  default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
     is_html = models.BooleanField(_('Is html'), default=True)
     is_admin = models.BooleanField(_('For admin'), default=False)
     category = models.ForeignKey(
@@ -211,7 +210,8 @@ class MailGroup(models.Model):
 class MailGroupEmail(models.Model):
     name = models.CharField(_('Username'), max_length=100)
     email = models.EmailField(_('Email'))
-    group = models.ForeignKey(MailGroup, verbose_name=_('Group'))
+    group = models.ForeignKey(
+        MailGroup, verbose_name=_('Group'), related_name='emails')
 
     def __unicode__(self):
         return self.email
@@ -225,3 +225,71 @@ class MailGroupEmail(models.Model):
     def save(self, *args, **kwargs):
         cache.delete(self.group.slug, version=2)
         return super(MailGroupEmail, self).save(*args, **kwargs)
+
+
+class Signal(models.Model):
+    SIGNALS = (
+        'pre_save',
+        'post_save',
+        'pre_delete',
+        'post_delete',
+        'm2m_changed',
+    )
+    name = models.CharField(_('Name'), max_length=100)
+    model = models.ForeignKey(
+        'contenttypes.ContentType', verbose_name=_('Model'))
+    signal = models.CharField(
+        _('Signal'), choices=zip(SIGNALS, SIGNALS),
+        max_length=15, default='post_save')
+    template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
+    group = models.ForeignKey(
+        MailGroup, verbose_name=_('Email group'), blank=True, null=True,
+        help_text=_('You can use group email or rules for recipients.'))
+    rules = models.TextField(
+        help_text=_(
+            'Template should return email to send message. Example:'
+            '{% if instance.is_active %}{{ instance.email }}{% endif %}.'
+            'You can return a multiple emails separated by commas.'
+        ), default='{{ instance.email }}', verbose_name=_('Rules'),
+        null=True, blank=True
+    )
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    is_active = models.BooleanField(_('Is active'), default=True)
+    receive_once = models.BooleanField(
+        _('Receive once'), default=True,
+        help_text=_('Signal will be receive and send once for new db row.'))
+    interval = models.PositiveIntegerField(
+        _('Send interval'), default=0,
+        help_text=_(
+            'Specify interval to send messages after sometime. '
+            'That very helpful for mailing on enterprise products.'
+            'Interval must be set in the seconds.'
+        ))
+
+    def is_sent(self, pk):
+        if pk is not None:
+            if self.receive_once is True:
+                return SignalLog.objects.filter(
+                    model=self.model, model_pk=pk, signal=self).exists()
+            return False
+
+    def mark_as_sent(self, pk):
+        if pk is not None:
+            SignalLog.objects.create(
+                model=self.model, model_pk=pk, signal=self
+            )
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail signal')
+        verbose_name_plural = _('Mail signals')
+
+
+class SignalLog(models.Model):
+    model = models.ForeignKey('contenttypes.ContentType')
+    model_pk = models.BigIntegerField()
+    signal = models.ForeignKey(Signal)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)

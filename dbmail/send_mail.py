@@ -1,18 +1,17 @@
 # -*- encoding: utf-8 -*-
 
-import traceback
 import pprint
-import time
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.contrib.sites.models import Site
 from django.template import Template, Context
+from django.utils.html import strip_tags
 from django.utils import translation
 from django.conf import settings
 
 from dbmail.models import MailTemplate, MailLog, MailGroup
-from dbmail.defaults import RETRY_INTERVAL, SHOW_CONTEXT
+from dbmail.defaults import SHOW_CONTEXT
 
 
 class SendMail(object):
@@ -33,6 +32,10 @@ class SendMail(object):
         self._kwargs = kwargs
         self._num = 1
         self._err_msg = None
+
+        self._kwargs.pop('retry', None)
+        self._kwargs.pop('max_retries', None)
+        self._kwargs.pop('retry_delay', None)
 
     def __get_template(self):
         return MailTemplate.get_template(slug=self._slug)
@@ -66,8 +69,9 @@ class SendMail(object):
 
     def __send_html_message(self):
         msg = EmailMultiAlternatives(
-            self._subject, self._message, from_email=self.__get_from_email(),
-            to=self._recipient_list, cc=self._cc, bcc=self._bcc, **self._kwargs
+            self._subject, strip_tags(self._message),
+            from_email=self.__get_from_email(), to=self._recipient_list,
+            cc=self._cc, bcc=self._bcc, **self._kwargs
         )
         msg.attach_alternative(self._message, "text/html")
         self.__attach_files(msg)
@@ -106,7 +110,7 @@ class SendMail(object):
         if recipient is None:
             return None
         elif not isinstance(recipient, list):
-            recipient = [d.strip() for d in recipient.split(',')]
+            recipient = [d.strip() for d in recipient.split(',') if d.strip()]
         return recipient
 
     @staticmethod
@@ -143,21 +147,9 @@ class SendMail(object):
             self._num, self._err_msg
         )
 
-    def __try_to_send(self):
-        for self._num in range(1, self._template.num_of_retries + 1):
-            try:
-                self.__send()
-                break
-            except Exception, msg:
-                if self._template.num_of_retries == self._num:
-                    self._err_msg = traceback.format_exc()
-                    print '[dbmail]', msg.__unicode__()
-                    raise
-                time.sleep(RETRY_INTERVAL)
-
     def send(self):
         try:
-            self.__try_to_send()
+            self.__send()
             self.__store_log(True)
         except Exception:
             self.__store_log(False)
