@@ -95,10 +95,11 @@ Local demo installation
 Additional information
 ----------------------
 
-**Reversion**
+**Revision**
 
 | For support template revisions, you can install ``django-reversion``.
 | Find information about compatibility with your Django versions `here <http://django-reversion.readthedocs.org/en/latest/django-versions.html>`_.
+
 
 **Editor**
 
