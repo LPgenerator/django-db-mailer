@@ -13,7 +13,8 @@ from django.db.models import get_model
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal,
-    MailGroup, MailGroupEmail, MailFile, MailFromEmail)
+    MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailFromEmailCredential
+)
 from dbmail import send_db_mail
 from dbmail import defaults
 
@@ -186,7 +187,7 @@ class MailGroupAdmin(admin.ModelAdmin):
 
 
 class MailFromEmailAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'created', 'updated', 'id',)
+    list_display = ('name', 'email', 'credential', 'created', 'updated', 'id',)
     list_filter = ('updated', 'created',)
 
 
@@ -197,6 +198,14 @@ class SignalAdmin(admin.ModelAdmin):
     list_filter = ('signal', 'receive_once', 'updated', 'created',)
 
 
+class MailFromEmailCredentialAdmin(admin.ModelAdmin):
+    list_display = (
+        'host', 'port', 'username', 'use_tls',
+        'fail_silently', 'updated', 'created', 'id',)
+    list_filter = ('use_tls', 'fail_silently', 'updated', 'created',)
+
+
+admin.site.register(MailFromEmailCredential, MailFromEmailCredentialAdmin)
 admin.site.register(MailFromEmail, MailFromEmailAdmin)
 admin.site.register(MailCategory, MailCategoryAdmin)
 admin.site.register(MailTemplate, MailTemplateAdmin)

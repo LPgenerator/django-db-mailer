@@ -6,8 +6,10 @@ from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.contrib.sites.models import Site
 from django.template import Template, Context
+from django.core.mail import get_connection
 from django.utils.html import strip_tags
 from django.utils import translation
+from django.core.cache import cache
 from django.conf import settings
 
 from dbmail.models import MailTemplate, MailLog, MailGroup
@@ -36,6 +38,15 @@ class SendMail(object):
         self._kwargs.pop('retry', None)
         self._kwargs.pop('max_retries', None)
         self._kwargs.pop('retry_delay', None)
+
+        self._from_email = self.__get_from_email()
+
+    def __get_connection(self):
+        auth_credentials = cache.get(self._from_email, version=1)
+        if auth_credentials:
+            return self._kwargs.pop('connection', None) or get_connection(
+                **auth_credentials)
+        return self._kwargs.pop('connection', None)
 
     def __get_template(self):
         return MailTemplate.get_template(slug=self._slug)
@@ -69,9 +80,9 @@ class SendMail(object):
 
     def __send_html_message(self):
         msg = EmailMultiAlternatives(
-            self._subject, strip_tags(self._message),
-            from_email=self.__get_from_email(), to=self._recipient_list,
-            cc=self._cc, bcc=self._bcc, **self._kwargs
+            self._subject, strip_tags(self._message), cc=self._cc,
+            from_email=self._from_email, to=self._recipient_list,
+            bcc=self._bcc, connection=self.__get_connection(), **self._kwargs
         )
         msg.attach_alternative(self._message, "text/html")
         self.__attach_files(msg)
@@ -79,8 +90,9 @@ class SendMail(object):
 
     def __send_plain_message(self):
         msg = EmailMessage(
-            self._subject, self._message, from_email=self.__get_from_email(),
-            to=self._recipient_list, cc=self._cc, bcc=self._bcc, **self._kwargs
+            self._subject, self._message, from_email=self._from_email,
+            to=self._recipient_list, cc=self._cc, bcc=self._bcc,
+            connection=self.__get_connection(), **self._kwargs
         )
         self.__attach_files(msg)
         msg.send()

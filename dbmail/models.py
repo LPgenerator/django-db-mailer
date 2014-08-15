@@ -30,13 +30,36 @@ class MailCategory(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = _('Category')
-        verbose_name_plural = _('Categories')
+        verbose_name = _('Mail category')
+        verbose_name_plural = _('Mail categories')
+
+
+class MailFromEmailCredential(models.Model):
+    host = models.CharField(_('Host'), max_length=50)
+    port = models.PositiveIntegerField(_('Port'))
+    username = models.CharField(
+        _('Username'), max_length=50, null=True, blank=True)
+    password = models.CharField(
+        _('Password'), max_length=50, null=True, blank=True)
+    use_tls = models.BooleanField(_('Use TLS'), default=False)
+    fail_silently = models.BooleanField(_('Fail silently'), default=False)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def __unicode__(self):
+        return '%s/%s' % (self.username, self.host)
+
+    class Meta:
+        verbose_name = _('Mail auth settings')
+        verbose_name_plural = _('Mail auth settings')
 
 
 class MailFromEmail(models.Model):
     name = models.CharField(_('Name'), max_length=100)
     email = models.EmailField(_('Email'), unique=True)
+    credential = models.ForeignKey(
+        MailFromEmailCredential, verbose_name=_('Auth credentials'),
+        blank=True, null=True, default=None)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
@@ -51,10 +74,27 @@ class MailFromEmail(models.Model):
         verbose_name = _('Mail from')
         verbose_name_plural = _('Mail from')
 
-    def save(self, *args, **kwargs):
+    def _update_template_cache(self):
         templates = MailTemplate.objects.filter(from_email__email=self.email)
         for template in templates:
             cache.delete(template.slug, version=1)
+
+    def _update_credential_cache(self):
+        if not self.credential:
+            cache.delete(self.get_mail_from, version=1)
+        else:
+            cache.set(self.get_mail_from, dict(
+                host=self.credential.host,
+                port=self.credential.port,
+                username=self.credential.username,
+                password=self.credential.password,
+                use_tls=self.credential.use_tls,
+                fail_silently=self.credential.fail_silently
+            ), version=1)
+
+    def save(self, *args, **kwargs):
+        self._update_template_cache()
+        self._update_credential_cache()
         return super(MailFromEmail, self).save(*args, **kwargs)
 
 
