@@ -2,7 +2,8 @@ What's that
 -----------
 | Django module to easily send emails using django templates stored on database.
 | From box you can use it with django-celery for send background messages.
-| Also you have opportunity create reports from logs by mail categories and slug.
+| Also you have opportunity to create reports from logs by mail categories and slug.
+| Groups with Recipients and send by model signal also available by default.
 | That app very simple to install and use on your projects.
 
 
@@ -16,7 +17,7 @@ Installation:
     $ pip install django-db-mailer
 
 2. Add the ``dbmail`` application to ``INSTALLED_APPS`` in your settings file (usually ``settings.py``)
-3. Sync database (``./manage.py syncdb``)
+3. Sync database (``./manage.py syncdb`` or ``./manage.py migrate``)
 
 
 Usage examples
