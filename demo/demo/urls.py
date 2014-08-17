@@ -10,4 +10,5 @@ urlpatterns = patterns(
     url(r'^rosetta/', include('rosetta.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^tinymce/', include('tinymce.urls')),
+    url(r'^dbmail/', include('dbmail.urls')),
 ) + staticfiles_urlpatterns()

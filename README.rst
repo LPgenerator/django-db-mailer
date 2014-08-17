@@ -118,6 +118,18 @@ Install and configure ``django-celery`` for background message sending with prio
 All app features available only with ``django-celery`` and with ``Redis``.
 
 
+
+External API usage
+------------------
+
+.. code-block:: bash
+
+    $ pip install httpie
+    $ http -f POST http://127.0.0.1:8000/dbmail/api/ api_key=ZzriUzE slug=welcome recipient=root@local.host data='{"name": "Ivan", "age": 20}'
+        or
+    $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host'
+
+
 Screenshots
 -----------
 

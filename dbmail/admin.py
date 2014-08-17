@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import get_model
 
 from dbmail.models import (
-    MailCategory, MailTemplate, MailLog, MailLogEmail, Signal,
+    MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey,
     MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailFromEmailCredential
 )
 from dbmail import send_db_mail
@@ -205,6 +205,12 @@ class MailFromEmailCredentialAdmin(admin.ModelAdmin):
     list_filter = ('use_tls', 'fail_silently', 'updated', 'created',)
 
 
+class MailApiKeyAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'api_key', 'is_active', 'updated', 'created', 'id',)
+    list_filter = ('is_active', 'updated', 'created',)
+
+
 admin.site.register(MailFromEmailCredential, MailFromEmailCredentialAdmin)
 admin.site.register(MailFromEmail, MailFromEmailAdmin)
 admin.site.register(MailCategory, MailCategoryAdmin)
@@ -212,3 +218,4 @@ admin.site.register(MailTemplate, MailTemplateAdmin)
 admin.site.register(MailLog, MailLogAdmin)
 admin.site.register(MailGroup, MailGroupAdmin)
 admin.site.register(Signal, SignalAdmin)
+admin.site.register(ApiKey, MailApiKeyAdmin)

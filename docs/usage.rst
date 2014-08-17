@@ -20,9 +20,9 @@ To use django-db-mailer in a project::
         # slug was defined on db template
         slug='welcome',
 
-        # recipient can be list, or separated with comma or simple string
+        # recipient can be list, or str separated with comma or simple string
         # 'user1@example.com' or 'user1@example.com, user2@example.com' or
-        # ['user1@example.com', 'user2@example.com'] or Mail group slug
+        # ['user1@example.com', 'user2@example.com'] or string Mail group slug
         recipient='user1@example.com',
 
         # All *args params will be accessible on template context
@@ -40,7 +40,15 @@ To use django-db-mailer in a project::
         # cc=['cc@example.com'],
         # bcc=['bcc@example.com'],
         # user=User.objects.get(pk=1),
-        # from_email='bcc@example.com',
+        #
         # attachments=[(filename, content, mimetype)],
+        # files=['hello.jpg', 'world.png'],
         # headers={'Custom-Header':'Some value'},
+        #
+        # queue='default',
+        # retry_delay=300,
+        # max_retries=3,
+        # retry=True,
+        # time_limit=30,
+        # send_after=60,
     )

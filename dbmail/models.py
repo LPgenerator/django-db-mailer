@@ -333,3 +333,22 @@ class SignalLog(models.Model):
     model_pk = models.BigIntegerField()
     signal = models.ForeignKey(Signal)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
+
+
+class ApiKey(models.Model):
+    name = models.CharField(_('Name'), max_length=25)
+    api_key = models.CharField(_('Api key'), max_length=32, unique=True)
+    is_active = models.BooleanField(_('Is active'), default=True)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def save(self, *args, **kwargs):
+        cache.delete(self.api_key)
+        return super(ApiKey, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail API')
+        verbose_name_plural = _('Mail API')
