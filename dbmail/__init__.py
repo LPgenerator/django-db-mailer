@@ -1,7 +1,8 @@
-from sys import argv
 from datetime import datetime
+from sys import argv
+
 from django.conf import settings
-from signals import initial_signals
+
 
 VERSION = (2, 0)
 
@@ -63,4 +64,9 @@ for cmd in ['schemamigration', 'migrate']:
     if cmd in argv:
         break
 else:
-    initial_signals()
+    try:
+        from signals import initial_signals
+
+        initial_signals()
+    except ImportError:
+        pass
