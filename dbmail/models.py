@@ -98,6 +98,33 @@ class MailFromEmail(models.Model):
         return super(MailFromEmail, self).save(*args, **kwargs)
 
 
+class MailBcc(models.Model):
+    email = models.EmailField(_('Email'), unique=True)
+    is_active = models.BooleanField(_('Is active'), default=True)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def __unicode__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = _('Mail Bcc')
+        verbose_name_plural = _('Mail Bcc')
+
+    def __clean_cache(self):
+        for obj in MailTemplate.objects.filter(bcc_email=self):
+            cache.delete(obj.slug, version=1)
+            cache.delete(obj.slug, version=2)
+
+    def save(self, *args, **kwargs):
+        self.__clean_cache()
+        return super(MailBcc, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        self.__clean_cache()
+        super(MailBcc, self).delete(using)
+
+
 class MailTemplate(models.Model):
     name = models.CharField(_('Template name'), max_length=100)
     subject = models.CharField(_('Subject'), max_length=100)
@@ -105,6 +132,9 @@ class MailTemplate(models.Model):
         MailFromEmail, null=True, blank=True,
         verbose_name=_('From email'), default=DEFAULT_FROM_EMAIL,
         help_text=_('If not specified, then used default.'))
+    bcc_email = models.ManyToManyField(
+        MailBcc, verbose_name=_('Bcc'), blank=True, null=True,
+        help_text='Blind carbon copy')
     message = HTMLField(_('Body'))
     slug = models.SlugField(
         _('Slug'), unique=True,
@@ -112,7 +142,7 @@ class MailTemplate(models.Model):
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
     priority = models.SmallIntegerField(
-        _('Priority'),  default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
+        _('Priority'), default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
     is_html = models.BooleanField(_('Is html'), default=True)
     is_admin = models.BooleanField(_('For admin'), default=False)
     category = models.ForeignKey(
@@ -127,11 +157,19 @@ class MailTemplate(models.Model):
         )
     )
 
+    def __clean_cache(self):
+        cache.delete(self.slug, version=1)
+        cache.delete(self.slug, version=2)
+
     def save(self, *args, **kwargs):
         if not self.is_html:
             self.message = strip_tags(self.message)
-        cache.delete(self.slug, version=1)
+        self.__clean_cache()
         return super(MailTemplate, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        self.__clean_cache()
+        super(MailTemplate, self).delete(using)
 
     def __unicode__(self):
         return self.name
@@ -147,7 +185,9 @@ class MailTemplate(models.Model):
             return obj
         else:
             obj = cls.objects.select_related('from_email').get(slug=slug)
+            bcc = [o.email for o in obj.bcc_email.filter(is_active=1)]
             cache.set(slug, obj, timeout=None, version=1)
+            cache.set(slug, bcc, timeout=None, version=2)
             return obj
 
 
@@ -236,6 +276,10 @@ class MailGroup(models.Model):
         cache.delete(self.slug, version=2)
         return super(MailGroup, self).save(*args, **kwargs)
 
+    def delete(self, using=None):
+        cache.delete(self.slug, version=2)
+        super(MailGroup, self).delete(using)
+
     @classmethod
     def get_emails(cls, slug):
         obj = cache.get(slug, version=2)
@@ -265,6 +309,10 @@ class MailGroupEmail(models.Model):
     def save(self, *args, **kwargs):
         cache.delete(self.group.slug, version=2)
         return super(MailGroupEmail, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        cache.delete(self.group.slug, version=2)
+        super(MailGroupEmail, self).delete(using)
 
 
 class Signal(models.Model):
@@ -345,6 +393,10 @@ class ApiKey(models.Model):
     def save(self, *args, **kwargs):
         cache.delete(self.api_key)
         return super(ApiKey, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        cache.delete(self.api_key)
+        super(ApiKey, self).delete(using)
 
     def __unicode__(self):
         return self.name

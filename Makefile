@@ -10,8 +10,11 @@ clean-pyc:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
+clean_celery:
+	cd demo && python manage.py celery purge -f
+
 pep8:
-	flake8 --exclude=migrations dbmail
+	flake8 --exclude=migrations --ignore=F401 dbmail
 
 release: clean
 	python setup.py register sdist upload --sign

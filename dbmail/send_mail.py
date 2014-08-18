@@ -40,6 +40,7 @@ class SendMail(object):
         self._kwargs.pop('retry_delay', None)
 
         self._from_email = self.__get_from_email()
+        self.__update_bcc_from_template_settings()
 
     def __get_connection(self):
         auth_credentials = cache.get(self._from_email, version=1)
@@ -101,6 +102,14 @@ class SendMail(object):
         if not isinstance(recipient, list) and '@' not in recipient:
             return self.__group_emails(recipient)
         return self.__email_to_list(recipient)
+
+    def __update_bcc_from_template_settings(self):
+        template_bcc = cache.get(self._slug, version=2)
+        if template_bcc is not None:
+            if self._bcc:
+                self._bcc.extend(template_bcc)
+            else:
+                self._bcc = template_bcc
 
     def __get_from_email(self):
         if self._kwargs.get('from_email'):
