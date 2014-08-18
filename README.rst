@@ -143,6 +143,9 @@ Screenshots
 .. image:: /screenshots/signals_changelist.jpg
 .. image:: /screenshots/apps_view.jpg
 .. image:: /screenshots/apps_browse_vars.jpg
+.. image:: /screenshots/smtp_changelist.jpg
+.. image:: /screenshots/apikey_changelist.jpg
+.. image:: /screenshots/bcc_changelist.jpg
 
 
 Compatibility:
