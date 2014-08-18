@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import os
 
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
@@ -196,6 +197,30 @@ class SignalAdmin(admin.ModelAdmin):
         'name', 'model', 'signal', 'template', 'interval', 'receive_once',
         'updated', 'created', 'id',)
     list_filter = ('signal', 'receive_once', 'updated', 'created',)
+
+    @staticmethod
+    def auto_reload(request):
+        if defaults.WSGI_AUTO_RELOAD is True:
+            env = request.environ.get
+            if env('mod_wsgi.process_group') and env('SCRIPT_FILENAME'):
+                if int(env('mod_wsgi.script_reloading', 0)):
+                    try:
+                        if os.path.exists(env('SCRIPT_FILENAME')):
+                            os.utime(env('SCRIPT_FILENAME'), None)
+                    except OSError:
+                        pass
+
+        if defaults.UWSGI_AUTO_RELOAD is True:
+            try:
+                import uwsgi
+
+                uwsgi.reload()
+            except ImportError:
+                pass
+
+    def save_model(self, request, *args, **kwargs):
+        super(SignalAdmin, self).save_model(request, *args, **kwargs)
+        self.auto_reload(request)
 
 
 class MailFromEmailCredentialAdmin(admin.ModelAdmin):

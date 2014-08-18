@@ -166,6 +166,8 @@ CACHES = {
 
 AUTH_USER_MODEL = 'auth.User'
 DB_MAILER_SHOW_CONTEXT = True
+DB_MAILER_WSGI_AUTO_RELOAD = False
+DB_MAILER_UWSGI_AUTO_RELOAD = True
 
 try:
     from local_settings import *
