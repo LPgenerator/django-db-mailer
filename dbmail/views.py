@@ -30,7 +30,7 @@ def send_by_dbmail(request):
             if not cache.get(api_key):
                 get_object_or_404(
                     ApiKey, api_key=api_key, is_active=True)
-                cache.set(api_key, 1)
+                cache.set(api_key, 1, timeout=None)
 
             args = []
             if request.POST.get('data'):

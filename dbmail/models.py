@@ -90,7 +90,7 @@ class MailFromEmail(models.Model):
                 password=self.credential.password,
                 use_tls=self.credential.use_tls,
                 fail_silently=self.credential.fail_silently
-            ), version=1)
+            ), timeout=None, version=1)
 
     def save(self, *args, **kwargs):
         self._update_template_cache()
@@ -147,7 +147,7 @@ class MailTemplate(models.Model):
             return obj
         else:
             obj = cls.objects.select_related('from_email').get(slug=slug)
-            cache.set(slug, obj, version=1)
+            cache.set(slug, obj, timeout=None, version=1)
             return obj
 
 
@@ -243,7 +243,7 @@ class MailGroup(models.Model):
             return obj
 
         obj = MailGroupEmail.objects.filter(group__slug=slug)
-        cache.set(slug, obj, version=2)
+        cache.set(slug, obj, timeout=None, version=2)
         return obj
 
 
