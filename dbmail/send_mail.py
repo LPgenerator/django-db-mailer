@@ -125,7 +125,7 @@ class SendMail(object):
 
     def __get_from_email(self):
         if self._kwargs.get('from_email'):
-            return self._kwargs['from_email']
+            return self._kwargs.pop('from_email', None)
         elif not self._template.from_email:
             return settings.DEFAULT_FROM_EMAIL
         return self._template.from_email.get_mail_from
