@@ -3,26 +3,24 @@
 import re
 import os
 
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
-from django.contrib import admin
-from django.conf import settings
-
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import get_model
+from django.contrib import admin
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey, MailBcc,
     MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailFromEmailCredential
 )
+from dbmail import app_installed
 from dbmail import send_db_mail
 from dbmail import defaults
 
-
 ModelAdmin = admin.ModelAdmin
 
-if 'reversion' in settings.INSTALLED_APPS:
+if app_installed('reversion'):
     try:
         from reversion import VersionAdmin
 

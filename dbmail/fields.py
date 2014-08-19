@@ -1,11 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf import settings
 from django.db import models
+
+from dbmail import app_installed
 
 HTMLField = models.TextField
 
-if 'tinymce' in settings.INSTALLED_APPS:
+if app_installed('tinymce'):
     try:
         from tinymce.models import HTMLField
 

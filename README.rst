@@ -154,6 +154,10 @@ External API usage
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host'
 
 
+Very simple version of this app, available `here <https://github.com/LPgenerator/django-db-mailer/tree/1.0>`_.
+That version do not include celery settings, bcc, api, mail settings, signals, mail groups and model browser.
+
+
 Screenshots
 -----------
 

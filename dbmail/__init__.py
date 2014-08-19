@@ -9,11 +9,15 @@ def get_version():
     return '.'.join(map(str, VERSION))
 
 
+def app_installed(app):
+    return app in settings.INSTALLED_APPS
+
+
 def celery_supported():
     try:
         import tasks
 
-        if 'djcelery' not in settings.INSTALLED_APPS:
+        if not app_installed('djcelery'):
             raise ImportError
         return True
     except ImportError:
@@ -32,7 +36,7 @@ def send_db_mail(slug, recipient, *args, **kwargs):
     if celery_supported():
         import tasks
 
-        if 'djcelery' not in settings.INSTALLED_APPS:
+        if not app_installed('djcelery'):
             raise ImportError
 
         template = MailTemplate.get_template(slug=slug)
