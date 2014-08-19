@@ -1,6 +1,4 @@
 from datetime import datetime
-from sys import argv
-
 from django.conf import settings
 
 
@@ -58,15 +56,3 @@ def send_db_mail(slug, recipient, *args, **kwargs):
         tasks.send_db_mail.apply_async(**options)
     else:
         SendMail(*args, **kwargs).send()
-
-
-for cmd in ['schemamigration', 'migrate']:
-    if cmd in argv:
-        break
-else:
-    try:
-        from signals import initial_signals
-
-        initial_signals()
-    except ImportError:
-        pass

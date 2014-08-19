@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import datetime
+
 from django.template import Template, Context
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
@@ -21,6 +23,8 @@ class SignalReceiver(object):
 
         self.kwargs['old_instance'] = self.get_old_instance()
         self.kwargs['users'] = self.get_users()
+        self.kwargs['date'] = datetime.date.today()
+        self.kwargs['date_time'] = datetime.datetime.now()
 
         self.run()
 

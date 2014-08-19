@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import uuid
+import sys
 import os
 
 from django.utils.translation import ugettext_lazy as _
@@ -413,3 +414,15 @@ class ApiKey(models.Model):
     class Meta:
         verbose_name = _('Mail API')
         verbose_name_plural = _('Mail API')
+
+
+for cmd in ['schemamigration', 'migrate']:
+    if cmd in sys.argv:
+        break
+else:
+    try:
+        from signals import initial_signals
+
+        initial_signals()
+    except ImportError:
+        pass
