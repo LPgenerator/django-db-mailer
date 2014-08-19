@@ -161,10 +161,18 @@ class MailTemplate(models.Model):
         cache.delete(self.slug, version=1)
         cache.delete(self.slug, version=2)
 
-    def save(self, *args, **kwargs):
+    def __clean_non_html(self):
         if not self.is_html:
             self.message = strip_tags(self.message)
+            if hasattr(settings, 'MODELTRANSLATION_LANGUAGES'):
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    message = strip_tags(getattr(self, 'message_%s' % lang))
+                    if message:
+                        setattr(self, 'message_%s' % lang, message)
+
+    def save(self, *args, **kwargs):
         self.__clean_cache()
+        self.__clean_non_html()
         return super(MailTemplate, self).save(*args, **kwargs)
 
     def delete(self, using=None):

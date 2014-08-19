@@ -164,10 +164,21 @@ CACHES = {
     }
 }
 
+# DbMail settings
 AUTH_USER_MODEL = 'auth.User'
 DB_MAILER_SHOW_CONTEXT = True
 DB_MAILER_WSGI_AUTO_RELOAD = False
 DB_MAILER_UWSGI_AUTO_RELOAD = True
+
+'''
+# Translation settings
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+MODELTRANSLATION_LANGUAGES = ('ru', 'en')
+MODELTRANSLATION_TRANSLATION_FILES = (
+    'dbmail.translation',
+)
+INSTALLED_APPS = ('modeltranslation',) + INSTALLED_APPS
+'''
 
 try:
     from local_settings import *

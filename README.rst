@@ -63,6 +63,8 @@ Usage examples
         # bcc=['bcc@example.com'],
         # user=User.objects.get(pk=1),
         #
+        # language='ru',
+        #
         # attachments=[(filename, content, mimetype)],
         # files=['hello.jpg', 'world.png'],
         # headers={'Custom-Header':'Some value'},
@@ -113,6 +115,26 @@ To enable editor, you may install and configure ``django-tinymce`` app.
 **Queue**
 
 Install and configure ``django-celery`` for background message sending with priorities. You can find celery settings examples on demo project.
+
+**Translation**
+For use different language on your mail templates, install ``django-modeltranslation``.
+Add into settings.py:
+
+.. code-block:: python
+
+    MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+    MODELTRANSLATION_LANGUAGES = ('ru', 'en')
+    MODELTRANSLATION_TRANSLATION_FILES = (
+        'dbmail.translation',
+    )
+    INSTALLED_APPS = ('modeltranslation',) + INSTALLED_APPS
+
+Update dbmail fields:
+
+.. code-block:: bash
+
+    $ ./manage.py sync_translation_fields --noinput
+
 
 **Note**
 

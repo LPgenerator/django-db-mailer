@@ -24,6 +24,7 @@ class SendMail(object):
         self._cc = self.__email_to_list(kwargs.pop('cc', None))
         self._bcc = self.__email_to_list(kwargs.pop('bcc', None))
         self._user = kwargs.pop('user', None)
+        self._language = kwargs.pop('language', None)
 
         self._template = self.__get_template()
         self._context = self.__get_context(args)
@@ -66,11 +67,22 @@ class SendMail(object):
             pprint.pprint(data)
         return data
 
+    def __get_str_by_language(self, field):
+        template = getattr(self._template, field)
+        if self._language is not None:
+            field = '%s_%s' % (field, self._language)
+            if hasattr(self._template, field):
+                if getattr(self._template, field):
+                    template = getattr(self._template, field)
+        return template
+
     def __get_subject(self):
-        return self.__render_template(self._template.subject, self._context)
+        return self.__render_template(
+            self.__get_str_by_language('subject'), self._context)
 
     def __get_message(self):
-        return self.__render_template(self._template.message, self._context)
+        return self.__render_template(
+            self.__get_str_by_language('message'), self._context)
 
     def __attach_files(self, mail):
         for file_object in self._template.files.all():
@@ -134,9 +146,8 @@ class SendMail(object):
             recipient = [d.strip() for d in recipient.split(',') if d.strip()]
         return recipient
 
-    @staticmethod
-    def __render_template(template, context):
-        translation.activate(settings.LANGUAGE_CODE)
+    def __render_template(self, template, context):
+        translation.activate(self._language or settings.LANGUAGE_CODE)
         return Template(template).render(Context(context))
 
     @staticmethod
