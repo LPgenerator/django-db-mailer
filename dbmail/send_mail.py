@@ -13,7 +13,7 @@ from django.core.cache import cache
 from django.conf import settings
 
 from dbmail.models import MailTemplate, MailLog, MailGroup
-from dbmail.defaults import SHOW_CONTEXT
+from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING
 
 
 class SendMail(object):
@@ -174,11 +174,12 @@ class SendMail(object):
             return self.__send_plain_message()
 
     def __store_log(self, is_sent):
-        MailLog.store(
-            self._recipient_list, self._cc, self._bcc,
-            is_sent, self._template, self._user,
-            self._num, self._err_msg
-        )
+        if ENABLE_LOGGING is True:
+            MailLog.store(
+                self._recipient_list, self._cc, self._bcc,
+                is_sent, self._template, self._user,
+                self._num, self._err_msg
+            )
 
     def send(self):
         try:
