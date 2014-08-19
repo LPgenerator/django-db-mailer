@@ -117,6 +117,7 @@ To enable editor, you may install and configure ``django-tinymce`` app.
 Install and configure ``django-celery`` for background message sending with priorities. You can find celery settings examples on demo project.
 
 **Translation**
+
 For use different language on your mail templates, install ``django-modeltranslation``.
 Add into settings.py:
 

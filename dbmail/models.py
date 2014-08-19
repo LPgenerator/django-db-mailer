@@ -145,6 +145,7 @@ class MailTemplate(models.Model):
         _('Priority'), default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
     is_html = models.BooleanField(_('Is html'), default=True)
     is_admin = models.BooleanField(_('For admin'), default=False)
+    is_active = models.BooleanField(_('Is active'), default=True)
     category = models.ForeignKey(
         MailCategory, null=True, blank=True,
         verbose_name=_('Category'), default=DEFAULT_CATEGORY)

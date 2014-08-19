@@ -168,9 +168,10 @@ class SendMail(object):
         return data
 
     def __send(self):
-        if self._template.is_html:
-            return self.__send_html_message()
-        return self.__send_plain_message()
+        if self._template.is_active:
+            if self._template.is_html:
+                return self.__send_html_message()
+            return self.__send_plain_message()
 
     def __store_log(self, is_sent):
         MailLog.store(

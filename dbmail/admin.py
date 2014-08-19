@@ -45,16 +45,16 @@ class MailTemplateFileAdmin(admin.TabularInline):
 class MailTemplateAdmin(ModelAdmin):
     list_display = (
         'name', 'category', 'from_email', 'slug', 'is_admin', 'is_html',
-        'num_of_retries', 'priority', 'created', 'updated', 'id',
+        'is_active', 'num_of_retries', 'priority', 'created', 'updated', 'id',
     )
     list_filter = (
-        'category', 'is_admin', 'is_html', 'priority',
+        'category', 'is_active', 'is_admin', 'is_html', 'priority',
         'from_email', 'created', 'updated',)
     search_fields = (
         'name', 'subject', 'slug', 'message',)
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('-id',)
-    list_editable = ('category', 'priority',)
+    list_editable = ('category', 'priority', 'is_active',)
     list_display_links = ('name',)
     date_hierarchy = 'created'
     list_per_page = defaults.TEMPLATES_PER_PAGE
