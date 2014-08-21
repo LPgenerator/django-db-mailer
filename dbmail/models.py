@@ -416,13 +416,13 @@ class ApiKey(models.Model):
         verbose_name_plural = _('Mail API')
 
 
-for cmd in ['schemamigration', 'migrate']:
+for cmd in ['schemamigration', 'migrate', 'syncdb']:
     if cmd in sys.argv:
         break
 else:
     try:
-        from signals import initial_signals
+        from .signals import initial_signals
 
         initial_signals()
-    except:
+    except ImportError:
         pass

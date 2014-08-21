@@ -195,6 +195,7 @@ class SendMail(object):
         try:
             self.__send()
             self.__store_log(True)
+            return 'OK'
         except Exception:
             self.__store_log(False)
             raise
