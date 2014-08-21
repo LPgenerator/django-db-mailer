@@ -118,7 +118,7 @@ Install and configure ``django-celery`` for background message sending with prio
 
 **Translation**
 
-For use different language on your mail templates, install ``django-modeltranslation``.
+For use different language on your mail templates, install ``django-modeltranslation`` or ``grappelli-modeltranslation``.
 Add into settings.py:
 
 .. code-block:: python
@@ -129,6 +129,7 @@ Add into settings.py:
         'dbmail.translation',
     )
     INSTALLED_APPS = ('modeltranslation',) + INSTALLED_APPS
+    # INSTALLED_APPS = ('grappelli', 'grappelli_modeltranslation', 'modeltranslation',) + INSTALLED_APPS
 
 Update dbmail fields:
 
@@ -137,10 +138,15 @@ Update dbmail fields:
     $ ./manage.py sync_translation_fields --noinput
 
 
+**Old versions**
+
+Very simple version of this app, available `here <https://github.com/LPgenerator/django-db-mailer/tree/1.0>`_.
+That version do not include celery settings, bcc, api, mail settings, signals, mail groups and model browser.
+
+
 **Note**
 
 All app features available only with ``django-celery`` and with ``Redis``.
-
 
 
 External API usage
@@ -152,10 +158,6 @@ External API usage
     $ http -f POST http://127.0.0.1:8000/dbmail/api/ api_key=ZzriUzE slug=welcome recipient=root@local.host data='{"name": "Ivan", "age": 20}'
         or
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host'
-
-
-Very simple version of this app, available `here <https://github.com/LPgenerator/django-db-mailer/tree/1.0>`_.
-That version do not include celery settings, bcc, api, mail settings, signals, mail groups and model browser.
 
 
 Screenshots
