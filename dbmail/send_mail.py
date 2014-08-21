@@ -12,8 +12,9 @@ from django.utils import translation
 from django.core.cache import cache
 from django.conf import settings
 
+from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
-from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING
+from dbmail import get_version
 
 
 class SendMail(object):
@@ -42,6 +43,15 @@ class SendMail(object):
 
         self._from_email = self.__get_from_email()
         self.__update_bcc_from_template_settings()
+        self.__insert_mailer_identification_head()
+
+    def __insert_mailer_identification_head(self):
+        if not ADD_HEADER:
+            return
+        headers = self._kwargs.pop('headers', {})
+        headers.update(
+            {'X-Mailer-Wrapper': 'django-db-mailer ver %s' % get_version()})
+        self._kwargs['headers'] = headers
 
     def __get_connection(self):
         auth_credentials = cache.get(self._from_email, version=1)
