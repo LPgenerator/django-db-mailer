@@ -36,11 +36,7 @@ def send_db_mail(slug, recipient, *args, **kwargs):
     if celery_supported():
         import tasks
 
-        if not app_installed('djcelery'):
-            raise ImportError
-
         template = MailTemplate.get_template(slug=slug)
-
         max_retries = kwargs.get('max_retries', None)
         if max_retries is None and template.num_of_retries:
             kwargs['max_retries'] = template.num_of_retries
