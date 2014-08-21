@@ -76,7 +76,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates'),
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -95,7 +95,7 @@ INSTALLED_APPS = (
     'tinymce',
 
     'dbmail',
-)
+]
 
 try:
     import djcelery
@@ -177,7 +177,7 @@ MODELTRANSLATION_LANGUAGES = ('ru', 'en')
 MODELTRANSLATION_TRANSLATION_FILES = (
     'dbmail.translation',
 )
-INSTALLED_APPS = ('modeltranslation',) + INSTALLED_APPS
+INSTALLED_APPS = ['modeltranslation'] + INSTALLED_APPS
 '''
 
 try:

@@ -185,11 +185,12 @@ class SendMail(object):
 
     def __store_log(self, is_sent):
         if ENABLE_LOGGING is True:
-            MailLog.store(
-                self._recipient_list, self._cc, self._bcc,
-                is_sent, self._template, self._user,
-                self._num, self._err_msg
-            )
+            if self._template.enable_log or not is_sent:
+                MailLog.store(
+                    self._recipient_list, self._cc, self._bcc,
+                    is_sent, self._template, self._user,
+                    self._num, self._err_msg
+                )
 
     def send(self):
         try:
