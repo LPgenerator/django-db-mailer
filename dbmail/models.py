@@ -424,5 +424,5 @@ else:
         from signals import initial_signals
 
         initial_signals()
-    except ImportError:
+    except:
         pass

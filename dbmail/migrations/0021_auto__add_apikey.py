@@ -147,7 +147,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_admin': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_html': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'message': ('tinymce.models.HTMLField', [], {}),
+            'message': ('django.db.models.fields.TextField', [], {}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'num_of_retries': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1'}),
             'priority': ('django.db.models.fields.SmallIntegerField', [], {'default': '6'}),
