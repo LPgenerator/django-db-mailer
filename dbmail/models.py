@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import datetime
 import uuid
 import sys
 import os
@@ -255,6 +256,11 @@ class MailLog(models.Model):
         cls.store_email_log(log, to, 'to')
         cls.store_email_log(log, cc, 'cc')
         cls.store_email_log(log, bcc, 'bcc')
+
+    @classmethod
+    def cleanup(cls, days=7):
+        date = datetime.datetime.now() - datetime.timedelta(days=days)
+        cls.objects.filter(created__lte=date).delete()
 
 
 class MailLogEmail(models.Model):
