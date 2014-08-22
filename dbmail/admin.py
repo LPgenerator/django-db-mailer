@@ -43,7 +43,8 @@ class MailTemplateFileAdmin(admin.TabularInline):
 class MailTemplateAdmin(ModelAdmin):
     list_display = (
         'name', 'category', 'from_email', 'slug', 'is_admin', 'is_html',
-        'is_active', 'num_of_retries', 'priority', 'created', 'updated', 'id',
+        'enable_log', 'is_active', 'num_of_retries', 'priority',
+        'created', 'updated', 'id',
     )
     list_filter = (
         'category', 'is_active', 'is_admin', 'is_html', 'priority',
