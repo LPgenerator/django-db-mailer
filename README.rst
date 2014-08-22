@@ -100,9 +100,8 @@ Additional information
 
 **Revision**
 
-| For support template revisions, you can install ``django-reversion``.
-| Find information about compatibility with your Django versions `here <http://django-reversion.readthedocs.org/en/latest/django-versions.html>`_.
-
+For support template revisions, you can install ``django-reversion``.
+Find information about compatibility with your Django versions `here <http://django-reversion.readthedocs.org/en/latest/django-versions.html>`_.
 
 **Editor**
 
@@ -138,7 +137,7 @@ Update dbmail fields:
     $ ./manage.py sync_translation_fields --noinput
 
 
-**Old versions**
+**Older versions**
 
 Very simple version of this app, available `here <https://github.com/LPgenerator/django-db-mailer/tree/1.0>`_.
 That version do not include celery settings, bcc, api, mail settings, signals, mail groups and model browser.
