@@ -113,9 +113,8 @@ class MailBcc(models.Model):
         verbose_name_plural = _('Mail Bcc')
 
     def __clean_cache(self):
-        for obj in MailTemplate.objects.filter(bcc_email=self):
-            cache.delete(obj.slug, version=1)
-            cache.delete(obj.slug, version=2)
+        for template in MailTemplate.objects.filter(bcc_email=self):
+            template._clean_cache()
 
     def save(self, *args, **kwargs):
         self.__clean_cache()
@@ -160,11 +159,11 @@ class MailTemplate(models.Model):
         )
     )
 
-    def __clean_cache(self):
+    def _clean_cache(self):
         cache.delete(self.slug, version=1)
         cache.delete(self.slug, version=2)
 
-    def __clean_non_html(self):
+    def _clean_non_html(self):
         if not self.is_html:
             self.message = strip_tags(self.message)
             if hasattr(settings, 'MODELTRANSLATION_LANGUAGES'):
@@ -173,13 +172,18 @@ class MailTemplate(models.Model):
                     if message:
                         setattr(self, 'message_%s' % lang, message)
 
+    @classmethod
+    def clean_cache(cls):
+        for template in cls.objects.all():
+            template._clean_cache()
+
     def save(self, *args, **kwargs):
-        self.__clean_cache()
-        self.__clean_non_html()
+        self._clean_cache()
+        self._clean_non_html()
         return super(MailTemplate, self).save(*args, **kwargs)
 
     def delete(self, using=None):
-        self.__clean_cache()
+        self._clean_cache()
         super(MailTemplate, self).delete(using)
 
     def __unicode__(self):
@@ -401,12 +405,20 @@ class ApiKey(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
-    def save(self, *args, **kwargs):
+    def _clean_cache(self):
         cache.delete(self.api_key)
+
+    @classmethod
+    def clean_cache(cls):
+        for api in cls.objects.all():
+            api._clean_cache()
+
+    def save(self, *args, **kwargs):
+        self._clean_cache()
         return super(ApiKey, self).save(*args, **kwargs)
 
     def delete(self, using=None):
-        cache.delete(self.api_key)
+        self._clean_cache()
         super(ApiKey, self).delete(using)
 
     def __unicode__(self):

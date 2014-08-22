@@ -97,28 +97,6 @@ INSTALLED_APPS = [
     'dbmail',
 ]
 
-try:
-    import djcelery
-
-    djcelery.setup_loader()
-
-    BROKER_URL = 'redis://127.0.0.1:6379/5'
-
-    BROKER_TRANSPORT_OPTIONS = {
-        'priority_steps': range(10),
-    }
-
-    CELERY_QUEUES = {
-        'default': {
-            "exchange": "default",
-            "binding_key": "default",
-        },
-    }
-
-    CELERY_IGNORE_RESULT = True
-except ImportError:
-    pass
-
 
 LOGGING = {
     'version': 1,
@@ -146,6 +124,30 @@ LOGGING = {
 
 ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
 ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
+
+
+################ Django-Db-Mailer configuration ################
+try:
+    import djcelery
+
+    djcelery.setup_loader()
+
+    BROKER_URL = 'redis://127.0.0.1:6379/5'
+
+    BROKER_TRANSPORT_OPTIONS = {
+        'priority_steps': range(10),
+    }
+
+    CELERY_QUEUES = {
+        'default': {
+            "exchange": "default",
+            "binding_key": "default",
+        },
+    }
+
+    CELERY_IGNORE_RESULT = True
+except ImportError:
+    pass
 
 TINYMCE_DEFAULT_CONFIG = {
     'plugins': "table,spellchecker,paste,searchreplace",
@@ -179,6 +181,8 @@ MODELTRANSLATION_TRANSLATION_FILES = (
 )
 INSTALLED_APPS = ['modeltranslation'] + INSTALLED_APPS
 '''
+############################################################
+
 
 try:
     from local_settings import *
