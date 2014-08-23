@@ -15,6 +15,7 @@ from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY)
 from dbmail.fields import HTMLField
+from dbmail.utils import clean_cache_key
 
 
 def _upload_mail_file(instance, filename):
@@ -83,9 +84,9 @@ class MailFromEmail(models.Model):
 
     def _update_credential_cache(self):
         if not self.credential:
-            cache.delete(self.get_mail_from, version=1)
+            cache.delete(clean_cache_key(self.get_mail_from), version=1)
         else:
-            cache.set(self.get_mail_from, dict(
+            cache.set(clean_cache_key(self.get_mail_from), dict(
                 host=self.credential.host,
                 port=self.credential.port,
                 username=self.credential.username,

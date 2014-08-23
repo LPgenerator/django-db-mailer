@@ -14,6 +14,7 @@ from django.conf import settings
 
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
+from dbmail.utils import clean_cache_key
 from dbmail import get_version
 
 
@@ -54,7 +55,8 @@ class SendMail(object):
         self._kwargs['headers'] = headers
 
     def __get_connection(self):
-        auth_credentials = cache.get(self._from_email, version=1)
+        auth_credentials = cache.get(
+            clean_cache_key(self._from_email), version=1)
         if auth_credentials:
             return self._kwargs.pop('connection', None) or get_connection(
                 **auth_credentials)
