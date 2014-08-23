@@ -32,8 +32,9 @@ def send_db_mail(slug, recipient, *args, **kwargs):
     args = (slug, recipient) + args
     send_after = kwargs.pop('send_after', None)
     send_at_date = kwargs.pop('send_at_date', None)
+    use_celery = kwargs.pop('use_celery', True)
 
-    if celery_supported():
+    if celery_supported() and use_celery:
         import tasks
 
         template = MailTemplate.get_template(slug=slug)

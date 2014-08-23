@@ -75,6 +75,8 @@ Usage examples
         # retry=True,
         # time_limit=30,
         # send_after=60,
+        #
+        # use_celery=True,
     )
 
 
