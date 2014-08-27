@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.conf import settings
 
 
 VERSION = (2, 0)
@@ -10,6 +9,8 @@ def get_version():
 
 
 def app_installed(app):
+    from django.conf import settings
+
     return app in settings.INSTALLED_APPS
 
 
