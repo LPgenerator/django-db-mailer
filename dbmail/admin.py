@@ -3,6 +3,7 @@
 import re
 import os
 
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
@@ -61,7 +62,7 @@ class MailTemplateAdmin(ModelAdmin):
 
     class Media:
         js = (
-            '/static/dbmail/admin/js/dbmail.js',
+            static('dbmail/admin/js/dbmail.js'),
         )
 
     def send_mail_view(self, request, pk):
