@@ -37,7 +37,7 @@ run-server:
 	@cd demo && python manage.py runserver --traceback
 
 run-celery:
-	@cd demo && python manage.py celeryd --loglevel=info -Q default
+	@cd demo && python manage.py celeryd --loglevel=info -Q default --maxtasksperchild=10000
 
 run-shell:
 	@cd demo && python manage.py shell_plus --print-sql

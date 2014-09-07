@@ -66,13 +66,10 @@ class MailTemplateAdmin(ModelAdmin):
         )
 
     def send_mail_view(self, request, pk):
-        template = MailTemplate.objects.get(pk=pk)
-        slug = template.slug
-        var_list = re.findall('\{\{\s?(\w+)\s?\}\}', template.message)
-        context = {}
-        for var in var_list:
-            context[var] = '"%s"' % var.upper().replace('_', '-')
-        send_db_mail(slug, request.user.email, request.user, context)
+        from dbmail.management.commands.dbmail_test_send import send_test_msg
+
+        send_test_msg(pk, request.user.email, request.user)
+
         return redirect(
             reverse(
                 'admin:dbmail_mailtemplate_change', args=(pk,),
