@@ -116,6 +116,7 @@ To enable editor, you may install and configure ``django-tinymce`` app.
 **Queue**
 
 Install and configure ``django-celery`` for background message sending with priorities. You can find celery settings examples on demo project.
+We recommended to use ``django-celery-mon`` with ``django-celery`` for monitoring celery and supervisor processes.
 
 **Translation**
 
