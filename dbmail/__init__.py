@@ -55,6 +55,6 @@ def send_db_mail(slug, recipient, *args, **kwargs):
         if send_after is not None:
             options.update({'countdown': send_after})
 
-        tasks.send_db_mail.apply_async(**options)
+        return tasks.send_db_mail.apply_async(**options)
     else:
-        SendMail(*args, **kwargs).send()
+        return SendMail(*args, **kwargs).send()
