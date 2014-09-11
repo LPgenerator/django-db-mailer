@@ -71,7 +71,7 @@ class SendMail(object):
         for context in context_list:
             if isinstance(context, dict):
                 data.update(context)
-            else:
+            elif hasattr(context, '_meta'):
                 data.update(self.__model_to_dict(context))
                 data.update({context._meta.module_name: context})
 
