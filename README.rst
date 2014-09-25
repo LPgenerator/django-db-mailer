@@ -139,6 +139,17 @@ Update dbmail fields:
 
     $ ./manage.py sync_translation_fields --noinput
 
+**Postmark backend**
+
+Install ``python-postmark`` app via pip. Configure your settings:
+
+.. code-block:: python
+
+    POSTMARK_API_KEY = ''
+    POSTMARK_SENDER = 'noreply@example.com'
+    POSTMARK_TEST_MODE = False
+    EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
+
 
 **Older versions**
 

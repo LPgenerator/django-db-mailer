@@ -138,7 +138,9 @@ class MailLogEmailInline(admin.TabularInline):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        if not request.user.is_superuser:
+            return False
+        return True
 
     def has_change_permission(self, request, obj=None):
         return request.method != 'POST'
@@ -164,6 +166,7 @@ class MailLogAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         if not request.user.is_superuser:
             return False
+        return True
 
     def has_change_permission(self, request, obj=None):
         return request.method != 'POST'
