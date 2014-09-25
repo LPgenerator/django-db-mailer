@@ -234,7 +234,7 @@ class MailLogException(models.Model):
 
 
 class MailLog(models.Model):
-    is_sent = models.BooleanField(_('Is sent'), default=True)
+    is_sent = models.BooleanField(_('Is sent'), default=True, db_index=True)
     template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     user = models.ForeignKey(
