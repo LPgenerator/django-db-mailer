@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import traceback
 import pprint
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
@@ -200,5 +201,6 @@ class SendMail(object):
             self.__store_log(True)
             return 'OK'
         except Exception:
+            self._err_msg = traceback.format_exc()
             self.__store_log(False)
             raise
