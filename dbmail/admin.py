@@ -156,7 +156,8 @@ class MailLogAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        if not request.user.is_superuser:
+            return False
 
     def has_change_permission(self, request, obj=None):
         return request.method != 'POST'
