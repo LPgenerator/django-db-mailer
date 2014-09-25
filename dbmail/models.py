@@ -222,6 +222,17 @@ class MailFile(models.Model):
         verbose_name_plural = _('Mail files')
 
 
+class MailLogException(models.Model):
+    name = models.CharField(_('Exception'), max_length=150, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail Exception')
+        verbose_name_plural = _('Mail Exception')
+
+
 class MailLog(models.Model):
     is_sent = models.BooleanField(_('Is sent'), default=True)
     template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
@@ -230,6 +241,8 @@ class MailLog(models.Model):
         settings.AUTH_USER_MODEL, verbose_name=_('User'),
         null=True, blank=True)
     error_message = models.TextField(_('Error message'), null=True, blank=True)
+    error_exception = models.ForeignKey(
+        MailLogException, null=True, blank=True, verbose_name=_('Exception'))
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
 
@@ -249,10 +262,13 @@ class MailLog(models.Model):
                 )
 
     @classmethod
-    def store(cls, to, cc, bcc, is_sent, template, user, num, message=None):
+    def store(cls, to, cc, bcc, is_sent, template, user, num, msg='', ex=None):
+        if ex is not None:
+            ex = MailLogException.objects.get_or_create(name=ex)[0]
+
         log = cls.objects.create(
             template=template, is_sent=is_sent, user=user,
-            num_of_retries=num, error_message=message
+            num_of_retries=num, error_message=msg, error_exception=ex
         )
         cls.store_email_log(log, to, 'to')
         cls.store_email_log(log, cc, 'cc')

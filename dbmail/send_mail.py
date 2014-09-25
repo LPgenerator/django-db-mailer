@@ -38,6 +38,7 @@ class SendMail(object):
         self._kwargs = kwargs
         self._num = 1
         self._err_msg = None
+        self._err_exc = None
 
         self._kwargs.pop('retry', None)
         self._kwargs.pop('max_retries', None)
@@ -192,7 +193,7 @@ class SendMail(object):
                 MailLog.store(
                     self._recipient_list, self._cc, self._bcc,
                     is_sent, self._template, self._user,
-                    self._num, self._err_msg
+                    self._num, self._err_msg, self._err_exc
                 )
 
     def send(self):
@@ -200,7 +201,8 @@ class SendMail(object):
             self.__send()
             self.__store_log(True)
             return 'OK'
-        except Exception:
+        except Exception as exc:
             self._err_msg = traceback.format_exc()
+            self._err_exc = exc.__class__.__name__
             self.__store_log(False)
             raise

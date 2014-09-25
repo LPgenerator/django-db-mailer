@@ -142,7 +142,7 @@ class MailLogEmailInline(admin.TabularInline):
 class MailLogAdmin(admin.ModelAdmin):
     list_display = (
         'template', 'created', 'is_sent', 'num_of_retries', 'user', 'id',)
-    list_filter = ('is_sent', 'created',)
+    list_filter = ('is_sent', 'created', 'error_exception')
     date_hierarchy = 'created'
     inlines = [MailLogEmailInline]
 
