@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import re
 import os
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -10,13 +9,13 @@ from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
 from django.db.models import get_model
 from django.contrib import admin
+from django.core.exceptions import ImproperlyConfigured
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey, MailBcc,
     MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailFromEmailCredential
 )
 from dbmail import app_installed
-from dbmail import send_db_mail
 from dbmail import defaults
 
 ModelAdmin = admin.ModelAdmin
@@ -61,9 +60,15 @@ class MailTemplateAdmin(ModelAdmin):
     inlines = [MailTemplateFileAdmin]
 
     class Media:
-        js = (
-            static('dbmail/admin/js/dbmail.js'),
-        )
+        try:
+            js = (
+                static('dbmail/admin/js/dbmail.js'),
+            )
+        except ImproperlyConfigured:
+            js = (
+                '/media/dbmail/admin/js/dbmail.js',
+                '/static/dbmail/admin/js/dbmail.js',
+            )
 
     def send_mail_view(self, request, pk):
         from dbmail.management.commands.dbmail_test_send import send_test_msg
