@@ -147,9 +147,10 @@ class MailLogEmailInline(admin.TabularInline):
 class MailLogAdmin(admin.ModelAdmin):
     list_display = (
         'template', 'created', 'is_sent', 'num_of_retries', 'user', 'id',)
-    list_filter = ('is_sent', 'created', 'error_exception')
+    list_filter = ('is_sent', 'created', 'error_exception', 'template',)
     date_hierarchy = 'created'
     inlines = [MailLogEmailInline]
+    search_fields = ('maillogemail__email', 'user__username', 'user__email',)
 
     def __init__(self, model, admin_site):
         super(MailLogAdmin, self).__init__(model, admin_site)
