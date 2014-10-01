@@ -452,7 +452,7 @@ class ApiKey(models.Model):
         verbose_name_plural = _('Mail API')
 
 
-for cmd in ['schemamigration', 'migrate', 'syncdb']:
+for cmd in ['schemamigration', 'migrate', 'syncdb', 'test']:
     if cmd in sys.argv:
         break
 else:

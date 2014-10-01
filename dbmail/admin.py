@@ -4,12 +4,12 @@ import os
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
 from django.db.models import get_model
 from django.contrib import admin
-from django.core.exceptions import ImproperlyConfigured
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey, MailBcc,
