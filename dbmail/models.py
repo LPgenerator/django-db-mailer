@@ -77,10 +77,8 @@ class MailFromEmail(models.Model):
         verbose_name = _('Mail from')
         verbose_name_plural = _('Mail from')
 
-    def _update_template_cache(self):
-        templates = MailTemplate.objects.filter(from_email__email=self.email)
-        for template in templates:
-            cache.delete(template.slug, version=1)
+    def _clean_template_cache(self):
+        MailTemplate.clean_cache(from_email__email=self.email)
 
     def _update_credential_cache(self):
         if not self.credential:
@@ -96,7 +94,7 @@ class MailFromEmail(models.Model):
             ), timeout=None, version=1)
 
     def save(self, *args, **kwargs):
-        self._update_template_cache()
+        self._clean_template_cache()
         self._update_credential_cache()
         return super(MailFromEmail, self).save(*args, **kwargs)
 
@@ -115,8 +113,7 @@ class MailBcc(models.Model):
         verbose_name_plural = _('Mail Bcc')
 
     def __clean_cache(self):
-        for template in MailTemplate.objects.filter(bcc_email=self):
-            template._clean_cache()
+        MailTemplate.clean_cache(bcc_email=self)
 
     def save(self, *args, **kwargs):
         self.__clean_cache()
@@ -175,8 +172,8 @@ class MailTemplate(models.Model):
                         setattr(self, 'message_%s' % lang, message)
 
     @classmethod
-    def clean_cache(cls):
-        for template in cls.objects.all():
+    def clean_cache(cls, **kwargs):
+        for template in cls.objects.filter(**kwargs):
             template._clean_cache()
 
     def save(self, *args, **kwargs):
@@ -205,6 +202,8 @@ class MailTemplate(models.Model):
             bcc = [o.email for o in obj.bcc_email.filter(is_active=1)]
             cache.set(slug, obj, timeout=None, version=1)
             cache.set(slug, bcc, timeout=None, version=2)
+            if obj.from_email:
+                obj.from_email._update_credential_cache()
             return obj
 
 
