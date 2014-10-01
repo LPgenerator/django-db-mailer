@@ -5,6 +5,7 @@ import uuid
 import sys
 import os
 
+from django.db.utils import DatabaseError, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
 from django.core.cache import cache
@@ -451,7 +452,7 @@ class ApiKey(models.Model):
         verbose_name_plural = _('Mail API')
 
 
-for cmd in ['schemamigration', 'migrate', 'syncdb', 'test']:
+for cmd in ['schemamigration', 'migrate', 'syncdb', 'test', 'createsuperuser']:
     if cmd in sys.argv:
         break
 else:
@@ -459,5 +460,5 @@ else:
         from .signals import initial_signals
 
         initial_signals()
-    except ImportError:
+    except (ImportError, DatabaseError, IntegrityError):
         pass
