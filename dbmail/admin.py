@@ -9,6 +9,7 @@ from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
 from django.db.models import get_model
+from django.contrib import messages
 from django.contrib import admin
 
 from dbmail.models import (
@@ -73,7 +74,12 @@ class MailTemplateAdmin(ModelAdmin):
     def send_mail_view(self, request, pk):
         from dbmail.management.commands.dbmail_test_send import send_test_msg
 
-        send_test_msg(pk, request.user.email, request.user)
+        if request.user.email:
+            send_test_msg(pk, request.user.email, request.user)
+        else:
+            messages.error(
+                request, 'Set your email address in user settings.'
+            )
 
         return redirect(
             reverse(
