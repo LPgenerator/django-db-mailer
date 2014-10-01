@@ -99,7 +99,7 @@ class SendMail(object):
             self.__get_str_by_language('message'), self._context)
 
     def __attach_files(self, mail):
-        for file_object in self._template.files.all():
+        for file_object in self._template.files_list:
             mail.attach_file(file_object.filename.path)
 
         for filename in self._files:

@@ -162,6 +162,7 @@ class MailTemplate(models.Model):
     def _clean_cache(self):
         cache.delete(self.slug, version=1)
         cache.delete(self.slug, version=2)
+        cache.delete(self.slug, version=3)
 
     def _clean_non_html(self):
         if not self.is_html:
@@ -185,6 +186,14 @@ class MailTemplate(models.Model):
     def delete(self, using=None):
         self._clean_cache()
         super(MailTemplate, self).delete(using)
+
+    @property
+    def files_list(self):
+        files = cache.get(self.slug, version=3)
+        if files is None:
+            files = list(self.files.all())
+            cache.set(self.slug, files, timeout=None, version=3)
+        return files
 
     def __unicode__(self):
         return self.name
