@@ -97,7 +97,62 @@ Local demo installation
     $ python manage.py migrate --noinput
     $ python manage.py createsuperuser --username admin --email admin@local.host
     $ python manage.py runserver >& /dev/null &
-    $ python manage.py celeryd -Q default  >& /dev/null &
+    $ python manage.py celeryd -Q default >& /dev/null &
+
+
+Open Shell:
+
+.. code-block:: bash
+
+    $ python manage.py shell_plus --print-sql
+
+
+Create new template:
+
+.. code-block:: python
+
+    from dbmail.models import MailTemplate
+    from dbmail import send_db_mail
+
+    MailTemplate.objects.create(
+        name="Site welcome template",
+        subject="Welcome",
+        message="Welcome to our site. We are glad to see you.",
+        slug="welcome",
+        is_html=False,
+    )
+
+
+Send test email with created template (without celery):
+
+.. code-block:: python
+
+    send_db_mail('welcome', 'user@example.com', use_celery=False)
+
+
+Send mail using celery:
+
+.. code-block:: python
+
+    send_db_mail('welcome', 'user@example.com')
+
+
+Check logs:
+
+.. code-block:: python
+
+    from pprint import pprint
+    from django.forms.models import model_to_dict
+    from dbmail.models import MailLog
+
+    pprint([model_to_dict(obj) for obj in MailLog.objects.all()])
+
+
+Open site on browser:
+
+.. code-block:: bash
+
+    $ xdg-open http://127.0.0.1:8000/admin/dbmail/ >& /dev/null; open http://127.0.0.1:8000/admin/dbmail/ >& /dev/null
 
 
 Additional information
