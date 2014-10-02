@@ -85,16 +85,19 @@ Local demo installation
 
 .. code-block:: bash
 
-    $ sudo apt-get install virtualenvwrapper
-    $ mkvirtualenv django-db-mailer
-    $ git clone https://github.com/LPgenerator/django-db-mailer.git
-    $ cd django-db-mailer
+    $ sudo apt-get install -y virtualenvwrapper redis-server || brew install pyenv-virtualenvwrapper redis
+    $ mkvirtualenv db-mailer
+    $ workon db-mailer
+    $ git clone --depth 1 https://github.com/LPgenerator/django-db-mailer.git db-mailer
+    $ cd db-mailer
     $ python setup.py develop
     $ cd demo
     $ pip install -r requirements.txt
-    $ python manage.py syncdb
-    $ python manage.py migrate
-    $ python manage.py runserver
+    $ python manage.py syncdb --noinput
+    $ python manage.py migrate --noinput
+    $ python manage.py createsuperuser --username admin --email admin@local.host
+    $ python manage.py runserver >& /dev/null &
+    $ python manage.py celeryd -Q default  >& /dev/null &
 
 
 Additional information
