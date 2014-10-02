@@ -243,7 +243,7 @@ class MailFromEmailCredentialAdmin(admin.ModelAdmin):
     list_filter = ('use_tls', 'fail_silently', 'updated', 'created',)
 
 
-class MailApiKeyAdmin(admin.ModelAdmin):
+class ApiKeyAdmin(admin.ModelAdmin):
     list_display = (
         'name', 'api_key', 'is_active', 'updated', 'created', 'id',)
     list_filter = ('is_active', 'updated', 'created',)
@@ -255,12 +255,22 @@ class MailBccAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'updated', 'created',)
 
 
-admin.site.register(MailFromEmailCredential, MailFromEmailCredentialAdmin)
-admin.site.register(MailFromEmail, MailFromEmailAdmin)
-admin.site.register(MailCategory, MailCategoryAdmin)
-admin.site.register(MailTemplate, MailTemplateAdmin)
-admin.site.register(MailLog, MailLogAdmin)
-admin.site.register(MailGroup, MailGroupAdmin)
-admin.site.register(Signal, SignalAdmin)
-admin.site.register(ApiKey, MailApiKeyAdmin)
-admin.site.register(MailBcc, MailBccAdmin)
+def admin_register(model):
+    model_name = model.__name__
+    if model_name in defaults.ALLOWED_MODELS_ON_ADMIN:
+        admin_cls = globals().get('%sAdmin' % model_name)
+        if admin_cls:
+            admin.site.register(model, admin_cls)
+        else:
+            admin.site.register(model)
+
+
+admin_register(MailFromEmailCredential)
+admin_register(MailFromEmail)
+admin_register(MailCategory)
+admin_register(MailTemplate)
+admin_register(MailLog)
+admin_register(MailGroup)
+admin_register(Signal)
+admin_register(ApiKey)
+admin_register(MailBcc)
