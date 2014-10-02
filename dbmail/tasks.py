@@ -14,7 +14,7 @@ def send_db_mail(*args, **kwargs):
     retry = kwargs.pop('retry', True)
 
     try:
-        return SendMail(*args, **kwargs).send()
+        return SendMail(*args, **kwargs).send(is_celery=True)
     except Exception, exc:
         if retry is True and max_retries:
             raise send_db_mail.retry(

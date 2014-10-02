@@ -2,6 +2,7 @@
 
 import traceback
 import pprint
+import time
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
@@ -17,6 +18,7 @@ from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
 from dbmail.utils import clean_cache_key
 from dbmail import get_version
+from dbmail import defaults
 
 
 class SendMail(object):
@@ -196,9 +198,23 @@ class SendMail(object):
                     self._num, self._err_msg, self._err_exc
                 )
 
-    def send(self):
+    def __try_to_send(self):
+        for self._num in range(1, self._template.num_of_retries + 1):
+            try:
+                self.__send()
+                break
+            except Exception, msg:
+                print '[dbmail]', msg.__unicode__()
+                if self._template.num_of_retries == self._num:
+                    raise
+                time.sleep(defaults.SEND_RETRY_DELAY_DIRECT)
+
+    def send(self, is_celery=True):
         try:
-            self.__send()
+            if is_celery is True:
+                self.__send()
+            else:
+                self.__try_to_send()
             self.__store_log(True)
             return 'OK'
         except Exception as exc:

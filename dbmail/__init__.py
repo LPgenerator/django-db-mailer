@@ -35,7 +35,7 @@ def send_db_mail(slug, recipient, *args, **kwargs):
     send_at_date = kwargs.pop('send_at_date', None)
     use_celery = kwargs.pop('use_celery', True)
 
-    if celery_supported() and use_celery:
+    if celery_supported() and use_celery is True:
         import tasks
 
         template = MailTemplate.get_template(slug=slug)
@@ -57,4 +57,4 @@ def send_db_mail(slug, recipient, *args, **kwargs):
 
         return tasks.send_db_mail.apply_async(**options)
     else:
-        return SendMail(*args, **kwargs).send()
+        return SendMail(*args, **kwargs).send(is_celery=False)
