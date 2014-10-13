@@ -4,4 +4,4 @@ include AUTHORS.rst
 include CONTRIBUTING.rst
 include requirements/*
 recursive-exclude * .DS_Store
-recursive-include django-db-mailer *.html *.png *.gif *js *.css *jpg *jpeg *svg *py *.txt *.po
+recursive-include dbmailer *.html *.png *.gif *js *.css *jpg *jpeg *svg *py *.txt *.po *.mo
