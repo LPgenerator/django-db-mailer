@@ -13,7 +13,7 @@ def send_test_msg(pk, email, user=None, use_celery=True):
     var_list = re.findall('\{\{\s?(\w+)\s?\}\}', template.message)
     context = {}
     for var in var_list:
-        context[var] = '"%s"' % var.upper().replace('_', '-')
+        context[var] = '%s' % var.upper().replace('_', '-')
     return send_db_mail(slug, email, user, context, use_celery=use_celery)
 
 

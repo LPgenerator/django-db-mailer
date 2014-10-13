@@ -26,14 +26,14 @@ def celery_supported():
 
 
 def send_db_mail(slug, recipient, *args, **kwargs):
-    from dbmail.defaults import CELERY_QUEUE, SEND_MAX_TIME
+    from dbmail.defaults import CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY
     from dbmail.models import MailTemplate
     from dbmail.send_mail import SendMail
 
     args = (slug, recipient) + args
     send_after = kwargs.pop('send_after', None)
     send_at_date = kwargs.pop('send_at_date', None)
-    use_celery = kwargs.pop('use_celery', True)
+    use_celery = kwargs.pop('use_celery', ENABLE_CELERY)
 
     if celery_supported() and use_celery is True:
         import tasks
