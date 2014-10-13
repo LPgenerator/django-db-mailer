@@ -176,6 +176,10 @@ To enable editor, you may install and configure ``django-tinymce`` app.
 Install and configure ``django-celery`` for background message sending with priorities. You can find celery settings examples on demo project.
 We recommended to use ``django-celery-mon`` with ``django-celery`` for monitoring celery and supervisor processes.
 
+**Premailer**
+
+For turns CSS blocks into style attributes, you can install ``premailer`` from PyPi.
+
 **Translation**
 
 For use different language on your mail templates, install ``django-modeltranslation`` or ``grappelli-modeltranslation``.
@@ -190,10 +194,6 @@ Add into settings.py:
     )
     INSTALLED_APPS = ('modeltranslation',) + INSTALLED_APPS
     # INSTALLED_APPS = ('grappelli', 'grappelli_modeltranslation', 'modeltranslation',) + INSTALLED_APPS
-
-**Premailer**
-
-For turns CSS blocks into style attributes, you can install ``premailer`` from PyPi.
 
 
 Update dbmail fields:
