@@ -191,6 +191,11 @@ Add into settings.py:
     INSTALLED_APPS = ('modeltranslation',) + INSTALLED_APPS
     # INSTALLED_APPS = ('grappelli', 'grappelli_modeltranslation', 'modeltranslation',) + INSTALLED_APPS
 
+**Premailer**
+
+For turns CSS blocks into style attributes, you can install ``premailer`` from PyPi.
+
+
 Update dbmail fields:
 
 .. code-block:: bash
@@ -223,11 +228,19 @@ All app features available only with ``django-celery`` and with ``Redis``.
 External API usage
 ------------------
 
+.. code-block:: python
+
+    from dbmail.models import ApiKey
+
+    ApiKey.objects.create(name='Test', api_key='ZzriUzE')
+
+
 .. code-block:: bash
 
     $ pip install httpie
     $ http -f POST http://127.0.0.1:8000/dbmail/api/ api_key=ZzriUzE slug=welcome recipient=root@local.host data='{"name": "Ivan", "age": 20}'
         or
+    $ apt-get install curl || brew install curl
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host'
 
 

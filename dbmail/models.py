@@ -15,8 +15,10 @@ from django.db import models
 from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY)
-from dbmail.fields import HTMLField
+
+from dbmail.utils import premailer_transform
 from dbmail.utils import clean_cache_key
+from dbmail.fields import HTMLField
 
 
 def _upload_mail_file(instance, filename):
@@ -173,6 +175,10 @@ class MailTemplate(models.Model):
                     if message:
                         setattr(self, 'message_%s' % lang, message)
 
+    def _premailer_transform(self):
+        if self.is_html:
+            self.message = premailer_transform(self.message)
+
     @classmethod
     def clean_cache(cls, **kwargs):
         for template in cls.objects.filter(**kwargs):
@@ -181,6 +187,7 @@ class MailTemplate(models.Model):
     def save(self, *args, **kwargs):
         self._clean_cache()
         self._clean_non_html()
+        self._premailer_transform()
         return super(MailTemplate, self).save(*args, **kwargs)
 
     def delete(self, using=None):
