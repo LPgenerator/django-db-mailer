@@ -29,6 +29,14 @@ if app_installed('reversion'):
     except ImportError:
         pass
 
+if app_installed('reversion_compare'):
+    try:
+        from reversion_compare.admin import CompareVersionAdmin
+
+        ModelAdmin = CompareVersionAdmin
+    except ImportError:
+        pass
+
 
 class MailCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'created', 'updated', 'id',)
