@@ -70,7 +70,10 @@ class SendMail(object):
         return MailTemplate.get_template(slug=self._slug)
 
     def __get_context(self, context_list):
-        data = self.__model_to_dict(Site.objects.get_current())
+        try:
+            data = self.__model_to_dict(Site.objects.get_current())
+        except Site.DoesNotExist:
+            data = {}
 
         for context in context_list:
             if isinstance(context, dict):
