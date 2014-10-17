@@ -152,7 +152,7 @@ Open site on browser:
 
 .. code-block:: bash
 
-    $ xdg-open http://127.0.0.1:8000/admin/dbmail/ >& /dev/null; open http://127.0.0.1:8000/admin/dbmail/ >& /dev/null
+    $ xdg-open http://127.0.0.1:8000/admin/dbmail/ >& /dev/null || open http://127.0.0.1:8000/admin/dbmail/ >& /dev/null
 
 
 Additional information
@@ -220,7 +220,7 @@ Very simple version of this app, available `here <https://github.com/LPgenerator
 That version do not include celery settings, bcc, api, mail settings, signals, mail groups and model browser.
 
 
-**Note**
+**Notes**
 
 All app features available only with ``django-celery`` and with ``Redis``.
 
@@ -259,6 +259,7 @@ Screenshots
 .. image:: /screenshots/smtp_changelist.jpg
 .. image:: /screenshots/apikey_changelist.jpg
 .. image:: /screenshots/bcc_changelist.jpg
+.. image:: /screenshots/template_compare.jpg
 
 
 Compatibility:
