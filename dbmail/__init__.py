@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-VERSION = (2, 0, 'b2')
+VERSION = (2, 0, 'b3')
 
 
 def get_version():
@@ -54,7 +54,7 @@ def send_db_mail(slug, recipient, *args, **kwargs):
             options.update({'eta': send_at_date})
         if send_after is not None:
             options.update({'countdown': send_after})
-
-        return tasks.send_db_mail.apply_async(**options)
+        if template.is_active:
+            return tasks.send_db_mail.apply_async(**options)
     else:
         return SendMail(*args, **kwargs).send(is_celery=False)
