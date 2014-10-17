@@ -101,7 +101,7 @@ class MailTemplateAdmin(ModelAdmin):
         for ct in ContentType.objects.all():
             if ct.app_label not in apps_list:
                 apps_list[ct.app_label] = [ct]
-            else:
+            elif ct.model_class():
                 apps_list[ct.app_label].append(ct)
         return render(request, 'dbmail/apps.html', {'apps_list': apps_list})
 
