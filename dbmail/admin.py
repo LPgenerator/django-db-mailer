@@ -132,19 +132,11 @@ class MailTemplateAdmin(ModelAdmin):
         )
         return admin_urls + urls
 
-    def get_readonly_fields(self, request, obj=None):
-        if obj is not None and defaults.READ_ONLY_ENABLED:
-            return ['slug', 'context_note']
-        return self.readonly_fields
-
-    def get_prepopulated_fields(self, request, obj=None):
-        if obj is not None:
-            return {}
-        return self.prepopulated_fields
-
     def get_form(self, request, obj=None, **kwargs):
         if obj is not None:
             self.prepopulated_fields = {}
+            if defaults.READ_ONLY_ENABLED:
+                self.readonly_fields = ['slug', 'context_note']
         else:
             self.prepopulated_fields = {'slug': ('name',)}
 

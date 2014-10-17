@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-VERSION = (2, 0, 'b4')
+VERSION = (2, 0, 'b6')
 
 
 def get_version():
