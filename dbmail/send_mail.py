@@ -187,10 +187,9 @@ class SendMail(object):
         return data
 
     def __send(self):
-        if self._template.is_active:
-            if self._template.is_html:
-                return self.__send_html_message()
-            return self.__send_plain_message()
+        if self._template.is_html:
+            return self.__send_html_message()
+        return self.__send_plain_message()
 
     def __store_log(self, is_sent):
         if ENABLE_LOGGING is True:
@@ -213,15 +212,16 @@ class SendMail(object):
                 time.sleep(defaults.SEND_RETRY_DELAY_DIRECT)
 
     def send(self, is_celery=True):
-        try:
-            if is_celery is True:
-                self.__send()
-            else:
-                self.__try_to_send()
-            self.__store_log(True)
-            return 'OK'
-        except Exception as exc:
-            self._err_msg = traceback.format_exc()
-            self._err_exc = exc.__class__.__name__
-            self.__store_log(False)
-            raise
+        if self._template.is_active:
+            try:
+                if is_celery is True:
+                    self.__send()
+                else:
+                    self.__try_to_send()
+                self.__store_log(True)
+                return 'OK'
+            except Exception as exc:
+                self._err_msg = traceback.format_exc()
+                self._err_exc = exc.__class__.__name__
+                self.__store_log(False)
+                raise
