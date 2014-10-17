@@ -60,7 +60,6 @@ class MailTemplateAdmin(ModelAdmin):
         'from_email', 'created', 'updated',)
     search_fields = (
         'name', 'subject', 'slug', 'message',)
-    prepopulated_fields = {'slug': ('name',)}
     ordering = ('-id',)
     list_editable = ('category', 'priority', 'is_active',)
     list_display_links = ('name',)
@@ -142,6 +141,15 @@ class MailTemplateAdmin(ModelAdmin):
         if obj is not None:
             return {}
         return self.prepopulated_fields
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj is not None:
+            self.prepopulated_fields = {}
+        else:
+            self.prepopulated_fields = {'slug': ('name',)}
+
+        return super(MailTemplateAdmin, self).get_form(
+            request, obj=None, **kwargs)
 
 
 class MailLogEmailInline(admin.TabularInline):
