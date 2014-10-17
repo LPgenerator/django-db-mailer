@@ -128,7 +128,7 @@ class MailBcc(models.Model):
 
 
 class MailTemplate(models.Model):
-    name = models.CharField(_('Template name'), max_length=100)
+    name = models.CharField(_('Template name'), max_length=100, db_index=True)
     subject = models.CharField(_('Subject'), max_length=100)
     from_email = models.ForeignKey(
         MailFromEmail, null=True, blank=True,
@@ -473,7 +473,7 @@ for cmd in ['schemamigration', 'migrate', 'syncdb', 'test', 'createsuperuser']:
         break
 else:
     try:
-        from .signals import initial_signals
+        from dbmail.signals import initial_signals
 
         initial_signals()
     except (ImportError, DatabaseError, IntegrityError):

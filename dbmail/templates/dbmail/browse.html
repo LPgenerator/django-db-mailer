@@ -9,6 +9,8 @@
 <hr>
 {% for field,description in fields_list.items %}
     <strong>&#123;&#123;{{ field }}&#125;&#125;</strong> - {{description|capfirst}}<br/>
+{% empty %}
+    Fields for this application is not available
 {% endfor %}
 </body>
 </html>
