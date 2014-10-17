@@ -91,6 +91,7 @@ INSTALLED_APPS = [
 
     'admin_jqueryui',
     'reversion',
+    'reversion_compare',
     'djcelery',
     'tinymce',
 
