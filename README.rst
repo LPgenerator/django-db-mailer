@@ -17,7 +17,9 @@ Installation:
     $ pip install django-db-mailer
 
 2. Add the ``dbmail`` application to ``INSTALLED_APPS`` in your settings file (usually ``settings.py``)
-3. Sync database (``./manage.py syncdb`` or ``./manage.py migrate``)
+3. Sync database (``./manage.py syncdb`` or ``./manage.py migrate``).
+
+**Important:** South 1.0 or greater is required to run migrations.
 
 
 Usage examples
@@ -123,21 +125,21 @@ Create new template:
     )
 
 
-Send test email with created template (without celery):
+Try to send test email with created template (without celery):
 
 .. code-block:: python
 
     send_db_mail('welcome', 'user@example.com', use_celery=False)
 
 
-Send mail using celery:
+Send email using celery:
 
 .. code-block:: python
 
     send_db_mail('welcome', 'user@example.com')
 
 
-Check logs:
+Check mail logs:
 
 .. code-block:: python
 
@@ -148,7 +150,7 @@ Check logs:
     pprint([model_to_dict(obj) for obj in MailLog.objects.all()])
 
 
-Open site on browser:
+Open app on browser:
 
 .. code-block:: bash
 
@@ -160,7 +162,7 @@ Additional information
 
 **Revision**
 
-For support template revisions, you can install ``django-reversion``.
+For support template reversion, you can install ``django-reversion``.
 Find information about compatibility with your Django versions `here <http://django-reversion.readthedocs.org/en/latest/django-versions.html>`_.
 
 **Editor**
@@ -265,4 +267,4 @@ Screenshots
 Compatibility:
 -------------
 * Python: 2.6, 2.7
-* Django: 1.4, 1.5, 1.6
+* Django: 1.4, 1.5, 1.6, 1.7
