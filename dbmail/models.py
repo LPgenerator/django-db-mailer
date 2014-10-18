@@ -2,15 +2,14 @@
 
 import datetime
 import uuid
-import sys
 import os
 
-from django.db.utils import DatabaseError, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
 from django.core.cache import cache
 from django.conf import settings
 from django.db import models
+from django import VERSION
 
 from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY,
@@ -19,6 +18,7 @@ from dbmail.defaults import (
 from dbmail.utils import premailer_transform
 from dbmail.utils import clean_cache_key
 from dbmail.fields import HTMLField
+from dbmail import initial_signals
 
 
 def _upload_mail_file(instance, filename):
@@ -468,13 +468,5 @@ class ApiKey(models.Model):
         verbose_name_plural = _('Mail API')
 
 
-for cmd in ['schemamigration', 'migrate', 'syncdb', 'test', 'createsuperuser']:
-    if cmd in sys.argv:
-        break
-else:
-    try:
-        from dbmail.signals import initial_signals
-
-        initial_signals()
-    except (ImportError, DatabaseError, IntegrityError):
-        pass
+if VERSION < (1, 7):
+    initial_signals()

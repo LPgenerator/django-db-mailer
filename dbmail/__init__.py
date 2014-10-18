@@ -1,7 +1,10 @@
 from datetime import datetime
+import sys
 
 
-VERSION = (2, 0, 'b6')
+VERSION = (2, 0, 'b7')
+
+default_app_config = 'dbmail.apps.DBMailConfig'
 
 
 def get_version():
@@ -58,3 +61,19 @@ def send_db_mail(slug, recipient, *args, **kwargs):
             return tasks.send_db_mail.apply_async(**options)
     else:
         return SendMail(*args, **kwargs).send(is_celery=False)
+
+
+def initial_signals():
+    from django.db.utils import DatabaseError, IntegrityError
+
+    for cmd in ['schemamigration', 'migrate', 'syncdb',
+                'test', 'createsuperuser', 'makemigrations']:
+        if cmd in sys.argv:
+            break
+    else:
+        try:
+            from dbmail.signals import initial_signals
+
+            initial_signals()
+        except (ImportError, DatabaseError, IntegrityError):
+            pass
