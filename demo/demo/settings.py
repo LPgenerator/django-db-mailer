@@ -1,6 +1,7 @@
 # Django settings for demo project.
 
 import os
+import django
 
 PROJECT_ROOT = os.path.normpath(os.path.dirname(__file__))
 
@@ -97,6 +98,14 @@ INSTALLED_APPS = [
 
     'dbmail',
 ]
+
+
+if django.VERSION >= (1, 7):
+    DJ17_NOT_SUPPORTED_APPS = [
+        'south', 'reversion', 'reversion_compare', 'tinymce']
+    for app in DJ17_NOT_SUPPORTED_APPS:
+        if app in INSTALLED_APPS:
+            INSTALLED_APPS.remove(app)
 
 
 LOGGING = {
