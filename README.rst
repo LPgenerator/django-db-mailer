@@ -1,5 +1,16 @@
 What's that
 -----------
+
+.. image:: https://pypip.in/v/django-db-mailer/badge.png
+    :alt: Current version on PyPi
+    :target: https://crate.io/packages/django-db-mailer/
+.. image:: https://pypip.in/d/django-db-mailer/badge.png
+    :alt: Downloads from PyPi
+    :target: https://crate.io/packages/django-db-mailer/
+
+Documentation available at `Read the Docs <http://django-db-mailer.readthedocs.org/>`_.
+
+
 | Django module to easily send emails using django templates stored on database.
 | From box you can use it with django-celery for send background messages.
 | Also you have opportunity to create reports from logs by mail categories and slug.
@@ -41,7 +52,7 @@ Usage examples
 
     # Send message with created template
     send_db_mail(
-        # slug was defined on db template
+        # slug which defined on db template
         slug='welcome',
 
         # recipient can be list, or str separated with comma or simple string
