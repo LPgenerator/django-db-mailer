@@ -1,5 +1,5 @@
-What's that
------------
+Django-Db-Mailer
+----------------
 
 .. image:: https://pypip.in/v/django-db-mailer/badge.png
     :alt: Current version on PyPi
@@ -11,6 +11,8 @@ What's that
 Documentation available at `Read the Docs <http://django-db-mailer.readthedocs.org/>`_.
 
 
+What's that
+-----------
 | Django module to easily send emails using django templates stored on database.
 | From box you can use it with django-celery for send background messages.
 | Also you have opportunity to create reports from logs by mail categories and slug.
