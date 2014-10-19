@@ -3,38 +3,48 @@
 Settings
 ========
 
-``dbmail`` priority configuration:
+Required Settings
+-----------------
+
+For minimize requests to database, configure django caches:
+
+.. code-block:: bash
+
+    $ pip install redis django-pylibmc
+        # or
+    $ pip install redis django-redis
 
 .. code-block:: python
 
-    DB_MAILER_PRIORITY_STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-
-Install redis-server, and configure django-celery for use priority option::
-
-    # pip install django-celery
-
-    import djcelery
-
-    INSTALLED_APPS += ('djcelery',)
-
-    djcelery.setup_loader()
-
-    BROKER_URL = 'redis://127.0.0.1:6379/5'
-
-    PRIORITY_STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    DB_MAILER_PRIORITY_STEPS = PRIORITY_STEPS
-    BROKER_TRANSPORT_OPTIONS = {
-        'priority_steps': PRIORITY_STEPS,
+    # settings.py
+    CACHES = {
+        # Memcached
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        },
+        # or Redis
+        "default": {
+            'BACKEND': 'redis_cache.cache.RedisCache',
+            'LOCATION': '127.0.0.1:6379:2',
+        },
+        # or Memory
+        "default": {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake'
+        },
     }
 
+*Note: App do not work without caches*
 
-DB_MAILER_PRIORITY_STEPS == BROKER_TRANSPORT_OPTIONS['priority_steps']
+For Django 1.4 define default ``AUTH_USER_MODEL``::
+
+    # settings.py
+    AUTH_USER_MODEL = 'auth.User'
 
 
-Configure SMTP settings::
+Configure project default SMTP settings::
 
+    # settings.py
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
     EMAIL_HOST_USER = 'noreply@gmail.com'
@@ -43,27 +53,152 @@ Configure SMTP settings::
     DEFAULT_FROM_EMAIL = 'User <noreply@gmail.com>'
 
 
-For minimize requests to database, configure caches::
+Also you can configure smtp options for dbmail on the admin. But maybe other apps,
+like ``django-registration`` is used default project settings.
 
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        }
+
+Optional Settings
+-----------------
+
+Install ``redis-server``, and configure ``django-celery`` for use priority option:
+
+.. code-block:: bash
+
+    $ pip install redis django-celery
+
+.. code-block:: python
+
+    # settings.py
+
+    import djcelery
+
+    INSTALLED_APPS += ('djcelery',)
+
+    BROKER_URL = 'redis://127.0.0.1:6379/1'
+
+    BROKER_TRANSPORT_OPTIONS = {
+        'priority_steps': list(range(10)),
     }
 
+    CELERY_TASK_SERIALIZER = 'pickle'
+    CELERY_DEFAULT_QUEUE = 'default'
 
-Optionally, you may install and configure django-tinymce::
+    djcelery.setup_loader()
 
-    # pip install django-tinymce
+.. code-block:: bash
 
+    $ python manage.py celeryd --loglevel=info -Q default
+
+
+*Note: Do not forget define on command line queue name.*
+
+``django-db-mailer`` can work without any third-party apps, but if you want to use all
+available app features and send emails on the background with priorities,
+you need configure some apps, which will be pretty for your project and clients.
+
+
+**Templates Revision**:
+
+.. code-block:: bash
+
+    $ pip install django-reversion
+
+.. code-block:: python
+
+    # settings.py
+    INSTALLED_APPS += ('reversion',)
+
+Find information about compatibility with your Django versions `here <http://django-reversion.readthedocs.org/en/latest/django-versions.html>`_.
+
+
+**Templates Compare Revision**:
+
+.. code-block:: bash
+
+    $ pip install django-reversion-compare diff-match-patch
+
+.. code-block:: python
+
+    # settings.py
+    INSTALLED_APPS += ('reversion', 'reversion_compare',)
+
+
+``django-reversion-compare`` is not compatible at this time with Django 1.4+,
+but you can override ``django-reversion-compare`` templates on your project templates,
+and app will be work with Django 1.4+.
+
+
+**Editor**:
+
+.. code-block:: bash
+
+    $ pip install django-tinymce
+
+.. code-block:: python
+
+    # settings.py
+    INSTALLED_APPS += ('tinymce',)
     TINYMCE_DEFAULT_CONFIG = {
         'plugins': "table,spellchecker,paste,searchreplace",
         'theme': "advanced",
         'cleanup_on_startup': True,
         'custom_undo_redo_levels': 10,
     }
+    # urls.py
+    urlpatterns += patterns(
+        '', url(r'^tinymce/', include('tinymce.urls')),
+    )
 
 
-For Django-1.4 define AUTH_USER_MODEL::
+**Premailer**:
 
-    AUTH_USER_MODEL = 'auth.User'
+.. code-block:: bash
+
+    $ pip install django-tinymce
+
+That's all what you need. App for turns CSS blocks into style attributes. Very pretty for cross-clients html templates.
+
+
+**Theme**:
+
+.. code-block:: bash
+
+    $ pip install django-grappelli
+
+``django-db-mailer`` supported from box ``django-grappelli`` skin. Information about compatibility available `here <https://pypi.python.org/pypi/django-grappelli/2.5.3>`_.
+
+
+**Translation Support**:
+
+.. code-block:: bash
+
+    $ pip install django-modeltranslation
+
+.. code-block:: python
+
+    # settings.py
+    MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+    MODELTRANSLATION_LANGUAGES = ('ru', 'en')
+    MODELTRANSLATION_TRANSLATION_FILES = (
+        'dbmail.translation',
+    )
+    INSTALLED_APPS = ('modeltranslation',) + INSTALLED_APPS
+
+    # If you are using django-grappelli, add grappelli_modeltranslation to the settings
+    INSTALLED_APPS = (
+        'grappelli',
+        'grappelli_modeltranslation',
+        'modeltranslation',
+    ) + INSTALLED_APPS
+
+.. code-block:: bash
+
+    $ ./manage.py collectstatic
+
+
+Update dbmail fields:
+
+.. code-block:: bash
+
+    $ ./manage.py sync_translation_fields --noinput
+

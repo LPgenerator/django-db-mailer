@@ -5,14 +5,26 @@ Contributing
 
 If you wish to contribute, please add corresponding tests.
 
-Running tests::
+Running tests:
 
-    make test
+.. code-block:: bash
 
-Checking coverage (requires ``coverage`` package)::
+    $ make test
 
-    make coverage
+Checking coverage (requires ``coverage`` package):
 
-Run tests for all python-django combinations ::
+.. code-block:: bash
 
-    tox
+    $ make coverage
+
+Checking pep8 (requires ``flake8`` package):
+
+.. code-block:: bash
+
+    $ make pep8
+
+Run tests for all python-django combinations:
+
+.. code-block:: bash
+
+    $ tox

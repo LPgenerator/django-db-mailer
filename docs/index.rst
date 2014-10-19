@@ -1,7 +1,7 @@
 django-db-mailer
-==================
+================
 
-Django module to easily send templated emails using django templates
+Django module to easily send emails using django templates stored on database.
 
 Contents
 --------
@@ -10,8 +10,10 @@ Contents
   :maxdepth: 1
 
   installation
-  usage
   settings
+  usage
+  commands
+  conf
   dev_install
   contributing
   authors
@@ -20,7 +22,7 @@ Contents
 Contributing
 ------------
 
-You can grab latest code on ``master`` branch at Github_.
+You can grab latest version of code on ``master`` branch at Github_.
 
 Feel free to submit issues_, pull requests are also welcome.
 
