@@ -7,6 +7,9 @@ Django-Db-Mailer
 .. image:: https://pypip.in/d/django-db-mailer/badge.png
     :alt: Downloads from PyPi
     :target: https://crate.io/packages/django-db-mailer/
+.. image:: https://readthedocs.org/projects/django-db-mailer/badge/?version=latest
+    :target: http://django-db-mailer.readthedocs.org/
+    :alt: Documentation Status
 
 Documentation available at `Read the Docs <http://django-db-mailer.readthedocs.org/>`_.
 
