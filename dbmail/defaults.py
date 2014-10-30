@@ -43,3 +43,4 @@ ALLOWED_MODELS_ON_ADMIN = get_settings('DB_MAILER_ALLOWED_MODELS_ON_ADMIN', [
     'ApiKey',
     'MailBcc',
 ])
+AUTH_USER_MODEL = get_settings('AUTH_USER_MODEL', 'auth.User')

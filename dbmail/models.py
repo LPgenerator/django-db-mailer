@@ -12,7 +12,7 @@ from django.db import models
 from django import VERSION
 
 from dbmail.defaults import (
-    PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY,
+    PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY)
 
 from dbmail.utils import premailer_transform
@@ -254,7 +254,7 @@ class MailLog(models.Model):
     template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=_('User'),
+        AUTH_USER_MODEL, verbose_name=_('User'),
         null=True, blank=True)
     error_message = models.TextField(_('Error message'), null=True, blank=True)
     error_exception = models.ForeignKey(
