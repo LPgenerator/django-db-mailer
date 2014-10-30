@@ -154,7 +154,7 @@ and app will be work with Django 1.4+.
 
 .. code-block:: bash
 
-    $ pip install django-tinymce
+    $ pip install premailer
 
 That's all what you need. App for turns CSS blocks into style attributes. Very pretty for cross-clients html templates.
 
