@@ -332,20 +332,20 @@ class MailGroup(models.Model):
 
     @classmethod
     def get_emails(cls, slug):
-        obj = cache.get(slug, version=2)
+        obj = cache.get(slug, version=4)
         if obj is not None:
             return obj
 
         obj = MailGroupEmail.objects.filter(group__slug=slug)
-        cache.set(slug, obj, timeout=None, version=2)
+        cache.set(slug, obj, timeout=None, version=4)
         return obj
 
     def save(self, *args, **kwargs):
-        cache.delete(self.slug, version=2)
+        cache.delete(self.slug, version=4)
         return super(MailGroup, self).save(*args, **kwargs)
 
     def delete(self, using=None):
-        cache.delete(self.slug, version=2)
+        cache.delete(self.slug, version=4)
         super(MailGroup, self).delete(using)
 
     def __unicode__(self):
@@ -363,11 +363,11 @@ class MailGroupEmail(models.Model):
         MailGroup, verbose_name=_('Group'), related_name='emails')
 
     def save(self, *args, **kwargs):
-        cache.delete(self.group.slug, version=2)
+        cache.delete(self.group.slug, version=4)
         return super(MailGroupEmail, self).save(*args, **kwargs)
 
     def delete(self, using=None):
-        cache.delete(self.group.slug, version=2)
+        cache.delete(self.group.slug, version=4)
         super(MailGroupEmail, self).delete(using)
 
     def __unicode__(self):
