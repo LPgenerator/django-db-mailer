@@ -13,7 +13,7 @@ from django import VERSION
 
 from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
-    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY)
+    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL)
 
 from dbmail.utils import premailer_transform
 from dbmail.fields import HTMLField
@@ -205,7 +205,7 @@ class MailTemplate(models.Model):
         obj = cls.objects.select_related('from_email').get(slug=slug)
         bcc_list = [o.email for o in obj.bcc_email.filter(is_active=1)]
         files_list = list(obj.files.all())
-        auth_credentials = obj.from_email.get_auth()
+        auth_credentials = obj.from_email and obj.from_email.get_auth()
 
         obj.__dict__['bcc_list'] = bcc_list
         obj.__dict__['files_list'] = files_list
