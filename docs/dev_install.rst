@@ -75,7 +75,6 @@ Simple shortcuts for fast development
 | ``clean`` -  Clean temporary files
 | ``clean-celery`` -  Clean all celery queues
 | ``pep8`` -  Check code for pep8 rules
-| ``release`` -  Release app into PyPi
 | ``sphinx`` -  Make app docs
 | ``run`` -  Run Django development server
 | ``run-celery`` -  Run celery daemon

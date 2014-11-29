@@ -36,11 +36,6 @@ For minimize requests to database, configure django caches:
 
 *Note: App do not work without caches*
 
-For Django 1.4 define default ``AUTH_USER_MODEL``::
-
-    # settings.py
-    AUTH_USER_MODEL = 'auth.User'
-
 
 Configure project default SMTP settings::
 
@@ -60,7 +55,7 @@ like ``django-registration`` is used default project settings.
 Optional Settings
 -----------------
 
-Install ``redis-server``, and configure ``django-celery`` for use priority option:
+Install ``redis-server``, and configure ``django-celery`` for use priorities and scheduler:
 
 .. code-block:: bash
 
@@ -93,8 +88,8 @@ Install ``redis-server``, and configure ``django-celery`` for use priority optio
 *Note: Do not forget define on command line queue name.*
 
 ``django-db-mailer`` can work without any third-party apps, but if you want to use all
-available app features and send emails on the background with priorities,
-you need configure some apps, which will be pretty for your project and clients.
+available app features and send emails on the background with priorities and scheduler,
+you need configure some apps, which will be pretty for your project and your clients.
 
 
 **Templates Revision**:
