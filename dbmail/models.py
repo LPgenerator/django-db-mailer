@@ -61,8 +61,8 @@ class MailFromEmailCredential(models.Model):
         super(MailFromEmailCredential, self).delete(using)
 
     def save(self, *args, **kwargs):
-        self._clean_cache()
         super(MailFromEmailCredential, self).save(*args, **kwargs)
+        self._clean_cache()
 
     def __unicode__(self):
         return '%s/%s' % (self.username, self.host)
@@ -104,8 +104,8 @@ class MailFromEmail(models.Model):
         super(MailFromEmail, self).delete(using)
 
     def save(self, *args, **kwargs):
+        super(MailFromEmail, self).save(*args, **kwargs)
         self._clean_template_cache()
-        return super(MailFromEmail, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
@@ -125,8 +125,8 @@ class MailBcc(models.Model):
         MailTemplate.clean_cache(bcc_email=self)
 
     def save(self, *args, **kwargs):
+        super(MailBcc, self).save(*args, **kwargs)
         self.__clean_cache()
-        return super(MailBcc, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         self.__clean_cache()
@@ -176,8 +176,6 @@ class MailTemplate(models.Model):
 
     def _clean_cache(self):
         cache.delete(self.slug, version=1)
-        # cache.delete(self.slug, version=2)
-        # cache.delete(self.slug, version=3)
 
     @classmethod
     def clean_cache(cls, **kwargs):
@@ -197,14 +195,6 @@ class MailTemplate(models.Model):
         if self.is_html:
             self.message = premailer_transform(self.message)
 
-    # @property
-    # def bcc_list(self):
-    #     return cache.get(self.slug, version=2)
-
-    # @property
-    # def files_list(self):
-    #     return cache.get(self.slug, version=3)
-
     @classmethod
     def get_template(cls, slug):
         obj = cache.get(slug, version=1)
@@ -217,7 +207,6 @@ class MailTemplate(models.Model):
         files_list = list(obj.files.all())
         auth_credentials = obj.from_email.get_auth()
 
-        # For one request to cache instead of four
         obj.__dict__['bcc_list'] = bcc_list
         obj.__dict__['files_list'] = files_list
         obj.__dict__['auth_credentials'] = auth_credentials
@@ -227,10 +216,10 @@ class MailTemplate(models.Model):
         return obj
 
     def save(self, *args, **kwargs):
-        self._clean_cache()
-        self._clean_non_html()
         self._premailer_transform()
-        return super(MailTemplate, self).save(*args, **kwargs)
+        self._clean_non_html()
+        super(MailTemplate, self).save(*args, **kwargs)
+        self._clean_cache()
 
     def delete(self, using=None):
         self._clean_cache()
@@ -254,8 +243,8 @@ class MailFile(models.Model):
         MailTemplate.clean_cache(pk=self.template.pk)
 
     def save(self, *args, **kwargs):
+        super(MailFile, self).save(*args, **kwargs)
         self._clean_cache()
-        return super(MailFile, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         self._clean_cache()
@@ -367,8 +356,8 @@ class MailGroup(models.Model):
         return emails
 
     def save(self, *args, **kwargs):
+        super(MailGroup, self).save(*args, **kwargs)
         self.clean_cache()
-        return super(MailGroup, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         self.clean_cache()
@@ -389,8 +378,8 @@ class MailGroupEmail(models.Model):
         MailGroup, verbose_name=_('Group'), related_name='emails')
 
     def save(self, *args, **kwargs):
+        super(MailGroupEmail, self).save(*args, **kwargs)
         self.group.clean_cache()
-        return super(MailGroupEmail, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         self.group.clean_cache()
@@ -496,8 +485,8 @@ class ApiKey(models.Model):
             api._clean_cache()
 
     def save(self, *args, **kwargs):
+        super(ApiKey, self).save(*args, **kwargs)
         self._clean_cache()
-        return super(ApiKey, self).save(*args, **kwargs)
 
     def delete(self, using=None):
         self._clean_cache()
