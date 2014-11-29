@@ -81,7 +81,7 @@ class MailFromEmail(models.Model):
         verbose_name_plural = _('Mail from')
 
     def _clean_template_cache(self):
-        MailTemplate.clean_cache(from_email__email=self.email)
+        MailTemplate.clean_cache(from_email=self)
 
     def _update_credential_cache(self):
         if not self.credential:
