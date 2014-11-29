@@ -1,12 +1,12 @@
 Usage
 =====
 
-To use django-db-mailer on the project - Add & Configure templates on the admin.
+To use ``django-db-mailer`` on the your project - Add and Configure mail templates on the admin page.
 
 
 High level API
 --------------
-Send message API with comments for all available options:
+Send mail API with comments for all available options:
 
 .. code-block:: python
 

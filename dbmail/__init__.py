@@ -36,7 +36,8 @@ def send_db_mail(slug, recipient, *args, **kwargs):
     args = (slug, recipient) + args
     send_after = kwargs.pop('send_after', None)
     send_at_date = kwargs.pop('send_at_date', None)
-    use_celery = kwargs.pop('use_celery', ENABLE_CELERY)
+    _use_celery = kwargs.pop('use_celery', ENABLE_CELERY)
+    use_celery = ENABLE_CELERY and _use_celery
 
     if celery_supported() and use_celery is True:
         import tasks
