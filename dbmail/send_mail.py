@@ -135,7 +135,7 @@ class SendMail(object):
         return self.__email_to_list(recipient)
 
     def __update_bcc_from_template_settings(self):
-        template_bcc = cache.get(self._slug, version=2)
+        template_bcc = self._template.bcc_list
         if template_bcc is not None:
             if self._bcc:
                 self._bcc.extend(template_bcc)

@@ -166,6 +166,11 @@ class MailTemplate(models.Model):
         cache.delete(self.slug, version=2)
         cache.delete(self.slug, version=3)
 
+    @classmethod
+    def clean_cache(cls, **kwargs):
+        for template in cls.objects.filter(**kwargs):
+            template._clean_cache()
+
     def _clean_non_html(self):
         if not self.is_html:
             self.message = strip_tags(self.message)
@@ -179,21 +184,6 @@ class MailTemplate(models.Model):
         if self.is_html:
             self.message = premailer_transform(self.message)
 
-    @classmethod
-    def clean_cache(cls, **kwargs):
-        for template in cls.objects.filter(**kwargs):
-            template._clean_cache()
-
-    def save(self, *args, **kwargs):
-        self._clean_cache()
-        self._clean_non_html()
-        self._premailer_transform()
-        return super(MailTemplate, self).save(*args, **kwargs)
-
-    def delete(self, using=None):
-        self._clean_cache()
-        super(MailTemplate, self).delete(using)
-
     @property
     def files_list(self):
         files = cache.get(self.slug, version=3)
@@ -202,12 +192,9 @@ class MailTemplate(models.Model):
             cache.set(self.slug, files, timeout=None, version=3)
         return files
 
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _('Mail template')
-        verbose_name_plural = _('Mail templates')
+    @property
+    def bcc_list(self):
+        return cache.get(self.slug, version=2)
 
     @classmethod
     def get_template(cls, slug):
@@ -222,6 +209,23 @@ class MailTemplate(models.Model):
             if obj.from_email:
                 obj.from_email._update_credential_cache()
             return obj
+
+    def save(self, *args, **kwargs):
+        self._clean_cache()
+        self._clean_non_html()
+        self._premailer_transform()
+        return super(MailTemplate, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        self._clean_cache()
+        super(MailTemplate, self).delete(using)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail template')
+        verbose_name_plural = _('Mail templates')
 
 
 class MailFile(models.Model):
