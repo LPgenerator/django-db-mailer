@@ -1,4 +1,4 @@
-django==1.4.15
+django==1.4.16
 django-bootstrap-static==2.3.2
 django-debug-toolbar>=1.2.1
 django-extensions>=1.4.0

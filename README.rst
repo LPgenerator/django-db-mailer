@@ -104,7 +104,7 @@ Local demo installation
 .. code-block:: bash
 
     $ sudo apt-get install -y virtualenvwrapper redis-server || brew install pyenv-virtualenvwrapper redis
-    $ source /usr/local/bin/virtualenvwrapper.sh
+    $ source /usr/share/virtualenvwrapper/virtualenvwrapper.sh || source /usr/local/bin/virtualenvwrapper.sh
     $ mkvirtualenv db-mailer
     $ workon db-mailer
     $ git clone --depth 1 https://github.com/LPgenerator/django-db-mailer.git db-mailer
