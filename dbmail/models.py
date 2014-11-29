@@ -164,8 +164,8 @@ class MailTemplate(models.Model):
 
     def _clean_cache(self):
         cache.delete(self.slug, version=1)
-        cache.delete(self.slug, version=2)
-        cache.delete(self.slug, version=3)
+        # cache.delete(self.slug, version=2)
+        # cache.delete(self.slug, version=3)
 
     @classmethod
     def clean_cache(cls, **kwargs):
@@ -185,13 +185,14 @@ class MailTemplate(models.Model):
         if self.is_html:
             self.message = premailer_transform(self.message)
 
-    @property
-    def bcc_list(self):
-        return cache.get(self.slug, version=2)
+    # @property
+    # def bcc_list(self):
+    #     #self.__dict__['test'] = 'hello'
+    #     return cache.get(self.slug, version=2)
 
-    @property
-    def files_list(self):
-        return cache.get(self.slug, version=3)
+    # @property
+    # def files_list(self):
+    #     return cache.get(self.slug, version=3)
 
     @classmethod
     def get_template(cls, slug):
@@ -204,9 +205,13 @@ class MailTemplate(models.Model):
         bcc_list = [o.email for o in obj.bcc_email.filter(is_active=1)]
         files_list = list(obj.files.all())
 
+        # For one request to cache instead of three
+        obj.__dict__['bcc_list'] = bcc_list
+        obj.__dict__['files_list'] = files_list
+
         cache.set(slug, obj, timeout=None, version=1)
-        cache.set(slug, bcc_list or None, timeout=None, version=2)
-        cache.set(slug, files_list or None, timeout=None, version=3)
+        # cache.set(slug, bcc_list or None, timeout=None, version=2)
+        # cache.set(slug, files_list or None, timeout=None, version=3)
 
         if obj.from_email:
             obj.from_email._update_credential_cache()
