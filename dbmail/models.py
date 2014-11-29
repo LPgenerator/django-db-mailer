@@ -186,30 +186,31 @@ class MailTemplate(models.Model):
             self.message = premailer_transform(self.message)
 
     @property
-    def files_list(self):
-        files = cache.get(self.slug, version=3)
-        if files is None:
-            files = list(self.files.all())
-            cache.set(self.slug, files, timeout=None, version=3)
-        return files
-
-    @property
     def bcc_list(self):
         return cache.get(self.slug, version=2)
+
+    @property
+    def files_list(self):
+        return cache.get(self.slug, version=3)
 
     @classmethod
     def get_template(cls, slug):
         obj = cache.get(slug, version=1)
+
         if obj is not None:
             return obj
-        else:
-            obj = cls.objects.select_related('from_email').get(slug=slug)
-            bcc = [o.email for o in obj.bcc_email.filter(is_active=1)]
-            cache.set(slug, obj, timeout=None, version=1)
-            cache.set(slug, bcc, timeout=None, version=2)
-            if obj.from_email:
-                obj.from_email._update_credential_cache()
-            return obj
+
+        obj = cls.objects.select_related('from_email').get(slug=slug)
+        bcc_list = [o.email for o in obj.bcc_email.filter(is_active=1)]
+        files_list = list(obj.files.all())
+
+        cache.set(slug, obj, timeout=None, version=1)
+        cache.set(slug, bcc_list or None, timeout=None, version=2)
+        cache.set(slug, files_list or None, timeout=None, version=3)
+
+        if obj.from_email:
+            obj.from_email._update_credential_cache()
+        return obj
 
     def save(self, *args, **kwargs):
         self._clean_cache()

@@ -57,7 +57,7 @@ run-celery:
 .PHONY: shell
 # target: shell - Run project shell
 shell:
-	@cd demo && @./manage.py shell_plus --print-sql || ./manage.py shell
+	@cd demo && ./manage.py shell_plus --print-sql || ./manage.py shell
 
 .PHONY: run-redis
 # target: run-redis - Run Redis daemon
