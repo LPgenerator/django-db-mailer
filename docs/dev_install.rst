@@ -23,7 +23,7 @@ Install all required packages and configure your project and environment:
     $ redis-server >& /dev/null &
     $ python manage.py runserver >& /dev/null &
     $ python manage.py celeryd -Q default >& /dev/null &
-    $ python manage.py shell
+    $ python manage.py shell_plus --print-sql
 
 
 Examples
@@ -60,6 +60,9 @@ Simple test from command line:
 
     >>> # test internal groups
     >>> send_db_mail('welcome', 'administrators')
+
+    >>> # test without celery
+    >>> send_db_mail('welcome', 'administrators', use_celery=False)
 
     >>> # Show what stored in logs
     >>> print MailLog.objects.all().count()
