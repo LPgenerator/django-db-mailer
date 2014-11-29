@@ -241,6 +241,17 @@ class MailFile(models.Model):
     name = models.CharField(_('Name'), max_length=100)
     filename = models.FileField(_('File'), upload_to=_upload_mail_file)
 
+    def _clean_cache(self):
+        MailTemplate.clean_cache(pk=self.template.pk)
+
+    def save(self, *args, **kwargs):
+        self._clean_cache()
+        return super(MailFile, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        self._clean_cache()
+        super(MailFile, self).delete(using)
+
     def __unicode__(self):
         return self.name
 
