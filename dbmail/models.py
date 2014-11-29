@@ -22,9 +22,10 @@ from dbmail import initial_signals
 
 
 def _upload_mail_file(instance, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (str(uuid.uuid4()), ext)
-    return os.path.join(UPLOAD_TO, filename)
+    if instance is not None:
+        ext = filename.split('.')[-1]
+        filename = "%s.%s" % (str(uuid.uuid4()), ext)
+        return os.path.join(UPLOAD_TO, filename)
 
 
 class MailCategory(models.Model):
