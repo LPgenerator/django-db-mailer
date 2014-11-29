@@ -96,3 +96,8 @@ App settings
     # and admin can not be wait, when he receive test email,
     # you can set False, and mail will be send without queue
     DB_MAILER_USE_CELERY_FOR_ADMIN_TEST = True
+
+    # When inside invalidation not invalidate templates, you can use this
+    # constant, for automatically invalidation after defined seconds.
+    # By default cache invalidate only when admin update some templates.
+    DB_MAILER_CACHE_TIMEOUT = None

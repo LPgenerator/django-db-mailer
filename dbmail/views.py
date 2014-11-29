@@ -9,6 +9,7 @@ from django.core.cache import cache
 
 from dbmail.models import ApiKey
 from dbmail import send_db_mail
+from dbmail import defaults
 
 allowed_fields = [
     'api_key', 'slug', 'recipient', 'from_email', 'cc', 'bcc', 'queue',
@@ -30,7 +31,7 @@ def send_by_dbmail(request):
             if not cache.get(api_key):
                 get_object_or_404(
                     ApiKey, api_key=api_key, is_active=True)
-                cache.set(api_key, 1, timeout=None)
+                cache.set(api_key, 1, timeout=defaults.CACHE_TTL)
 
             args = []
             if request.POST.get('data'):

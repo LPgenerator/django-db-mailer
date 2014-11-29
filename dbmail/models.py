@@ -211,7 +211,7 @@ class MailTemplate(models.Model):
         obj.__dict__['files_list'] = files_list
         obj.__dict__['auth_credentials'] = auth_credentials
 
-        cache.set(slug, obj, timeout=None, version=1)
+        cache.set(slug, obj, timeout=CACHE_TTL, version=1)
 
         return obj
 
@@ -352,7 +352,7 @@ class MailGroup(models.Model):
         emails = MailGroupEmail.objects.values_list(
             'email', flat=True).filter(group__slug=slug)
 
-        cache.set(slug, emails, timeout=None, version=4)
+        cache.set(slug, emails, timeout=CACHE_TTL, version=4)
         return emails
 
     def save(self, *args, **kwargs):
