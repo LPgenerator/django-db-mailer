@@ -53,10 +53,16 @@ class MailFromEmailCredential(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
-    def save(self, *args, **kwargs):
+    def _clean_cache(self):
         for obj in MailFromEmail.objects.filter(credential=self):
             obj._clean_template_cache()
 
+    def delete(self, using=None):
+        self._clean_cache()
+        super(MailFromEmailCredential, self).delete(using)
+
+    def save(self, *args, **kwargs):
+        self._clean_cache()
         super(MailFromEmailCredential, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -93,6 +99,10 @@ class MailFromEmail(models.Model):
                 use_tls=self.credential.use_tls,
                 fail_silently=self.credential.fail_silently
             )
+
+    def delete(self, using=None):
+        self._clean_template_cache()
+        super(MailFromEmail, self).delete(using)
 
     def save(self, *args, **kwargs):
         self._clean_template_cache()
