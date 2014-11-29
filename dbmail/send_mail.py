@@ -135,12 +135,11 @@ class SendMail(object):
         return self.__email_to_list(recipient)
 
     def __update_bcc_from_template_settings(self):
-        template_bcc = self._template.bcc_list
-        if template_bcc is not None:
+        if self._template.bcc_list:
             if self._bcc:
-                self._bcc.extend(template_bcc)
+                self._bcc.extend(self._template.bcc_list)
             else:
-                self._bcc = template_bcc
+                self._bcc = self._template.bcc_list
 
     def __get_from_email(self):
         if self._kwargs.get('from_email'):
