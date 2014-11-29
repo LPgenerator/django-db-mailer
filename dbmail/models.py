@@ -70,16 +70,9 @@ class MailFromEmail(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
-    def __unicode__(self):
-        return self.name
-
     @property
     def get_mail_from(self):
         return u'%s <%s>' % (self.name, self.email)
-
-    class Meta:
-        verbose_name = _('Mail from')
-        verbose_name_plural = _('Mail from')
 
     def _clean_template_cache(self):
         MailTemplate.clean_cache(from_email=self)
@@ -102,19 +95,19 @@ class MailFromEmail(models.Model):
         self._update_credential_cache()
         return super(MailFromEmail, self).save(*args, **kwargs)
 
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail from')
+        verbose_name_plural = _('Mail from')
+
 
 class MailBcc(models.Model):
     email = models.EmailField(_('Email'), unique=True)
     is_active = models.BooleanField(_('Is active'), default=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
-
-    def __unicode__(self):
-        return self.email
-
-    class Meta:
-        verbose_name = _('Mail Bcc')
-        verbose_name_plural = _('Mail Bcc')
 
     def __clean_cache(self):
         MailTemplate.clean_cache(bcc_email=self)
@@ -126,6 +119,13 @@ class MailBcc(models.Model):
     def delete(self, using=None):
         self.__clean_cache()
         super(MailBcc, self).delete(using)
+
+    def __unicode__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = _('Mail Bcc')
+        verbose_name_plural = _('Mail Bcc')
 
 
 class MailTemplate(models.Model):
@@ -267,13 +267,6 @@ class MailLog(models.Model):
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
 
-    def __unicode__(self):
-        return self.template.name
-
-    class Meta:
-        verbose_name = _('Mail log')
-        verbose_name_plural = _('Mail logs')
-
     @staticmethod
     def store_email_log(log, email_list, mail_type):
         if log and email_list:
@@ -300,6 +293,13 @@ class MailLog(models.Model):
         date = datetime.datetime.now() - datetime.timedelta(days=days)
         cls.objects.filter(created__lte=date).delete()
 
+    def __unicode__(self):
+        return self.template.name
+
+    class Meta:
+        verbose_name = _('Mail log')
+        verbose_name_plural = _('Mail logs')
+
 
 class MailLogEmail(models.Model):
     log = models.ForeignKey(MailLog)
@@ -324,21 +324,6 @@ class MailGroup(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _('Mail group')
-        verbose_name_plural = _('Mail groups')
-
-    def save(self, *args, **kwargs):
-        cache.delete(self.slug, version=2)
-        return super(MailGroup, self).save(*args, **kwargs)
-
-    def delete(self, using=None):
-        cache.delete(self.slug, version=2)
-        super(MailGroup, self).delete(using)
-
     @classmethod
     def get_emails(cls, slug):
         obj = cache.get(slug, version=2)
@@ -349,21 +334,27 @@ class MailGroup(models.Model):
         cache.set(slug, obj, timeout=None, version=2)
         return obj
 
+    def save(self, *args, **kwargs):
+        cache.delete(self.slug, version=2)
+        return super(MailGroup, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        cache.delete(self.slug, version=2)
+        super(MailGroup, self).delete(using)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail group')
+        verbose_name_plural = _('Mail groups')
+
 
 class MailGroupEmail(models.Model):
     name = models.CharField(_('Username'), max_length=100)
     email = models.EmailField(_('Email'))
     group = models.ForeignKey(
         MailGroup, verbose_name=_('Group'), related_name='emails')
-
-    def __unicode__(self):
-        return self.email
-
-    class Meta:
-        verbose_name = _('Mail group email')
-        verbose_name_plural = _('Mail group emails')
-
-        unique_together = (('email', 'group',),)
 
     def save(self, *args, **kwargs):
         cache.delete(self.group.slug, version=2)
@@ -372,6 +363,14 @@ class MailGroupEmail(models.Model):
     def delete(self, using=None):
         cache.delete(self.group.slug, version=2)
         super(MailGroupEmail, self).delete(using)
+
+    def __unicode__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = _('Mail group email')
+        verbose_name_plural = _('Mail group emails')
+        unique_together = (('email', 'group',),)
 
 
 class Signal(models.Model):
@@ -440,6 +439,13 @@ class SignalLog(models.Model):
     model_pk = models.BigIntegerField()
     signal = models.ForeignKey(Signal)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
+
+    def __unicode__(self):
+        return self.signal.name
+
+    class Meta:
+        verbose_name = _('Signal log')
+        verbose_name_plural = _('Signal logs')
 
 
 class ApiKey(models.Model):
