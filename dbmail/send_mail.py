@@ -11,12 +11,10 @@ from django.template import Template, Context
 from django.core.mail import get_connection
 from django.utils.html import strip_tags
 from django.utils import translation
-from django.core.cache import cache
 from django.conf import settings
 
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
-from dbmail.utils import clean_cache_key
 from dbmail import get_version
 from dbmail import defaults
 
@@ -59,11 +57,9 @@ class SendMail(object):
         self._kwargs['headers'] = headers
 
     def __get_connection(self):
-        auth_credentials = cache.get(
-            clean_cache_key(self._from_email), version=1)
-        if auth_credentials:
+        if self._template.auth_credentials:
             return self._kwargs.pop('connection', None) or get_connection(
-                **auth_credentials)
+                **self._template.auth_credentials)
         return self._kwargs.pop('connection', None)
 
     def __get_template(self):

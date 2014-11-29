@@ -53,6 +53,8 @@ class MailFromEmailCredential(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
+    # todo: _clean_template_cache
+
     def __unicode__(self):
         return '%s/%s' % (self.username, self.host)
 
@@ -77,22 +79,19 @@ class MailFromEmail(models.Model):
     def _clean_template_cache(self):
         MailTemplate.clean_cache(from_email=self)
 
-    def _update_credential_cache(self):
-        if not self.credential:
-            cache.delete(clean_cache_key(self.get_mail_from), version=1)
-        else:
-            cache.set(clean_cache_key(self.get_mail_from), dict(
+    def get_auth(self):
+        if self.credential:
+            return dict(
                 host=self.credential.host,
                 port=self.credential.port,
                 username=self.credential.username,
                 password=self.credential.password,
                 use_tls=self.credential.use_tls,
                 fail_silently=self.credential.fail_silently
-            ), timeout=None, version=1)
+            )
 
     def save(self, *args, **kwargs):
         self._clean_template_cache()
-        self._update_credential_cache()
         return super(MailFromEmail, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -187,7 +186,6 @@ class MailTemplate(models.Model):
 
     # @property
     # def bcc_list(self):
-    #     #self.__dict__['test'] = 'hello'
     #     return cache.get(self.slug, version=2)
 
     # @property
@@ -204,17 +202,15 @@ class MailTemplate(models.Model):
         obj = cls.objects.select_related('from_email').get(slug=slug)
         bcc_list = [o.email for o in obj.bcc_email.filter(is_active=1)]
         files_list = list(obj.files.all())
+        auth_credentials = obj.from_email.get_auth()
 
-        # For one request to cache instead of three
+        # For one request to cache instead of four
         obj.__dict__['bcc_list'] = bcc_list
         obj.__dict__['files_list'] = files_list
+        obj.__dict__['auth_credentials'] = auth_credentials
 
         cache.set(slug, obj, timeout=None, version=1)
-        # cache.set(slug, bcc_list or None, timeout=None, version=2)
-        # cache.set(slug, files_list or None, timeout=None, version=3)
 
-        if obj.from_email:
-            obj.from_email._update_credential_cache()
         return obj
 
     def save(self, *args, **kwargs):
