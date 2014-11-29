@@ -53,7 +53,11 @@ class MailFromEmailCredential(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
-    # todo: _clean_template_cache
+    def save(self, *args, **kwargs):
+        for obj in MailFromEmail.objects.filter(credential=self):
+            obj._clean_template_cache()
+
+        super(MailFromEmailCredential, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return '%s/%s' % (self.username, self.host)
