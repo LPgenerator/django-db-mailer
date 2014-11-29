@@ -16,7 +16,6 @@ from dbmail.defaults import (
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY)
 
 from dbmail.utils import premailer_transform
-from dbmail.utils import clean_cache_key
 from dbmail.fields import HTMLField
 from dbmail import initial_signals
 
