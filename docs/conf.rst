@@ -91,3 +91,8 @@ App settings
         'ApiKey',
         'MailBcc',
     ]
+
+    # If you are using celery, and have a big mail queue,
+    # and admin can not be wait, when he receive test email,
+    # you can set False, and mail will be send without queue
+    DB_MAILER_USE_CELERY_FOR_ADMIN_TEST = True

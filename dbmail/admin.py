@@ -82,7 +82,9 @@ class MailTemplateAdmin(ModelAdmin):
         from dbmail.management.commands.dbmail_test_send import send_test_msg
 
         if request.user.email:
-            send_test_msg(pk, request.user.email, request.user)
+            send_test_msg(
+                pk, request.user.email, request.user,
+                use_celery=defaults.USE_CELERY_FOR_ADMIN_TEST)
         else:
             messages.error(
                 request, 'Set your email address in user settings.'
