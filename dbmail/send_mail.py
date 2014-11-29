@@ -152,9 +152,8 @@ class SendMail(object):
     def __group_emails(recipient):
         email_list = []
         for slug in recipient.split(','):
-            for obj in MailGroup.get_emails(slug):
-                email_list.append(obj.email.strip())
-        return email_list
+            email_list.extend(MailGroup.get_emails(slug))
+        return list(set(email_list))
 
     @staticmethod
     def __email_to_list(recipient):

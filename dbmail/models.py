@@ -330,22 +330,28 @@ class MailGroup(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
+    def clean_cache(self):
+        cache.delete(self.slug, version=4)
+
     @classmethod
     def get_emails(cls, slug):
-        obj = cache.get(slug, version=4)
-        if obj is not None:
-            return obj
+        emails = cache.get(slug, version=4)
 
-        obj = MailGroupEmail.objects.filter(group__slug=slug)
-        cache.set(slug, obj, timeout=None, version=4)
-        return obj
+        if emails is not None:
+            return emails
+
+        emails = MailGroupEmail.objects.values_list(
+            'email', flat=True).filter(group__slug=slug)
+
+        cache.set(slug, emails, timeout=None, version=4)
+        return emails
 
     def save(self, *args, **kwargs):
-        cache.delete(self.slug, version=4)
+        self.clean_cache()
         return super(MailGroup, self).save(*args, **kwargs)
 
     def delete(self, using=None):
-        cache.delete(self.slug, version=4)
+        self.clean_cache()
         super(MailGroup, self).delete(using)
 
     def __unicode__(self):
@@ -363,11 +369,11 @@ class MailGroupEmail(models.Model):
         MailGroup, verbose_name=_('Group'), related_name='emails')
 
     def save(self, *args, **kwargs):
-        cache.delete(self.group.slug, version=4)
+        self.group.clean_cache()
         return super(MailGroupEmail, self).save(*args, **kwargs)
 
     def delete(self, using=None):
-        cache.delete(self.group.slug, version=4)
+        self.group.clean_cache()
         super(MailGroupEmail, self).delete(using)
 
     def __unicode__(self):
