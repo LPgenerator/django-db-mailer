@@ -103,7 +103,7 @@ Local demo installation
 
 .. code-block:: bash
 
-    $ sudo apt-get install -y virtualenvwrapper redis-server || brew install pyenv-virtualenvwrapper redis
+    $ sudo apt-get install -y virtualenvwrapper redis-server git python-dev libxml2-dev libxslt-dev zlib1g-dev || brew install pyenv-virtualenvwrapper redis git
     $ source /usr/share/virtualenvwrapper/virtualenvwrapper.sh || source /usr/local/bin/virtualenvwrapper.sh
     $ mkvirtualenv db-mailer
     $ workon db-mailer

@@ -8,7 +8,7 @@ Install all required packages and configure your project and environment:
 
 .. code-block:: bash
 
-    $ sudo apt-get install -y virtualenvwrapper redis-server || brew install pyenv-virtualenvwrapper redis
+    $ sudo apt-get install -y virtualenvwrapper redis-server git python-dev libxml2-dev libxslt-dev zlib1g-dev || brew install pyenv-virtualenvwrapper redis git
     $ source /usr/share/virtualenvwrapper/virtualenvwrapper.sh || source /usr/local/bin/virtualenvwrapper.sh
     $ mkvirtualenv db-mailer
     $ workon db-mailer
@@ -21,6 +21,7 @@ Install all required packages and configure your project and environment:
     $ python manage.py migrate --noinput
     $ python manage.py createsuperuser --username admin --email admin@local.host
     $ redis-server >& /dev/null &
+    $ ln -sf /bin/bash /bin/sh
     $ python manage.py runserver >& /dev/null &
     $ python manage.py celeryd -Q default >& /dev/null &
     $ python manage.py shell_plus --print-sql
