@@ -13,6 +13,7 @@ Contents
   settings
   usage
   commands
+  signals
   conf
   dev_install
   contributing
