@@ -5,6 +5,7 @@ import os
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
@@ -85,9 +86,10 @@ class MailTemplateAdmin(ModelAdmin):
             send_test_msg(
                 pk, request.user.email, request.user,
                 use_celery=defaults.USE_CELERY_FOR_ADMIN_TEST)
+            messages.error(request, _('Email was sent.'))
         else:
             messages.error(
-                request, 'Set your email address in user settings.'
+                request, _('Set your email address in user settings.')
             )
 
         return redirect(

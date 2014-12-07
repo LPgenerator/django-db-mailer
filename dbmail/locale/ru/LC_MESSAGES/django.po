@@ -210,3 +210,9 @@ msgstr "Логирование включено"
 
 msgid "DB Mailer"
 msgstr "Мейлер"
+
+msgid "Set your email address in user settings."
+msgstr "Установите свой адрес электронной почты в настройках профиля."
+
+msgid "Email was sent."
+msgstr "Письмо отправлено."
