@@ -9,7 +9,7 @@ from django.db.models import signals
 
 from dbmail.defaults import SEND_RETRY, SEND_RETRY_DELAY
 from dbmail.models import Signal, MailGroup
-from dbmail.defaults import CELERY_QUEUE
+from dbmail.defaults import CELERY_QUEUE, ENABLE_USERS
 
 
 class SignalReceiver(object):
@@ -49,8 +49,10 @@ class SignalReceiver(object):
 
     @staticmethod
     def get_users():
-        return User.objects.filter(
-            is_active=True, is_staff=False, is_superuser=False)
+        if ENABLE_USERS:
+            return User.objects.filter(
+                is_active=True, is_staff=False, is_superuser=False)
+        return []
 
     def get_old_instance(self):
         instance = self.kwargs.get('instance')

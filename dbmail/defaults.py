@@ -47,3 +47,4 @@ AUTH_USER_MODEL = get_settings('AUTH_USER_MODEL', 'auth.User')
 USE_CELERY_FOR_ADMIN_TEST = get_settings(
     'DB_MAILER_USE_CELERY_FOR_ADMIN_TEST', True)
 CACHE_TTL = get_settings('DB_MAILER_CACHE_TIMEOUT', None)
+ENABLE_USERS = get_settings('DB_MAILER_ENABLE_USERS', False)

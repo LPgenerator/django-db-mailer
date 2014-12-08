@@ -221,7 +221,7 @@ class MailFromEmailAdmin(admin.ModelAdmin):
 class SignalAdmin(admin.ModelAdmin):
     list_display = (
         'name', 'model', 'signal', 'template', 'interval', 'receive_once',
-        'group', 'updated', 'created', 'id',)
+        'is_active', 'group', 'updated', 'created', 'id',)
     list_filter = ('signal', 'receive_once', 'updated', 'created',)
 
     @staticmethod
