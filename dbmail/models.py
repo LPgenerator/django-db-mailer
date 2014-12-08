@@ -3,6 +3,7 @@
 import datetime
 import uuid
 import os
+import re
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
@@ -218,6 +219,7 @@ class MailTemplate(models.Model):
     def save(self, *args, **kwargs):
         self._premailer_transform()
         self._clean_non_html()
+        self.slug = re.sub(r'[^0-9a-zA-Z._-]', '', self.slug)
         super(MailTemplate, self).save(*args, **kwargs)
         self._clean_cache()
 
@@ -356,6 +358,7 @@ class MailGroup(models.Model):
         return emails
 
     def save(self, *args, **kwargs):
+        self.slug = re.sub(r'[^0-9a-zA-Z._-]', '', self.slug)
         super(MailGroup, self).save(*args, **kwargs)
         self.clean_cache()
 
