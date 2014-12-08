@@ -29,4 +29,6 @@ def send_db_mail(*args, **kwargs):
 def signal_receiver(*args, **kwargs):
     from dbmail.signals import SignalReceiver
 
-    return SignalReceiver(*args, **kwargs)
+    SignalReceiver(*args, **kwargs)
+    if len(args):
+        return args[0]._meta.module_name
