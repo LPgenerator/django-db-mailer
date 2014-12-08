@@ -2,14 +2,15 @@
 
 import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.template import Template, Context
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from django.db.models import signals
 
 from dbmail.defaults import SEND_RETRY, SEND_RETRY_DELAY
-from dbmail.models import Signal, MailGroup
 from dbmail.defaults import CELERY_QUEUE, ENABLE_USERS
+from dbmail.models import Signal
 
 
 class SignalReceiver(object):
@@ -55,10 +56,13 @@ class SignalReceiver(object):
         return []
 
     def get_old_instance(self):
-        instance = self.kwargs.get('instance')
-        if instance and instance.pk:
-            return self.sender.objects.get(
-                pk=self.kwargs['instance'].pk)
+        try:
+            instance = self.kwargs.get('instance')
+            if instance and instance.pk:
+                return self.sender.objects.get(
+                    pk=self.kwargs['instance'].pk)
+        except ObjectDoesNotExist:
+            pass
 
     def send_mail(self):
         from dbmail import send_db_mail
