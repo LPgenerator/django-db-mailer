@@ -36,7 +36,7 @@ class SignalReceiver(object):
 
     def get_email_list(self):
         if self.signal.group:
-            return MailGroup.get_emails(self.signal.group.slug)
+            return self.signal.group.slug
 
         email_list = Template(self.signal.rules).render(Context(self.kwargs))
         return email_list.strip().replace('\r', '').replace('\n', '')
