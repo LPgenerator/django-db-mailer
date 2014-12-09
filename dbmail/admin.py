@@ -222,7 +222,10 @@ class SignalAdmin(admin.ModelAdmin):
     list_display = (
         'name', 'model', 'signal', 'template', 'interval', 'receive_once',
         'is_active', 'group', 'updated', 'created', 'id',)
-    list_filter = ('signal', 'receive_once', 'updated', 'created',)
+    list_filter = (
+        'signal', 'receive_once', 'is_active',
+        'update_model', 'updated', 'created',)
+    list_editable = ('is_active',)
 
     @staticmethod
     def auto_reload(request):
