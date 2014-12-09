@@ -9,7 +9,6 @@ Available variables for rules on Signals:
 
 .. code-block:: html
 
-    {{ users }} - all users
     {{ date }} - current date
     {{ date_time }} - current datetime
     {{ site }} - current site

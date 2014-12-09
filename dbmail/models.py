@@ -438,12 +438,20 @@ class Signal(models.Model):
         _('Receive once'), default=True,
         help_text=_('Signal will be receive and send once for new db row.'))
     interval = models.PositiveIntegerField(
-        _('Send interval'), default=0,
+        _('Send interval'), null=True, blank=True,
         help_text=_(
             'Specify interval to send messages after sometime. '
             'That very helpful for mailing on enterprise products.'
             'Interval must be set in the seconds.'
         ))
+    update_model = models.BooleanField(
+        _('Update model state'), default=False,
+        help_text=_(
+            """
+            If you are using interval and want to update object state,
+            you can use this flag and refer to the variable
+            {{current_instance}}
+            """))
 
     def is_sent(self, pk):
         if pk is not None:

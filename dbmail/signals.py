@@ -17,17 +17,18 @@ class SignalReceiver(object):
     def __init__(self, sender, **kwargs):
         self.sender = sender
         self.kwargs = kwargs
+        self._kwargs = kwargs
         self.site = Site.objects.get_current()
         self.instance = kwargs.get('instance')
         self.pk = self.instance and self.instance.pk or None
+
         self.signal = None
+        self.signal_pk = self.kwargs.pop('signal_pk', None)
 
         self.kwargs['old_instance'] = self.get_old_instance()
         self.kwargs['users'] = self.get_users()
         self.kwargs['date'] = datetime.date.today()
         self.kwargs['date_time'] = datetime.datetime.now()
-
-        self.run()
 
     def get_signal_list(self):
         return Signal.objects.filter(
@@ -44,7 +45,7 @@ class SignalReceiver(object):
 
     def get_interval(self):
         options = dict()
-        if self.signal.interval >= 0:
+        if self.signal.interval >= 0 and not self.signal_pk:
             options['send_after'] = self.signal.interval
         return options
 
@@ -64,6 +65,14 @@ class SignalReceiver(object):
         except ObjectDoesNotExist:
             pass
 
+    def get_current_instance(self):
+        try:
+            if self.instance and self.instance.pk:
+                obj = self.instance._default_manager.get(pk=self.instance.pk)
+                self.kwargs['current_instance'] = obj
+        except ObjectDoesNotExist:
+            pass
+
     def send_mail(self):
         from dbmail import send_db_mail
 
@@ -75,9 +84,32 @@ class SignalReceiver(object):
             )
             self.signal.mark_as_sent(self.pk)
 
+    def _run(self):
+        import tasks
+
+        if self.signal.interval and self.signal.update_model:
+            self._kwargs['signal_pk'] = self.signal.pk
+            tasks.deferred_signal.apply_async(
+                args=[self.sender], kwargs=self._kwargs,
+                default_retry_delay=SEND_RETRY_DELAY,
+                max_retries=SEND_RETRY,
+                queue=CELERY_QUEUE,
+                countdown=self.signal.interval
+            )
+        else:
+            self.send_mail()
+
     def run(self):
         for self.signal in self.get_signal_list():
+            self._run()
+
+    def run_deferred(self):
+        try:
+            self.signal = Signal.objects.get(pk=self.signal_pk, is_active=True)
+            self.get_current_instance()
             self.send_mail()
+        except ObjectDoesNotExist:
+            pass
 
 
 def signal_receiver(sender, **kwargs):
@@ -96,7 +128,7 @@ def signal_receiver(sender, **kwargs):
             queue=CELERY_QUEUE,
         )
     else:
-        SignalReceiver(sender, **kwargs)
+        SignalReceiver(sender, **kwargs).run()
 
 
 def initial_signals():
