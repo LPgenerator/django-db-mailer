@@ -101,3 +101,9 @@ App settings
     # constant, for automatically invalidation after defined seconds.
     # By default cache invalidate only when admin update some templates.
     DB_MAILER_CACHE_TIMEOUT = None
+
+    # We are strongly recommended use a different queue for signals, mail and mail on signals
+    # Because on standard mail queue you will need to use a priorities
+    # Big queues with countdown will constantly interfere and will be break, if priority steps are to be used on current queue
+    DB_MAILER_SIGNALS_QUEUE = "default"
+    DB_MAILER_SIGNALS_MAIL_QUEUE = "default"
