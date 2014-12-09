@@ -86,7 +86,7 @@ class MailTemplateAdmin(ModelAdmin):
             send_test_msg(
                 pk, request.user.email, request.user,
                 use_celery=defaults.USE_CELERY_FOR_ADMIN_TEST)
-            messages.error(request, _('Email was sent.'))
+            messages.success(request, _('Email was sent.'))
         else:
             messages.error(
                 request, _('Set your email address in user settings.')
