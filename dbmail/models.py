@@ -174,6 +174,14 @@ class MailTemplate(models.Model):
             'This is simple note field for context variables with description'
         )
     )
+    interval = models.PositiveIntegerField(
+        _('Send interval'), null=True, blank=True,
+        help_text=_(
+            """
+            Specify interval to send messages after sometime.
+            Interval must be set in the seconds.
+            """
+        ))
 
     def _clean_cache(self):
         cache.delete(self.slug, version=1)
