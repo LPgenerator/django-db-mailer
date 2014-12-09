@@ -8,8 +8,8 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from django.db.models import signals
 
+from dbmail.defaults import SIGNALS_QUEUE, SIGNALS_MAIL_QUEUE, ENABLE_USERS
 from dbmail.defaults import SEND_RETRY, SEND_RETRY_DELAY
-from dbmail.defaults import SIGNALS_QUEUE, ENABLE_USERS
 from dbmail.models import Signal
 
 
@@ -80,7 +80,8 @@ class SignalReceiver(object):
         if email_list and not self.signal.is_sent(self.pk):
             send_db_mail(
                 self.signal.template.slug, email_list, self.site,
-                self.kwargs, self.instance, **self.get_interval()
+                self.kwargs, self.instance, queue=SIGNALS_MAIL_QUEUE,
+                **self.get_interval()
             )
             self.signal.mark_as_sent(self.pk)
 
