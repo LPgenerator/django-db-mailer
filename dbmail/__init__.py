@@ -2,7 +2,7 @@ from datetime import datetime
 import sys
 
 
-VERSION = (2, 0, 'b7')
+VERSION = (2, 0, 'b8')
 
 default_app_config = 'dbmail.apps.DBMailConfig'
 
@@ -44,6 +44,7 @@ def send_db_mail(slug, recipient, *args, **kwargs):
 
         template = MailTemplate.get_template(slug=slug)
         max_retries = kwargs.get('max_retries', None)
+        send_after = send_after if send_after else template.interval
         if max_retries is None and template.num_of_retries:
             kwargs['max_retries'] = template.num_of_retries
 
