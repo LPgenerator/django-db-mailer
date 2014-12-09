@@ -66,14 +66,17 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
     # settings.py
 
     import djcelery
+    import sys
 
     INSTALLED_APPS += ('djcelery',)
 
     BROKER_URL = 'redis://127.0.0.1:6379/1'
 
-    BROKER_TRANSPORT_OPTIONS = {
-        'priority_steps': list(range(10)),
-    }
+    # use priority steps only for mail queue
+    if 'mail_messages' in sys.argv:
+        BROKER_TRANSPORT_OPTIONS = {
+            'priority_steps': list(range(10)),
+        }
 
     CELERY_TASK_SERIALIZER = 'pickle'
     CELERY_DEFAULT_QUEUE = 'default'
@@ -83,6 +86,7 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 .. code-block:: bash
 
     $ python manage.py celeryd --loglevel=info -Q default
+    $ python manage.py celeryd --loglevel=info -Q mail_messages # divide queues on production
 
 
 *Note: Do not forget define on command line queue name.*
