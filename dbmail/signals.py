@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.db.models import signals
 
 from dbmail.defaults import SEND_RETRY, SEND_RETRY_DELAY
-from dbmail.defaults import CELERY_QUEUE, ENABLE_USERS
+from dbmail.defaults import SIGNALS_QUEUE, ENABLE_USERS
 from dbmail.models import Signal
 
 
@@ -93,7 +93,7 @@ class SignalReceiver(object):
                 args=[self.sender], kwargs=self._kwargs,
                 default_retry_delay=SEND_RETRY_DELAY,
                 max_retries=SEND_RETRY,
-                queue=CELERY_QUEUE,
+                queue=SIGNALS_QUEUE,
                 countdown=self.signal.interval
             )
         else:
@@ -125,7 +125,7 @@ def signal_receiver(sender, **kwargs):
             args=[sender], kwargs=kwargs,
             default_retry_delay=SEND_RETRY_DELAY,
             max_retries=SEND_RETRY,
-            queue=CELERY_QUEUE,
+            queue=SIGNALS_QUEUE,
         )
     else:
         SignalReceiver(sender, **kwargs).run()
