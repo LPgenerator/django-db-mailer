@@ -72,6 +72,9 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 
     BROKER_URL = 'redis://127.0.0.1:6379/1'
 
+    CELERY_ACKS_LATE = True
+    CELERYD_PREFETCH_MULTIPLIER = 1
+
     # use priority steps only for mail queue
     if 'mail_messages' in sys.argv:
         BROKER_TRANSPORT_OPTIONS = {

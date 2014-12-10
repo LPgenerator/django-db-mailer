@@ -20,3 +20,5 @@ Available variables for rules on Signals:
 When all signals was configured, you need to reload your wsgi application.
 Auto-reloading can be configured on settings by WSGI_AUTO_RELOAD/UWSGI_AUTO_RELOAD.
 But if you launch application on several instances, do it manually.
+
+*Note: Do not use big intervals, if tasks on queue more than 3-4k. It can crash a celery worker.*
