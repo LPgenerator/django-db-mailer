@@ -8,9 +8,11 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from django.db.models import signals
 
-from dbmail.defaults import SIGNALS_QUEUE, SIGNALS_MAIL_QUEUE, ENABLE_USERS
-from dbmail.defaults import SEND_RETRY, SEND_RETRY_DELAY
-from dbmail.models import Signal
+from dbmail.defaults import (
+    SIGNALS_QUEUE, SIGNALS_MAIL_QUEUE, SIGNAL_DEFERRED_DISPATCHER,
+    ENABLE_USERS, SEND_RETRY, SEND_RETRY_DELAY
+)
+from dbmail.models import Signal, SignalDeferredDispatch
 
 
 class SignalReceiver(object):
@@ -67,7 +69,7 @@ class SignalReceiver(object):
 
     def get_current_instance(self):
         try:
-            if self.instance and self.instance.pk:
+            if self.instance and self.instance.pk and self.signal.update_model:
                 obj = self.instance._default_manager.get(pk=self.instance.pk)
                 self.kwargs['current_instance'] = obj
         except ObjectDoesNotExist:
@@ -85,11 +87,12 @@ class SignalReceiver(object):
             )
             self.signal.mark_as_sent(self.pk)
 
-    def _run(self):
-        import tasks
+    def _dispatch_deferred_task(self):
+        self._kwargs['signal_pk'] = self.signal.pk
 
-        if self.signal.interval and self.signal.update_model:
-            self._kwargs['signal_pk'] = self.signal.pk
+        if SIGNAL_DEFERRED_DISPATCHER == 'celery':
+            import tasks
+
             tasks.deferred_signal.apply_async(
                 args=[self.sender], kwargs=self._kwargs,
                 default_retry_delay=SEND_RETRY_DELAY,
@@ -97,6 +100,19 @@ class SignalReceiver(object):
                 queue=SIGNALS_QUEUE,
                 countdown=self.signal.interval
             )
+        else:
+            SignalDeferredDispatch.add_task(
+                args=[self.sender], kwargs=self._kwargs,
+                params=dict(
+                    default_retry_delay=SEND_RETRY_DELAY,
+                    max_retries=SEND_RETRY,
+                    queue=SIGNALS_QUEUE
+                ), interval=self.signal.interval
+            )
+
+    def _run(self):
+        if self.signal.interval:
+            self._dispatch_deferred_task()
         else:
             self.send_mail()
 

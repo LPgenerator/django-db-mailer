@@ -1,12 +1,14 @@
 # -*- encoding: utf-8 -*-
 
 import datetime
+import pickle
 import uuid
 import os
 import re
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
+from django.utils.timezone import now
 from django.core.cache import cache
 from django.conf import settings
 from django.db import models
@@ -315,7 +317,7 @@ class MailLog(models.Model):
 
     @classmethod
     def cleanup(cls, days=7):
-        date = datetime.datetime.now() - datetime.timedelta(days=days)
+        date = now() - datetime.timedelta(days=days)
         cls.objects.filter(created__lte=date).delete()
 
     def __unicode__(self):
@@ -486,6 +488,38 @@ class SignalLog(models.Model):
     class Meta:
         verbose_name = _('Signal log')
         verbose_name_plural = _('Signal logs')
+
+
+class SignalDeferredDispatch(models.Model):
+    args = models.TextField()
+    kwargs = models.TextField()
+    params = models.TextField()
+    eta = models.DateTimeField(db_index=True)
+    done = models.NullBooleanField(default=None)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def run_task(self):
+        if self.done is False:
+            import tasks
+
+            tasks.deferred_signal.apply_async(
+                args=pickle.loads(self.args),
+                kwargs=pickle.loads(self.kwargs),
+                **pickle.loads(self.params)
+            )
+
+    @classmethod
+    def add_task(cls, args, kwargs, params, interval):
+        eta = now() + datetime.timedelta(seconds=interval)
+        dump = pickle.dumps
+        return cls.objects.create(
+            args=dump(args), kwargs=dump(kwargs),
+            params=dump(params), eta=eta
+        )
+
+    class Meta:
+        if VERSION >= (1, 5):
+            index_together = (('eta', 'done'),)
 
 
 class ApiKey(models.Model):

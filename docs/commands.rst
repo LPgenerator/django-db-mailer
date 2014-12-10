@@ -5,7 +5,11 @@ Management commands
 
 Commands
 --------
-``clean_dbmail_cache`` - Clear all caches
+``send_dbmail_deferred_signal`` - Send deferred mails which stored on database (if dbmail.Signals was used).
+
+``update_dbmail_cache`` - Best way for update cache after migration to new app version.
+
+``clean_dbmail_cache`` - Clear all caches.
 
 ``clean_dbmail_logs`` - Clear old logs. Days can be defined as DB_MAILER_LOGS_EXPIRE_DAYS constant.
 

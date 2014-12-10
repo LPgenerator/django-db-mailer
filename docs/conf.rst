@@ -103,7 +103,13 @@ App settings
     DB_MAILER_CACHE_TIMEOUT = None
 
     # We are strongly recommended use a different queue for signals, mail and mail on signals
-    # Because on standard mail queue you will need to use a priorities
+    # Because on standard mail queue you will use priorities
     # Big queues with countdown will constantly interfere and will be break, if priority steps are to be used on current queue
     DB_MAILER_SIGNALS_QUEUE = "default"
     DB_MAILER_SIGNALS_MAIL_QUEUE = "default"
+
+    # For pending and very long task, you must use a database instead of the celery queues
+    DB_MAILER_SIGNAL_DEFERRED_DISPATCHER = 'celery'
+
+    # Remove database long tasks after execution
+    DB_MAILER_SIGNAL_DB_DEFERRED_PURGE = True
