@@ -82,14 +82,14 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
         }
 
     CELERY_TASK_SERIALIZER = 'pickle'
-    CELERY_DEFAULT_QUEUE = 'default'
+    CELERY_DEFAULT_QUEUE = 'default' # use mail_messages, if workers is divided
 
     djcelery.setup_loader()
 
 .. code-block:: bash
 
-    $ python manage.py celeryd --loglevel=info -Q default
-    $ python manage.py celeryd --loglevel=info -Q mail_messages # divide queues on production
+    $ python manage.py celeryd --loglevel=debug -Q default
+    $ python manage.py celeryd --loglevel=info -Q mail_messages -n mail_messages # divide workers and queues on production
 
 
 *Note: Do not forget define on command line queue name.*
