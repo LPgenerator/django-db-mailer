@@ -15,7 +15,8 @@ from django.contrib import admin
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey, MailBcc,
-    MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailFromEmailCredential
+    MailGroup, MailGroupEmail, MailFile, MailFromEmail,
+    MailFromEmailCredential, MailLogTrack
 )
 from dbmail import app_installed
 from dbmail import defaults
@@ -271,6 +272,28 @@ class MailBccAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'updated', 'created',)
 
 
+class MailLogTrackAdmin(admin.ModelAdmin):
+    list_display = (
+        'mail_log', 'counter', 'ip', 'is_read', 'updated', 'created', 'id',)
+
+    def __init__(self, model, admin_site):
+        super(MailLogTrackAdmin, self).__init__(model, admin_site)
+
+        self.readonly_fields = [field.name for field in model._meta.fields]
+        self.readonly_model = model
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        if not request.user.is_superuser:
+            return False
+        return True
+
+    def has_change_permission(self, request, obj=None):
+        return request.method != 'POST'
+
+
 def admin_register(model):
     model_name = model.__name__
     if model_name in defaults.ALLOWED_MODELS_ON_ADMIN:
@@ -283,6 +306,7 @@ def admin_register(model):
 
 admin_register(MailFromEmailCredential)
 admin_register(MailFromEmail)
+admin_register(MailLogTrack)
 admin_register(MailCategory)
 admin_register(MailTemplate)
 admin_register(MailGroup)

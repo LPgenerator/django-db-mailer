@@ -113,3 +113,21 @@ App settings
 
     # Remove database long tasks after execution
     DB_MAILER_SIGNAL_DB_DEFERRED_PURGE = True
+
+    # Enable/Disable tracking functionality.
+    # If tracking is enabled, Logging must be enabled to.
+    # DbMail urls must be configured.
+    # Site framework must configured and installed.
+    DB_MAILER_TRACK_ENABLE = True
+
+    # Tracking image content and mime type
+    DB_MAILER_TRACK_PIXEL = [
+        'image/gif',
+        "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00"
+        "\x00\xff\xff\xff\x00\x00\x00\x21\xf9\x04\x01\x00"
+        "\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00"
+        "\x00\x02\x02\x44\x01\x00\x3b"
+    ]
+
+    # Html code for inject into message for tracking
+    DB_MAILER_TRACK_HTML = '<table bgcolor="white"><tr><td><font size="-1" color="black"><img src="%(url)s" width="16" height="16" alt="" title="" border="0"></font></td></tr></table></center>'

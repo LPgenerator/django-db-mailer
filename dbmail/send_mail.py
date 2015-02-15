@@ -2,16 +2,19 @@
 
 import traceback
 import pprint
+import uuid
 import time
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.contrib.sites.models import Site
 from django.template import Template, Context
+from django.core.urlresolvers import reverse
 from django.core.mail import get_connection
 from django.utils.html import strip_tags
 from django.utils import translation
 from django.conf import settings
+from django.core import signing
 
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
@@ -39,6 +42,7 @@ class SendMail(object):
         self._num = 1
         self._err_msg = None
         self._err_exc = None
+        self._log_id = self.__get_log_id()
 
         self._kwargs.pop('retry', None)
         self._kwargs.pop('max_retries', None)
@@ -47,6 +51,10 @@ class SendMail(object):
         self._from_email = self.__get_from_email()
         self.__update_bcc_from_template_settings()
         self.__insert_mailer_identification_head()
+
+    @staticmethod
+    def __get_log_id():
+        return '%f-%s' % (time.time(), uuid.uuid4())
 
     def __insert_mailer_identification_head(self):
         if not ADD_HEADER:
@@ -99,6 +107,19 @@ class SendMail(object):
         return self.__render_template(
             self.__get_str_by_language('message'), self._context)
 
+    def __get_msg_with_track(self):
+        message = self._message
+        if ENABLE_LOGGING and self._template.enable_log:
+            try:
+                domain = Site.objects.get_current().domain
+                encrypted = signing.dumps(self._log_id, compress=True)
+                path = reverse('db-mail-tracker', args=[encrypted])
+                message += defaults.TRACK_HTML % {
+                    'url': 'http://%s%s' % (domain, path)}
+            except Site.DoesNotExist:
+                pass
+        return message
+
     def __attach_files(self, mail):
         for file_object in self._template.files_list:
             mail.attach_file(file_object.filename.path)
@@ -112,7 +133,7 @@ class SendMail(object):
             from_email=self._from_email, to=self._recipient_list,
             bcc=self._bcc, connection=self.__get_connection(), **self._kwargs
         )
-        msg.attach_alternative(self._message, "text/html")
+        msg.attach_alternative(self.__get_msg_with_track(), "text/html")
         self.__attach_files(msg)
         msg.send()
 
@@ -191,7 +212,7 @@ class SendMail(object):
                 MailLog.store(
                     self._recipient_list, self._cc, self._bcc,
                     is_sent, self._template, self._user,
-                    self._num, self._err_msg, self._err_exc
+                    self._num, self._err_msg, self._err_exc, self._log_id
                 )
 
     def __try_to_send(self):

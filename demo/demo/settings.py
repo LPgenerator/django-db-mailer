@@ -191,8 +191,11 @@ MODELTRANSLATION_TRANSLATION_FILES = (
 )
 INSTALLED_APPS = ['modeltranslation'] + INSTALLED_APPS
 '''
-############################################################
 
+# For detect info about user
+GEOIP_PATH = '/usr/share/GeoIP/'
+
+############################################################
 
 try:
     from local_settings import *

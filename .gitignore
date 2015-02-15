@@ -46,3 +46,5 @@ output/*/index.html
 docs/_build
 TODO
 local_settings.py
+mail_files
+

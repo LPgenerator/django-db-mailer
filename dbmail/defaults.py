@@ -44,6 +44,7 @@ ALLOWED_MODELS_ON_ADMIN = get_settings('DB_MAILER_ALLOWED_MODELS_ON_ADMIN', [
     'Signal',
     'ApiKey',
     'MailBcc',
+    'MailLogTrack',
 ])
 AUTH_USER_MODEL = get_settings('AUTH_USER_MODEL', 'auth.User')
 USE_CELERY_FOR_ADMIN_TEST = get_settings(
@@ -54,3 +55,20 @@ SIGNAL_DEFERRED_DISPATCHER = get_settings(
     'DB_MAILER_SIGNAL_DEFERRED_DISPATCHER', 'celery')
 SIGNAL_DB_DEFERRED_PURGE = get_settings(
     'DB_MAILER_SIGNAL_DB_DEFERRED_PURGE', True)
+
+TRACK_ENABLE = get_settings('DB_MAILER_TRACK_ENABLE', True)
+TRACK_PIXEL = get_settings(
+    'DB_MAILER_TRACK_PIXEL',
+    [
+        'image/gif',
+        "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00"
+        "\x00\xff\xff\xff\x00\x00\x00\x21\xf9\x04\x01\x00"
+        "\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00"
+        "\x00\x02\x02\x44\x01\x00\x3b"
+    ]
+)
+TRACK_HTML = get_settings(
+    'DB_MAILER_TRACK_HTML',
+    '<table bgcolor="white"><tr><td><font size="-1" color="black">'
+    '<img src="%(url)s" width="16" height="16" alt="" title="" border="0">'
+    '</font></td></tr></table></center>')

@@ -293,6 +293,7 @@ class MailLog(models.Model):
         MailLogException, null=True, blank=True, verbose_name=_('Exception'))
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
+    log_id = models.CharField(max_length=60, editable=False, db_index=True)
 
     @staticmethod
     def store_email_log(log, email_list, mail_type):
@@ -303,13 +304,14 @@ class MailLog(models.Model):
                 )
 
     @classmethod
-    def store(cls, to, cc, bcc, is_sent, template, user, num, msg='', ex=None):
+    def store(cls, to, cc, bcc, is_sent, template,
+              user, num, msg='', ex=None, log_id=None):
         if ex is not None:
             ex = MailLogException.objects.get_or_create(name=ex)[0]
 
         log = cls.objects.create(
-            template=template, is_sent=is_sent, user=user,
-            num_of_retries=num, error_message=msg, error_exception=ex
+            template=template, is_sent=is_sent, user=user, log_id=log_id,
+            num_of_retries=num, error_message=msg, error_exception=ex,
         )
         cls.store_email_log(log, to, 'to')
         cls.store_email_log(log, cc, 'cc')
@@ -551,6 +553,102 @@ class ApiKey(models.Model):
     class Meta:
         verbose_name = _('Mail API')
         verbose_name_plural = _('Mail API')
+
+
+class MailLogTrack(models.Model):
+    mail_log = models.ForeignKey(MailLog, verbose_name=_('Log'))
+    counter = models.PositiveIntegerField(_('Counter'), default=0)
+    ip = models.GenericIPAddressField(_('IP'))
+    ua = models.CharField(
+        _('User Agent'), max_length=350, blank=True, null=True)
+
+    ua_os = models.CharField(_('OS'), max_length=100, blank=True, null=True)
+    ua_os_version = models.CharField(
+        _('OS version'), max_length=100, blank=True, null=True)
+
+    ua_dist = models.CharField(
+        _('Dist name'), max_length=20, blank=True, null=True)
+    ua_dist_version = models.CharField(
+        _('Dist version'), max_length=100, blank=True, null=True)
+    ua_browser = models.CharField(
+        _('Browser'), max_length=100, blank=True, null=True)
+    ua_browser_version = models.CharField(
+        _('Browser version'), max_length=20, blank=True, null=True)
+    ip_area_code = models.CharField(
+        _('Area code'), max_length=255, blank=True, null=True)
+    ip_city = models.CharField(
+        _('City'), max_length=255, blank=True, null=True)
+    ip_country_code = models.CharField(
+        _('Country code'), max_length=255, blank=True, null=True)
+    ip_country_code3 = models.CharField(
+        _('Country code3'), max_length=255, blank=True, null=True)
+    ip_country_name = models.CharField(
+        _('Country name'), max_length=255, blank=True, null=True)
+    ip_dma_code = models.CharField(
+        _('Dma code'), max_length=255, blank=True, null=True)
+    ip_latitude = models.CharField(
+        _('Latitude'), max_length=255, blank=True, null=True)
+    ip_longitude = models.CharField(
+        _('Longitude'), max_length=255, blank=True, null=True)
+    ip_postal_code = models.CharField(
+        _('Postal code'), max_length=255, blank=True, null=True)
+    ip_region = models.CharField(
+        _('Region'), max_length=255, blank=True, null=True)
+
+    is_read = models.BooleanField(_('Is read'), default=False)
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def __unicode__(self):
+        return self.mail_log.template.name
+
+    class Meta:
+        verbose_name = _('Mail Tracking')
+        verbose_name_plural = _('Mail Tracking')
+
+    def detect_ua(self):
+        try:
+            if self.ua and self.counter == 0:
+                import httpagentparser
+
+                data = httpagentparser.detect(self.ua)
+                get = lambda b, k: data.get(b, {}).get(k, '')
+
+                self.ua_os = get('os', 'name')
+                self.ua_os_version = get('os', 'version')
+
+                self.ua_dist = get('platform', 'name')
+                self.ua_dist_version = get('platform', 'version')
+
+                self.ua_browser = get('browser', 'name')
+                self.ua_browser_version = get('browser', 'version')
+
+        except ImportError:
+            pass
+
+    def detect_geo(self):
+        if self.ip and self.counter == 0:
+            from django.contrib.gis.geoip import GeoIP, GeoIPException
+
+            try:
+                g = GeoIP()
+                info = g.city(self.ip) or dict()
+                for (k, v) in info.items():
+                    setattr(self, 'ip_%s' % k, v)
+            except GeoIPException:
+                pass
+
+    def detect_open(self):
+        if self.counter == 0:
+            self.counter = 1
+        elif self.counter >= 1:
+            self.counter += 1
+
+    def save(self, *args, **kwargs):
+        self.detect_ua()
+        self.detect_geo()
+        self.detect_open()
+        super(MailLogTrack, self).save(*args, **kwargs)
 
 
 if VERSION < (1, 7):

@@ -43,3 +43,20 @@ def send_by_dbmail(request):
                     *args, **kwargs)
                 return HttpResponse('OK')
     raise Http404
+
+
+def mail_read_tracker(request, encrypted):
+    if defaults.TRACK_ENABLE and defaults.ENABLE_LOGGING:
+        from dbmail.tasks import mail_track
+
+        req = {k: v for k, v in request.META.items()
+               if k.startswith('HTTP_') or k.startswith('REMOTE')}
+        if defaults.ENABLE_CELERY is True:
+            mail_track.delay(args=[req, encrypted], retry=1, max_retries=2)
+        else:
+            mail_track(req, encrypted)
+
+    return HttpResponse(
+        content=defaults.TRACK_PIXEL[1],
+        mimetype=defaults.TRACK_PIXEL[0],
+    )

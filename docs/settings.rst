@@ -204,3 +204,11 @@ Update dbmail fields:
 
     $ ./manage.py sync_translation_fields --noinput
 
+
+**Tracking**:
+
+.. code-block:: bash
+
+    $ pip install httpagentparser django-ipware
+
+For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
