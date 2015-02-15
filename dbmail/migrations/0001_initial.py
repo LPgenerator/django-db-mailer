@@ -127,7 +127,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=100, verbose_name='Username')),
                 ('email', models.EmailField(max_length=75, verbose_name='Email')),
-                ('group', models.ForeignKey(related_name=b'emails', verbose_name='Group', to='dbmail.MailGroup')),
+                ('group', models.ForeignKey(related_name='emails', verbose_name='Group', to='dbmail.MailGroup')),
             ],
             options={
                 'verbose_name': 'Mail group email',
@@ -143,6 +143,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
                 ('error_message', models.TextField(null=True, verbose_name='Error message', blank=True)),
                 ('num_of_retries', models.PositiveIntegerField(default=1, verbose_name='Number of retries')),
+                ('log_id', models.CharField(max_length=60, editable=False, db_index=True)),
             ],
             options={
                 'verbose_name': 'Mail log',
@@ -177,6 +178,40 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='MailLogTrack',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('counter', models.PositiveIntegerField(default=0, verbose_name='Counter')),
+                ('ip', models.GenericIPAddressField(verbose_name='IP')),
+                ('ua', models.CharField(max_length=350, null=True, verbose_name='User Agent', blank=True)),
+                ('ua_os', models.CharField(max_length=100, null=True, verbose_name='OS', blank=True)),
+                ('ua_os_version', models.CharField(max_length=100, null=True, verbose_name='OS version', blank=True)),
+                ('ua_dist', models.CharField(max_length=20, null=True, verbose_name='Dist name', blank=True)),
+                ('ua_dist_version', models.CharField(max_length=100, null=True, verbose_name='Dist version', blank=True)),
+                ('ua_browser', models.CharField(max_length=100, null=True, verbose_name='Browser', blank=True)),
+                ('ua_browser_version', models.CharField(max_length=20, null=True, verbose_name='Browser version', blank=True)),
+                ('ip_area_code', models.CharField(max_length=255, null=True, verbose_name='Area code', blank=True)),
+                ('ip_city', models.CharField(max_length=255, null=True, verbose_name='City', blank=True)),
+                ('ip_country_code', models.CharField(max_length=255, null=True, verbose_name='Country code', blank=True)),
+                ('ip_country_code3', models.CharField(max_length=255, null=True, verbose_name='Country code3', blank=True)),
+                ('ip_country_name', models.CharField(max_length=255, null=True, verbose_name='Country name', blank=True)),
+                ('ip_dma_code', models.CharField(max_length=255, null=True, verbose_name='Dma code', blank=True)),
+                ('ip_latitude', models.CharField(max_length=255, null=True, verbose_name='Latitude', blank=True)),
+                ('ip_longitude', models.CharField(max_length=255, null=True, verbose_name='Longitude', blank=True)),
+                ('ip_postal_code', models.CharField(max_length=255, null=True, verbose_name='Postal code', blank=True)),
+                ('ip_region', models.CharField(max_length=255, null=True, verbose_name='Region', blank=True)),
+                ('is_read', models.BooleanField(default=False, verbose_name='Is read')),
+                ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
+                ('updated', models.DateTimeField(auto_now=True, verbose_name='Updated')),
+                ('mail_log', models.ForeignKey(verbose_name='Log', to='dbmail.MailLog')),
+            ],
+            options={
+                'verbose_name': 'Mail Tracking',
+                'verbose_name_plural': 'Mail Tracking',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='MailTemplate',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -193,6 +228,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
                 ('updated', models.DateTimeField(auto_now=True, verbose_name='Updated')),
                 ('context_note', models.TextField(help_text='This is simple note field for context variables with description', null=True, verbose_name='Context note', blank=True)),
+                ('interval', models.PositiveIntegerField(help_text='\n            Specify interval to send messages after sometime.\n            Interval must be set in the seconds.\n            ', null=True, verbose_name='Send interval', blank=True)),
                 ('bcc_email', models.ManyToManyField(help_text=b'Blind carbon copy', to='dbmail.MailBcc', null=True, verbose_name='Bcc', blank=True)),
                 ('category', models.ForeignKey(default=None, blank=True, to='dbmail.MailCategory', null=True, verbose_name='Category')),
                 ('from_email', models.ForeignKey(default=None, to='dbmail.MailFromEmail', blank=True, help_text='If not specified, then used default.', null=True, verbose_name='From email')),
@@ -214,7 +250,8 @@ class Migration(migrations.Migration):
                 ('updated', models.DateTimeField(auto_now=True, verbose_name='Updated')),
                 ('is_active', models.BooleanField(default=True, verbose_name='Is active')),
                 ('receive_once', models.BooleanField(default=True, help_text='Signal will be receive and send once for new db row.', verbose_name='Receive once')),
-                ('interval', models.PositiveIntegerField(default=0, help_text='Specify interval to send messages after sometime. That very helpful for mailing on enterprise products.Interval must be set in the seconds.', verbose_name='Send interval')),
+                ('interval', models.PositiveIntegerField(help_text='Specify interval to send messages after sometime. That very helpful for mailing on enterprise products.Interval must be set in the seconds.', null=True, verbose_name='Send interval', blank=True)),
+                ('update_model', models.BooleanField(default=False, help_text='\n            If you are using interval and want to update object state,\n            you can use this flag and refer to the variable\n            {{current_instance}}\n            ', verbose_name='Update model state')),
                 ('group', models.ForeignKey(blank=True, to='dbmail.MailGroup', help_text='You can use group email or rules for recipients.', null=True, verbose_name='Email group')),
                 ('model', models.ForeignKey(verbose_name='Model', to='contenttypes.ContentType')),
                 ('template', models.ForeignKey(verbose_name='Template', to='dbmail.MailTemplate')),
@@ -222,6 +259,21 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Mail signal',
                 'verbose_name_plural': 'Mail signals',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='SignalDeferredDispatch',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('args', models.TextField()),
+                ('kwargs', models.TextField()),
+                ('params', models.TextField()),
+                ('eta', models.DateTimeField(db_index=True)),
+                ('done', models.NullBooleanField(default=None)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+            ],
+            options={
             },
             bases=(models.Model,),
         ),
@@ -235,8 +287,14 @@ class Migration(migrations.Migration):
                 ('signal', models.ForeignKey(to='dbmail.Signal')),
             ],
             options={
+                'verbose_name': 'Signal log',
+                'verbose_name_plural': 'Signal logs',
             },
             bases=(models.Model,),
+        ),
+        migrations.AlterIndexTogether(
+            name='signaldeferreddispatch',
+            index_together=set([('eta', 'done')]),
         ),
         migrations.AddField(
             model_name='maillog',
@@ -269,7 +327,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mailfile',
             name='template',
-            field=models.ForeignKey(related_name=b'files', verbose_name='Template', to='dbmail.MailTemplate'),
+            field=models.ForeignKey(related_name='files', verbose_name='Template', to='dbmail.MailTemplate'),
             preserve_default=True,
         ),
     ]
