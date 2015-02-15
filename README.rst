@@ -233,6 +233,15 @@ Install ``python-postmark`` app via pip. Configure your settings:
     EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
 
 
+**Tracking**:
+
+.. code-block:: bash
+
+    $ pip install httpagentparser django-ipware
+
+For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
+
+
 **Older versions**
 
 Very simple version of this app, available `here <https://github.com/LPgenerator/django-db-mailer/tree/1.0>`_.
