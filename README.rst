@@ -288,6 +288,7 @@ Screenshots
 .. image:: /screenshots/apikey_changelist.jpg
 .. image:: /screenshots/bcc_changelist.jpg
 .. image:: /screenshots/template_compare.jpg
+.. image:: /screenshots/tracking_edit.jpg
 
 
 Compatibility:
