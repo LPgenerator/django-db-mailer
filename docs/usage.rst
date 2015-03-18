@@ -73,6 +73,8 @@ Send mail API with comments for all available options:
         use_celery=True,
     )
 
+*For track information about read - add dbmail into urls.*
+
 
 Web API
 -------
