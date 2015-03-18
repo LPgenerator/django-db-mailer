@@ -7,9 +7,9 @@ import time
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib.sites.models import Site
 from django.template import Template, Context
-from django.core.urlresolvers import reverse
 from django.core.mail import get_connection
 from django.utils.html import strip_tags
 from django.utils import translation
@@ -116,7 +116,7 @@ class SendMail(object):
                 path = reverse('db-mail-tracker', args=[encrypted])
                 message += defaults.TRACK_HTML % {
                     'url': 'http://%s%s' % (domain, path)}
-            except Site.DoesNotExist:
+            except (Site.DoesNotExist, NoReverseMatch):
                 pass
         return message
 
