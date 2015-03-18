@@ -272,6 +272,12 @@ External API usage
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host'
 
 
+Publications
+------------
+* `Установка и использование с примерами на русском <http://habrahabr.ru/post/253445/>`_.
+* `Completely installation and usage with examples. Translated by Google <http://translate.google.com/translate?hl=en&sl=ru&tl=en&u=http://habrahabr.ru/post/253445/>`_.
+
+
 Screenshots
 -----------
 
