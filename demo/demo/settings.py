@@ -197,6 +197,12 @@ GEOIP_PATH = '/usr/share/GeoIP/'
 
 ############################################################
 
+from django import VERSION
+
+
+if VERSION[:2] < (1, 6):
+    TEST_RUNNER = 'discover_runner.DiscoverRunner'
+
 try:
     from local_settings import *
 
