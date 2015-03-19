@@ -2,6 +2,8 @@ language: python
 python:
   - "2.7"
 before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq python-dev redis-server
   - export PIP_USE_MIRRORS=true
 install:
   - pip install -e .
@@ -17,7 +19,7 @@ env:
   - DJANGO=1.5.12
   - DJANGO=1.6.10
   - DJANGO=1.7.6
-  - DJANGO=1.8b2
+  - DJANGO=1.8c1
 branches:
   only:
     - master
