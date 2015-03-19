@@ -1,6 +1,9 @@
 Django-Db-Mailer
 ----------------
 
+.. image:: https://api.travis-ci.org/LPgenerator/django-db-mailer.png?branch=development
+    :alt: Build Status
+    :target: https://travis-ci.org/LPgenerator/django-db-mailer
 .. image:: https://pypip.in/v/django-db-mailer/badge.png
     :alt: Current version on PyPi
     :target: https://crate.io/packages/django-db-mailer/
