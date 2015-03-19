@@ -67,12 +67,12 @@ run-redis:
 .PHONY: test
 # target: test - Run tests
 test:
-	cd demo && ./manage.py test dbmail
+	@cd demo && ./manage.py test dbmail
 
 .PHONY: coverage
 # target: coverage - Run tests with coverage
 coverage:
-	cd demo && \
+	@cd demo && \
 	coverage run --branch --source=dbmail ./manage.py test dbmail && \
 	coverage report --omit="*/dbmail/test*,*/dbmail/migrations/*,*/dbmail/admin*"
 

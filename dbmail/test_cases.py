@@ -87,6 +87,18 @@ class TemplateTestCase(TestCase):
             template = MailTemplate.get_template("welcome")
             self.assertEquals(template.bcc_list, ["root@local.host"])
 
+    def test_retrieve_bcc_delete(self):
+        self.test_retrieve_bcc_cached_invalidation_cache()
+
+        for bcc in MailBcc.objects.all():
+            bcc.delete()
+
+        with self.assertNumQueries(3):
+            template = MailTemplate.get_template("welcome")
+            self.assertEquals(template.bcc_list, [])
+
+        self.__retrieve_named_template_and_check_num_queries(0)
+
     ###########################################################################
     def test_retrieve_from(self):
         """ create template and check default email from """
@@ -104,7 +116,8 @@ class TemplateTestCase(TestCase):
         """ invalidate cached from and add new email from """
         self.test_retrieve_from_cached()
 
-        mail_from = MailFromEmail.objects.create(name="root", email="r@loc.hs")
+        mail_from = MailFromEmail.objects.create(
+            name="root", email="r@loc.hs", pk=1)
         template = MailTemplate.get_template("welcome")
         template.from_email = mail_from
         template.save()
@@ -123,6 +136,18 @@ class TemplateTestCase(TestCase):
             self.assertEquals(
                 template.from_email.get_mail_from, "root <r@loc.hs>")
 
+    def test_retrieve_from_delete(self):
+        self.test_retrieve_from_cached_invalidation_cache()
+
+        mail_from = MailFromEmail.objects.get(pk=1)
+        mail_from.delete()
+
+        with self.assertNumQueries(3):
+            template = MailTemplate.get_template("welcome")
+            self.assertEquals(template.from_email, None)
+
+        self.__retrieve_named_template_and_check_num_queries(0)
+
     ###########################################################################
     def test_retrieve_file(self):
         self.__create_template()
@@ -138,7 +163,7 @@ class TemplateTestCase(TestCase):
         self.test_retrieve_file_cached()
 
         attachment = MailFile.objects.create(
-            template_id=1, name="report.xls", filename="")
+            template_id=1, name="report.xls", filename="", pk=1)
         attachment.save()
 
         with self.assertNumQueries(3):
@@ -151,6 +176,18 @@ class TemplateTestCase(TestCase):
         with self.assertNumQueries(0):
             template = MailTemplate.get_template("welcome")
             self.assertEquals(len(template.files_list), 1)
+
+    def test_retrieve_file_delete(self):
+        self.test_retrieve_file_cached_invalidation_cache()
+
+        attachment = MailFile.objects.get(pk=1)
+        attachment.delete()
+
+        with self.assertNumQueries(3):
+            template = MailTemplate.get_template("welcome")
+            self.assertEquals(template.files_list, [])
+
+        self.__retrieve_named_template_and_check_num_queries(0)
 
     ###########################################################################
     def test_retrieve_auth(self):
@@ -209,3 +246,14 @@ class TemplateTestCase(TestCase):
             template = MailTemplate.get_template("welcome")
             self.assertEquals(len(template.auth_credentials), 6)
             self.assertEquals(template.auth_credentials['port'], 587)
+
+    def test_retrieve_auth_cached_delete(self):
+        self.test_retrieve_auth_cached_invalidation_parent_cached()
+
+        credentials = MailFromEmailCredential.objects.get(pk=1)
+        credentials.delete()
+
+        with self.assertNumQueries(3):
+            template = MailTemplate.get_template("welcome")
+            self.assertEquals(template.auth_credentials, None)
+            self.assertEquals(template.from_email, None)
