@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from dbmail.models import MailTemplate, ApiKey
+from dbmail.models import MailTemplate
 
 
 class Command(BaseCommand):
