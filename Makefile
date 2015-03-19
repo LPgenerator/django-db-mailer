@@ -74,7 +74,7 @@ test:
 coverage:
 	@cd demo && \
 	coverage run --branch --source=dbmail ./manage.py test dbmail && \
-	coverage report --omit="*/dbmail/test*,*/dbmail/migrations/*,*/dbmail/admin*"
+	coverage report --omit="*/dbmail/test*,*/dbmail/migrations/*,*/dbmail/south_migrations/*,*/dbmail/admin*"
 
 .PHONY: help
 # target: help - Display callable targets
