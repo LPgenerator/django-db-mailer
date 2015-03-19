@@ -149,7 +149,8 @@ class MailTemplate(models.Model):
     from_email = models.ForeignKey(
         MailFromEmail, null=True, blank=True,
         verbose_name=_('From email'), default=DEFAULT_FROM_EMAIL,
-        help_text=_('If not specified, then used default.'))
+        help_text=_('If not specified, then used default.'),
+        on_delete=models.SET_NULL)
     bcc_email = models.ManyToManyField(
         MailBcc, verbose_name=_('Bcc'), blank=True, null=True,
         help_text='Blind carbon copy')
