@@ -144,9 +144,10 @@ class MailTemplateAdmin(ModelAdmin):
                 self.readonly_fields = ['slug', 'context_note']
         else:
             self.prepopulated_fields = {'slug': ('name',)}
+            self.readonly_fields = []
 
         return super(MailTemplateAdmin, self).get_form(
-            request, obj=None, **kwargs)
+            request, obj, **kwargs)
 
 
 class MailLogEmailInline(admin.TabularInline):
