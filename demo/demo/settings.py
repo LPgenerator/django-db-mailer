@@ -185,6 +185,14 @@ CACHES = {
     }
 }
 
+if 'test' is sys.argv:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': '/tmp/django_cache',
+        }
+    }
+
 # DbMail settings
 AUTH_USER_MODEL = 'auth.User'
 DB_MAILER_SHOW_CONTEXT = True
