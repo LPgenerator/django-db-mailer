@@ -178,12 +178,21 @@ TINYMCE_DEFAULT_CONFIG = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'Django <no_reply@local.host>'
 
-CACHES = {
-    "default": {
-        "BACKEND": "redis_cache.cache.RedisCache",
-        "LOCATION": "127.0.0.1:6379:1",
+
+if 'test' not in sys.argv:
+    CACHES = {
+        "default": {
+            "BACKEND": "redis_cache.cache.RedisCache",
+            "LOCATION": "127.0.0.1:6379:1",
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': '/tmp/django_cache',
+        }
+    }
 
 # DbMail settings
 AUTH_USER_MODEL = 'auth.User'

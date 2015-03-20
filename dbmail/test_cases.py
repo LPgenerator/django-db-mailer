@@ -88,6 +88,7 @@ class TemplateTestCase(TestCase):
             self.assertEquals(template.bcc_list, ["root@local.host"])
 
     def test_retrieve_bcc_delete(self):
+        """ invalidate cached template when object was removed """
         self.test_retrieve_bcc_cached_invalidation_cache()
 
         for bcc in MailBcc.objects.all():
@@ -137,6 +138,7 @@ class TemplateTestCase(TestCase):
                 template.from_email.get_mail_from, "root <r@loc.hs>")
 
     def test_retrieve_from_delete(self):
+        """ invalidate cached template when object was removed """
         self.test_retrieve_from_cached_invalidation_cache()
 
         mail_from = MailFromEmail.objects.get(pk=1)
