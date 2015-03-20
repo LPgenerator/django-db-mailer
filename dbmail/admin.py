@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
-from django.db.models import get_model
+from django.db.models.loading import get_model
 from django.contrib import messages
 from django.contrib import admin
 
@@ -21,7 +21,9 @@ from dbmail.models import (
 from dbmail import app_installed
 from dbmail import defaults
 
+
 ModelAdmin = admin.ModelAdmin
+
 
 if app_installed('reversion'):
     try:
@@ -68,6 +70,7 @@ class MailTemplateAdmin(ModelAdmin):
     date_hierarchy = 'created'
     list_per_page = defaults.TEMPLATES_PER_PAGE
     inlines = [MailTemplateFileAdmin]
+    prepopulated_fields = {'slug': ('name',)}
 
     class Media:
         try:
@@ -137,17 +140,16 @@ class MailTemplateAdmin(ModelAdmin):
         )
         return admin_urls + urls
 
-    def get_form(self, request, obj=None, **kwargs):
-        if obj is not None:
-            self.prepopulated_fields = {}
+    def get_readonly_fields(self, request, obj=None):
+        if obj is not None and defaults.READ_ONLY_ENABLED:
             if defaults.READ_ONLY_ENABLED:
-                self.readonly_fields = ['slug', 'context_note']
-        else:
-            self.prepopulated_fields = {'slug': ('name',)}
-            self.readonly_fields = []
+                return ['slug', 'context_note']
+        return super(MailTemplateAdmin, self).get_readonly_fields(request, obj)
 
-        return super(MailTemplateAdmin, self).get_form(
-            request, obj, **kwargs)
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj is not None:
+            return {}
+        return self.prepopulated_fields
 
 
 class MailLogEmailInline(admin.TabularInline):
