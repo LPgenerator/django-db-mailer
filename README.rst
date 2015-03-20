@@ -26,8 +26,8 @@ What's that
 | That app very simple to install and use on your projects.
 
 
-Installation:
--------------
+Installation
+------------
 
 1. Using pip:
 
@@ -39,6 +39,16 @@ Installation:
 3. Sync database (``./manage.py syncdb`` or ``./manage.py migrate``).
 
 **Important:** South 1.0 or greater is required to run migrations.
+
+
+Development installation
+------------------------
+
+1. Using pip:
+
+.. code-block:: bash
+
+    $ pip install git+https://github.com/LPgenerator/django-db-mailer.git@development
 
 
 Usage examples
@@ -300,7 +310,14 @@ Screenshots
 .. image:: /screenshots/tracking_edit.jpg
 
 
-Compatibility:
+Compatibility
 -------------
+
 * Python: 2.6, 2.7
 * Django: 1.4, 1.5, 1.6, 1.7
+
+
+Contributing
+------------
+
+Please use development branch before adding code modifications.
