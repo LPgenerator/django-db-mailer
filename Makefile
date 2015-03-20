@@ -64,6 +64,18 @@ shell:
 run-redis:
 	@redis-server >& /dev/null &
 
+.PHONY: test
+# target: test - Run tests
+test:
+	@cd demo && ./manage.py test dbmail
+
+.PHONY: coverage
+# target: coverage - Run tests with coverage
+coverage:
+	@cd demo && \
+	coverage run --branch --source=dbmail ./manage.py test dbmail && \
+	coverage report --omit="*/dbmail/test*,*/dbmail/migrations/*,*/dbmail/south_migrations/*,*/dbmail/admin*"
+
 .PHONY: help
 # target: help - Display callable targets
 help:

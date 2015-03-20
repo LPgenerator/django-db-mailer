@@ -1,6 +1,7 @@
 # Django settings for demo project.
 
 import os
+import sys
 import django
 
 PROJECT_ROOT = os.path.normpath(os.path.dirname(__file__))
@@ -77,28 +78,36 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates'),
 )
 
-INSTALLED_APPS = [
+INSTALLED_APPS = []
+
+if 'test' not in sys.argv:
+    INSTALLED_APPS += [
+        'grappelli',
+    ]
+
+INSTALLED_APPS += [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'grappelli',
     'django.contrib.admin',
-    'django_extensions',
-    'rosetta',
-    'south',
-
-    'admin_jqueryui',
-    'reversion',
-    'reversion_compare',
-    'djcelery',
-    'tinymce',
 
     'dbmail',
 ]
 
+if 'test' not in sys.argv:
+    INSTALLED_APPS += [
+        'django_extensions',
+        'admin_jqueryui',
+        'reversion',
+        'reversion_compare',
+        'djcelery',
+        'tinymce',
+        'rosetta',
+        'south',
+    ]
 
 if django.VERSION >= (1, 7):
     DJ17_NOT_SUPPORTED_APPS = [
@@ -176,6 +185,14 @@ CACHES = {
     }
 }
 
+if 'test' is sys.argv:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': '/tmp/django_cache',
+        }
+    }
+
 # DbMail settings
 AUTH_USER_MODEL = 'auth.User'
 DB_MAILER_SHOW_CONTEXT = True
@@ -196,6 +213,9 @@ INSTALLED_APPS = ['modeltranslation'] + INSTALLED_APPS
 GEOIP_PATH = '/usr/share/GeoIP/'
 
 ############################################################
+
+if django.VERSION[:2] < (1, 6):
+    TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 try:
     from local_settings import *

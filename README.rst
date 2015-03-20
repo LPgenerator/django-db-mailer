@@ -1,6 +1,9 @@
 Django-Db-Mailer
 ----------------
 
+.. image:: https://api.travis-ci.org/LPgenerator/django-db-mailer.png?branch=development
+    :alt: Build Status
+    :target: https://travis-ci.org/LPgenerator/django-db-mailer
 .. image:: https://pypip.in/v/django-db-mailer/badge.png
     :alt: Current version on PyPi
     :target: https://crate.io/packages/django-db-mailer/
@@ -23,8 +26,8 @@ What's that
 | That app very simple to install and use on your projects.
 
 
-Installation:
--------------
+Installation
+------------
 
 1. Using pip:
 
@@ -36,6 +39,16 @@ Installation:
 3. Sync database (``./manage.py syncdb`` or ``./manage.py migrate``).
 
 **Important:** South 1.0 or greater is required to run migrations.
+
+
+Development installation
+------------------------
+
+1. Using pip:
+
+.. code-block:: bash
+
+    $ pip install git+https://github.com/LPgenerator/django-db-mailer.git@development
 
 
 Usage examples
@@ -297,7 +310,14 @@ Screenshots
 .. image:: /screenshots/tracking_edit.jpg
 
 
-Compatibility:
+Compatibility
 -------------
+
 * Python: 2.6, 2.7
 * Django: 1.4, 1.5, 1.6, 1.7
+
+
+Contributing
+------------
+
+Please use development branch before adding code modifications.
