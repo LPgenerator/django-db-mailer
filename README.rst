@@ -374,7 +374,7 @@ External API usage
     $ http -f POST http://127.0.0.1:8000/dbmail/api/ api_key=ZzriUzE slug=welcome recipient=root@local.host data='{"name": "Ivan", "age": 20}'
         or
     $ apt-get install curl || brew install curl
-    $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host'
+    $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host&backend=mail'
 
 
 Publications
@@ -405,4 +405,4 @@ Screenshots
 Compatibility:
 -------------
 * Python: 2.6, 2.7
-* Django: 1.4, 1.5, 1.6, 1.7
+* Django: 1.4, 1.5, 1.6, 1.7, 1.8

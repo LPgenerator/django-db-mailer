@@ -58,14 +58,17 @@ Get Started!
 Ready to contribute? Here's how to set up `django-db-mailer` for local development.
 
 1. Fork the `django-db-mailer` repo on GitHub.
-2. Clone your fork locally::
+2. Clone your fork locally and switch to development branch::
 
     $ git clone git@github.com:LPgenerator/django-db-mailer.git
+    $ cd django-db-mailer/
+    $ git fetch --all
+    $ git checkout development
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
     $ mkvirtualenv django-db-mailer
-    $ cd django-db-mailer/
+    $ workon django-db-mailer
     $ python setup.py develop
 
 4. Create a branch for local development::
