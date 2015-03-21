@@ -150,8 +150,8 @@ Sms API
 
 
 
-Tts API
--------
+Text to speech API
+------------------
 
 .. code-block:: python
 
@@ -199,8 +199,8 @@ Tts API
 *Text to speech supported by default provider. But maybe not supported by your provider.*
 
 
-Push API
---------
+Push notification API
+---------------------
 
 .. code-block:: python
 
