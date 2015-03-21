@@ -32,6 +32,7 @@ class Sender(object):
         self._user = kwargs.pop('user', None)
         self._language = kwargs.pop('language', None)
         self._backend = kwargs.pop('backend')
+        self._provider = kwargs.pop('provider', None)
 
         self._template = self._get_template()
         self._context = self._get_context(args)
@@ -214,7 +215,7 @@ class Sender(object):
                     self._recipient_list, self._cc, self._bcc,
                     is_sent, self._template, self._user,
                     self._num, self._err_msg, self._err_exc,
-                    self._log_id, self._backend
+                    self._log_id, self._backend, self._provider
                 )
 
     def _try_to_send(self):

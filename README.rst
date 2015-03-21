@@ -41,8 +41,8 @@ Installation
 **Important:** South 1.0 or greater is required to run migrations.
 
 
-Usage examples
---------------
+MAIL API
+--------
 
 .. code-block:: python
 
@@ -131,6 +131,7 @@ SMS API
 
         # Optional kwargs:
         # backend='dbmail.backends.sms',
+        # provider='dbmail.providers.nexmo.sms',
         # from_email='DBMail'
         # user=User.objects.get(pk=1),
         #
@@ -177,6 +178,7 @@ TTS API
 
         # Optional kwargs:
         # backend='dbmail.backends.tts',
+        # provider='dbmail.providers.nexmo.tts',
         # from_email='DBMail'
         # user=User.objects.get(pk=1),
         #
@@ -225,6 +227,7 @@ PUSH API
 
         # Optional kwargs:
         # backend='dbmail.backends.push',
+        # provider='dbmail.providers.prowl.push',
         # event='Server is down!',
         # from_email='ConsoleApp'
         # user=User.objects.get(pk=1),

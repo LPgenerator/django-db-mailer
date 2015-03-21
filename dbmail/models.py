@@ -302,6 +302,9 @@ class MailLog(models.Model):
     backend = models.CharField(
         _('Backend'), max_length=25, editable=False, db_index=True,
         choices=BACKEND.items(), default='mail')
+    provider = models.CharField(
+        _('Provider'), max_length=250, editable=False, db_index=True,
+        default=None, null=True, blank=True)
 
     @staticmethod
     def store_email_log(log, email_list, mail_type):
@@ -313,14 +316,15 @@ class MailLog(models.Model):
 
     @classmethod
     def store(cls, to, cc, bcc, is_sent, template,
-              user, num, msg='', ex=None, log_id=None, backend=None):
+              user, num, msg='', ex=None, log_id=None,
+              backend=None, provider=None):
         if ex is not None:
             ex = MailLogException.objects.get_or_create(name=ex)[0]
 
         log = cls.objects.create(
             template=template, is_sent=is_sent, user=user,
             log_id=log_id, num_of_retries=num, error_message=msg,
-            error_exception=ex, backend=_BACKEND[backend]
+            error_exception=ex, backend=_BACKEND[backend], provider=provider
         )
         cls.store_email_log(log, to, 'to')
         cls.store_email_log(log, cc, 'cc')
