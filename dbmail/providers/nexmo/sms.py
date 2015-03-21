@@ -35,3 +35,6 @@ def send(sms_to, sms_body, **kwargs):
     response = messages.get('messages')
     if response and response[0].get('error-text'):
         raise NexmoSmsError(messages['messages'][0]['error-text'])
+    elif 'status' in messages and messages.get('status') != '0':
+        raise NexmoSmsError(messages.get('error-text'))
+    return messages

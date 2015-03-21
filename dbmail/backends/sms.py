@@ -31,6 +31,7 @@ class Sender(SenderBase):
         message = strip_tags(self._message)
         for phone in self._recipient_list:
             if self._from_email:
-                module.send(phone, message, sms_from=self._from_email)
+                module.send(
+                    phone, message, sms_from=self._from_email, **self._kwargs)
             else:
-                module.send(phone, message)
+                module.send(phone, message, **self._kwargs)
