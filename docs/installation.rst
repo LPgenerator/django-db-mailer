@@ -4,7 +4,7 @@ Installation
 Compatibility
 -------------
 * Python: 2.6, 2.7
-* Django: 1.4, 1.5, 1.6, 1.7
+* Django: 1.4, 1.5, 1.6, 1.7, 1.8
 
 
 Installation

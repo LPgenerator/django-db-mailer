@@ -26,8 +26,8 @@ What's that
 | That app very simple to install and use on your projects.
 
 
-Installation:
--------------
+Installation
+------------
 
 1. Using pip:
 
@@ -196,11 +196,56 @@ TTS API
 *Text to speech supported by default provider. But maybe not supported by your provider.*
 
 
+PUSH API
+--------
+
+.. code-block:: python
+
+    from dbmail import send_db_push
+
+
+    send_db_push(
+        # slug which defined on db template
+        slug='welcome',
+
+        # recipient can be list, or str separated with comma or simple string
+        # '+34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a' or '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a, 34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b' or
+        # ['34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a', '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b'] or string Mail group slug
+        recipient='34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8c',
+
+        # All *args params will be accessible on template context
+        {
+            'username': request.user.username,
+            'full_name': request.user.get_full_name(),
+            'signup_date': request.user.date_joined
+        },
+
+        # You can access to all model fields. For m2m and fk fields, you should use module_name
+        MyModel.objects.get(pk=1),
+
+        # Optional kwargs:
+        # backend='dbmail.backends.push',
+        # event='Server is down!',
+        # from_email='ConsoleApp'
+        # user=User.objects.get(pk=1),
+        #
+        # language='ru',
+        #
+        # queue='default',
+        # retry_delay=300,
+        # max_retries=3,
+        # retry=True,
+        # time_limit=30,
+        # send_after=60,
+        #
+        # use_celery=True,
+    )
+
+
 DBMail Backends
 ---------------
-By default ``django-dbmail`` used 3 built-in backends (Mail/Sms/Tts).
+By default ``django-dbmail`` used 4 built-in backends (Mail/Sms/Tts/Push).
 But nothing prevents to write your own backend to work with all that you want.
-
 
 
 Local demo installation
@@ -402,7 +447,7 @@ Screenshots
 .. image:: /screenshots/tracking_edit.jpg
 
 
-Compatibility:
+Compatibility
 -------------
 * Python: 2.6, 2.7
 * Django: 1.4, 1.5, 1.6, 1.7, 1.8

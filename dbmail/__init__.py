@@ -89,6 +89,13 @@ def send_db_tts(*args, **kwargs):
     return db_sender(*args, **kwargs)
 
 
+def send_db_push(*args, **kwargs):
+    from dbmail.defaults import BACKEND
+
+    kwargs['backend'] = kwargs.pop('backend', BACKEND['push'])
+    return db_sender(*args, **kwargs)
+
+
 def initial_signals():
     from django.db.utils import DatabaseError, IntegrityError
 

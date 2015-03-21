@@ -152,3 +152,13 @@ App settings
 
     # Default SMS from
     DB_MAILER_DEFAULT_SMS_FROM = None
+
+    # Default Push notification from
+    DB_MAILER_DEFAULT_PUSH_FROM
+
+    # Prowl provider settings
+    PROWL_APP = 'DBMail'
+
+    # Parse.com provider settings
+    PARSE_APP_ID = ""
+    PARSE_API_KEY = ""

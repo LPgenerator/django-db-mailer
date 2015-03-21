@@ -24,6 +24,7 @@ UPLOAD_TO = get_settings('DB_MAILER_UPLOAD_TO', 'mail_files')
 DEFAULT_CATEGORY = get_settings('DB_MAILER_DEFAULT_CATEGORY', None)
 DEFAULT_FROM_EMAIL = get_settings('DB_MAILER_DEFAULT_FROM_EMAIL', None)
 DEFAULT_SMS_FROM = get_settings('DB_MAILER_DEFAULT_SMS_FROM', None)
+DEFAULT_PUSH_FROM = get_settings('DB_MAILER_DEFAULT_PUSH_FROM', None)
 DEFAULT_PRIORITY = get_settings('DB_MAILER_DEFAULT_PRIORITY', 6)
 TEMPLATES_PER_PAGE = get_settings('DB_MAILER_TEMPLATES_PER_PAGE', 20)
 SEND_RETRY = get_settings('DB_MAILER_SEND_RETRY', 3)
@@ -78,6 +79,7 @@ BACKEND = get_settings('DB_MAILER_BACKEND', {
     'mail': 'dbmail.backends.mail',
     'tts': 'dbmail.backends.tts',
     'sms': 'dbmail.backends.sms',
+    'push': 'dbmail.backends.push',
 })
 _BACKEND = dict([(v, k) for k, v in BACKEND.items()])
 
@@ -85,3 +87,5 @@ SMS_PROVIDER = get_settings(
     'DB_MAILER_SMS_PROVIDER', 'dbmail.providers.nexmo.sms')
 TTS_PROVIDER = get_settings(
     'DB_MAILER_TTS_PROVIDER', 'dbmail.providers.nexmo.tts')
+PUSH_PROVIDER = get_settings(
+    'DB_MAILER_PUSH_PROVIDER', 'dbmail.providers.prowl.push')

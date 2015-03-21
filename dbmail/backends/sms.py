@@ -10,13 +10,14 @@ from dbmail.backends.mail import Sender as SenderBase
 
 class Sender(SenderBase):
     provider = SMS_PROVIDER
+    default_from = DEFAULT_SMS_FROM
 
     def _get_from_email(self):
         if self._kwargs.get('from_email'):
             return self._kwargs.pop('from_email', None)
         elif not self._template.from_email:
-            if DEFAULT_SMS_FROM:
-                return DEFAULT_SMS_FROM
+            if self.default_from:
+                return self.default_from
             else:
                 return settings.DEFAULT_FROM_EMAIL.split('<')[0].strip()
         return self._template.from_email.email
