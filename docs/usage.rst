@@ -200,6 +200,13 @@ And send email from bash using ``curl``:
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host'
 
 
+or sms:
+
+.. code-block:: bash
+
+curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=%2B79031234567&backend=sms'
+
+
 DB template
 -----------
 Simple example to create template from the shell:

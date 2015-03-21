@@ -11,9 +11,11 @@ from dbmail.models import ApiKey
 from dbmail import send_db_mail
 from dbmail import defaults
 
+
 allowed_fields = [
-    'api_key', 'slug', 'recipient', 'from_email', 'cc', 'bcc', 'queue',
-    'retry_delay', 'max_retries', 'retry', 'time_limit', 'send_after',
+    'api_key', 'slug', 'recipient', 'from_email', 'cc', 'bcc',
+    'queue', 'retry_delay', 'max_retries', 'retry',
+    'time_limit', 'send_after', 'backend'
 ]
 
 
@@ -25,6 +27,7 @@ def send_by_dbmail(request):
             if request.POST.get(f):
                 kwargs[f] = request.POST.get(f)
 
+        backend = defaults.BACKEND.get(kwargs.pop('backend', 'mail'))
         api_key = kwargs.get('api_key')
         if api_key:
             del kwargs['api_key']
@@ -38,6 +41,9 @@ def send_by_dbmail(request):
                 args = [json.loads(request.POST['data'])]
 
             if kwargs.get('slug') and kwargs.get('recipient'):
+                if backend is not None:
+                    kwargs['backend'] = backend
+
                 send_db_mail(
                     kwargs.pop('slug'), kwargs.pop('recipient'),
                     *args, **kwargs)
