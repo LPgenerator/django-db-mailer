@@ -7,21 +7,21 @@ from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME
 from dbmail.utils import get_ip
 
 
-@task(name='dbmail.send_db_mail', default_retry_delay=SEND_RETRY_DELAY)
-def send_db_mail(*args, **kwargs):
+@task(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY)
+def db_sender(*args, **kwargs):
     from django.utils.importlib import import_module
 
     retry_delay = kwargs.pop('retry_delay', SEND_RETRY_DELAY)
     time_limit = kwargs.pop('time_limit', SEND_MAX_TIME)
     max_retries = kwargs.pop('max_retries', SEND_RETRY)
-    backend = import_module(kwargs.pop('backend'))
+    backend = import_module(kwargs.get('backend'))
     retry = kwargs.pop('retry', True)
 
     try:
-        return backend.SendMail(*args, **kwargs).send(is_celery=True)
+        return backend.Sender(*args, **kwargs).send(is_celery=True)
     except Exception, exc:
         if retry is True and max_retries:
-            raise send_db_mail.retry(
+            raise db_sender.retry(
                 retry=retry, max_retries=max_retries,
                 countdown=retry_delay, exc=exc,
                 time_limit=time_limit,

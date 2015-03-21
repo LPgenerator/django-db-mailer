@@ -16,7 +16,7 @@ from django import VERSION
 
 from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
-    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL)
+    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL, BACKEND, _BACKEND)
 
 from dbmail.utils import premailer_transform
 from dbmail.fields import HTMLField
@@ -299,6 +299,9 @@ class MailLog(models.Model):
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
     log_id = models.CharField(max_length=60, editable=False, db_index=True)
+    backend = models.CharField(
+        _('Backend'), max_length=25, editable=False, db_index=True,
+        choices=BACKEND.items(), default='mail')
 
     @staticmethod
     def store_email_log(log, email_list, mail_type):
@@ -310,13 +313,14 @@ class MailLog(models.Model):
 
     @classmethod
     def store(cls, to, cc, bcc, is_sent, template,
-              user, num, msg='', ex=None, log_id=None):
+              user, num, msg='', ex=None, log_id=None, backend=None):
         if ex is not None:
             ex = MailLogException.objects.get_or_create(name=ex)[0]
 
         log = cls.objects.create(
-            template=template, is_sent=is_sent, user=user, log_id=log_id,
-            num_of_retries=num, error_message=msg, error_exception=ex,
+            template=template, is_sent=is_sent, user=user,
+            log_id=log_id, num_of_retries=num, error_message=msg,
+            error_exception=ex, backend=_BACKEND[backend]
         )
         cls.store_email_log(log, to, 'to')
         cls.store_email_log(log, cc, 'cc')

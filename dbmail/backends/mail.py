@@ -22,7 +22,7 @@ from dbmail import get_version
 from dbmail import defaults
 
 
-class SendMail(object):
+class Sender(object):
     def __init__(self, slug, recipient, *args, **kwargs):
         self._slug = slug
 
@@ -31,6 +31,7 @@ class SendMail(object):
         self._bcc = self._email_to_list(kwargs.pop('bcc', None))
         self._user = kwargs.pop('user', None)
         self._language = kwargs.pop('language', None)
+        self._backend = kwargs.pop('backend')
 
         self._template = self._get_template()
         self._context = self._get_context(args)
@@ -212,7 +213,8 @@ class SendMail(object):
                 MailLog.store(
                     self._recipient_list, self._cc, self._bcc,
                     is_sent, self._template, self._user,
-                    self._num, self._err_msg, self._err_exc, self._log_id
+                    self._num, self._err_msg, self._err_exc,
+                    self._log_id, self._backend
                 )
 
     def _try_to_send(self):

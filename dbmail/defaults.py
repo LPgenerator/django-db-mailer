@@ -79,6 +79,7 @@ BACKEND = get_settings('DB_MAILER_BACKEND', {
     'tts': 'dbmail.backends.tts',
     'sms': 'dbmail.backends.sms',
 })
+_BACKEND = dict([(v, k) for k, v in BACKEND.items()])
 
 SMS_PROVIDER = get_settings(
     'DB_MAILER_SMS_PROVIDER', 'dbmail.providers.nexmo.sms')

@@ -4,11 +4,11 @@ from django.utils.importlib import import_module
 from django.utils.html import strip_tags
 from django.conf import settings
 
-from dbmail.backends.mail import SendMail as SendMailBase
 from dbmail.defaults import SMS_PROVIDER, DEFAULT_SMS_FROM
+from dbmail.backends.mail import Sender as SenderBase
 
 
-class SendMail(SendMailBase):
+class Sender(SenderBase):
     provider = SMS_PROVIDER
 
     def _get_from_email(self):
