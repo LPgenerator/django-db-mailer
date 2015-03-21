@@ -8,6 +8,7 @@ import time
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.core.urlresolvers import reverse, NoReverseMatch
+from django.utils.importlib import import_module
 from django.contrib.sites.models import Site
 from django.template import Template, Context
 from django.core.mail import get_connection
@@ -203,10 +204,19 @@ class Sender(object):
                 data[f.name] = f.value_from_object(instance)
         return data
 
-    def _send(self):
+    def _send_by_custom_provider(self):
+        module = import_module(self._provider)
+        module.send(self)
+
+    def _send_by_native_provider(self):
         if self._template.is_html:
             return self._send_html_message()
         return self._send_plain_message()
+
+    def _send(self):
+        if self._provider is not None:
+            return self._send_by_custom_provider()
+        return self._send_by_native_provider()
 
     def _store_log(self, is_sent):
         if ENABLE_LOGGING is True:

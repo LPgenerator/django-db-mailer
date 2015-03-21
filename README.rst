@@ -41,7 +41,7 @@ Installation
 **Important:** South 1.0 or greater is required to run migrations.
 
 
-MAIL API
+Mail API
 --------
 
 .. code-block:: python
@@ -80,6 +80,7 @@ MAIL API
 
         # Optional kwargs:
         # backend='dbmail.backends.mail',
+        # provider='apps.utils.some.mail.provider',
         # from_email='from@example.com'
         # cc=['cc@example.com'],
         # bcc=['bcc@example.com'],
@@ -102,7 +103,7 @@ MAIL API
     )
 
 
-SMS API
+Sms API
 -------
 
 .. code-block:: python
@@ -149,7 +150,7 @@ SMS API
 
 
 
-TTS API
+Tts API
 -------
 
 .. code-block:: python
@@ -198,7 +199,7 @@ TTS API
 *Text to speech supported by default provider. But maybe not supported by your provider.*
 
 
-PUSH API
+Push API
 --------
 
 .. code-block:: python
