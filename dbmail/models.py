@@ -79,7 +79,7 @@ class MailFromEmail(models.Model):
     name = models.CharField(_('Name'), max_length=100)
     email = models.CharField(
         _('Email'), max_length=75, unique=True,
-        help_text=_('For sms/tts you must specify name or number'))
+        help_text=_('For sms/tts/push you must specify name or number'))
     credential = models.ForeignKey(
         MailFromEmailCredential, verbose_name=_('Auth credentials'),
         blank=True, null=True, default=None)
@@ -166,7 +166,7 @@ class MailTemplate(models.Model):
         _('Priority'), default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
     is_html = models.BooleanField(
         _('Is html'), default=True,
-        help_text=_('For sms/tts must be text not html'))
+        help_text=_('For sms/tts/push must be text not html'))
     is_admin = models.BooleanField(_('For admin'), default=False)
     is_active = models.BooleanField(_('Is active'), default=True)
     enable_log = models.BooleanField(_('Logging enabled'), default=True)
@@ -298,7 +298,8 @@ class MailLog(models.Model):
         MailLogException, null=True, blank=True, verbose_name=_('Exception'))
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
-    log_id = models.CharField(max_length=60, editable=False, db_index=True)
+    log_id = models.CharField(
+        _('Log ID'), max_length=60, editable=False, db_index=True)
     backend = models.CharField(
         _('Backend'), max_length=25, editable=False, db_index=True,
         choices=BACKEND.items(), default='mail')
@@ -345,7 +346,7 @@ class MailLog(models.Model):
 
 class MailLogEmail(models.Model):
     log = models.ForeignKey(MailLog)
-    email = models.CharField(max_length=75)
+    email = models.CharField(_('Recipient'), max_length=75)
     mail_type = models.CharField(_('Mail type'), choices=(
         ('cc', 'CC'),
         ('bcc', 'BCC'),

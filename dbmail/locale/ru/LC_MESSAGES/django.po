@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-12 13:09+0400\n"
-"PO-Revision-Date: 2014-12-09 19:41+0230\n"
+"PO-Revision-Date: 2015-03-21 23:34+0230\n"
 "Last-Translator:   <gotlium@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -106,7 +106,7 @@ msgstr "Email адреса"
 msgid "Context note"
 msgstr "Описание переменных"
 
-msgid "This is simple note field for context variables with description"
+msgid "This is simple note field for context variables with description."
 msgstr "Необязатаельное поле с переменными и их описанием"
 
 msgid "Mail file"
@@ -219,3 +219,28 @@ msgstr "Письмо отправлено."
 
 msgid "Update model state"
 msgstr "Обновить состояние модели"
+
+msgid "Backend"
+msgstr "Бекенд"
+
+msgid "Provider"
+msgstr "Провайдер"
+
+msgid "Log ID"
+msgstr "Идентификатор"
+
+msgid "Recipient"
+msgstr "Получатель"
+
+msgid "Mail Tracking"
+msgstr "Трекинг лог"
+
+msgid "Message from"
+msgstr "Отправитель"
+
+msgid "For sms/tts/push must be text not html"
+msgstr "Для уведомлений отличных от почтовых, тип должен не должен быть html"
+
+msgid "For sms/tts/push you must specify name or number"
+msgstr ""
+"Для Отправителей отличных от почтовых, необходимо указывать Имя или Номер"
