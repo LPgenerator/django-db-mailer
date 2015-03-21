@@ -8,14 +8,14 @@ from django.http import HttpResponse, Http404
 from django.core.cache import cache
 
 from dbmail.models import ApiKey
-from dbmail import send_db_mail
+from dbmail import db_sender
 from dbmail import defaults
 
 
 allowed_fields = [
     'api_key', 'slug', 'recipient', 'from_email', 'cc', 'bcc',
     'queue', 'retry_delay', 'max_retries', 'retry',
-    'time_limit', 'send_after', 'backend'
+    'time_limit', 'send_after', 'backend', 'provider',
 ]
 
 
@@ -44,7 +44,7 @@ def send_by_dbmail(request):
                 if backend is not None:
                     kwargs['backend'] = backend
 
-                send_db_mail(
+                db_sender(
                     kwargs.pop('slug'), kwargs.pop('recipient'),
                     *args, **kwargs)
                 return HttpResponse('OK')
