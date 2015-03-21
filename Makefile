@@ -23,7 +23,7 @@ clean-celery:
 .PHONY: pep8
 # target: pep8 - Check code for pep8 rules
 pep8:
-	@flake8 --exclude=migrations,south_migrations --ignore=F401 dbmail
+	@flake8 dbmail --ignore=E402,E731,F401,F401 --exclude=migrations,south_migrations
 
 .PHONY: release
 # target: release - Release app into PyPi
