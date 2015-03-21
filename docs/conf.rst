@@ -131,3 +131,24 @@ App settings
 
     # Html code for inject into message for tracking
     DB_MAILER_TRACK_HTML = '<table bgcolor="white"><tr><td><font size="-1" color="black"><img src="%(url)s" width="16" height="16" alt="" title="" border="0"></font></td></tr></table></center>'
+
+    # Default backend for sending mail/sms/tts. You can redefine standard backend for implement your custom logic.
+    DB_MAILER_BACKEND' = {
+        'mail': 'dbmail.backends.mail',
+        'tts': 'dbmail.backends.tts',
+        'sms': 'dbmail.backends.sms',
+    }
+
+    # Default providers for sms and text to speech. If you want use different providers, you can write simple function to do it. Look to examples at dbmail.providers.nexmo.sms.
+    DB_MAILER_SMS_PROVIDER = 'dbmail.providers.nexmo.sms'
+    DB_MAILER_TTS_PROVIDER = 'dbmail.providers.nexmo.tts'
+
+
+    # TTS and SMS provider settings
+    NEXMO_USERNAME = ''
+    NEXMO_PASSWORD = ''
+    NEXMO_FROM = 'DBMail'
+    NEXMO_LANG = 'en-us'
+
+    # Default SMS from
+    DB_MAILER_DEFAULT_SMS_FROM = None

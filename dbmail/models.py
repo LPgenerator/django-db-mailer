@@ -77,7 +77,9 @@ class MailFromEmailCredential(models.Model):
 
 class MailFromEmail(models.Model):
     name = models.CharField(_('Name'), max_length=100)
-    email = models.EmailField(_('Email'), unique=True)
+    email = models.CharField(
+        _('Email'), max_length=75, unique=True,
+        help_text=_('For sms/tts you must specify name or number'))
     credential = models.ForeignKey(
         MailFromEmailCredential, verbose_name=_('Auth credentials'),
         blank=True, null=True, default=None)
@@ -148,7 +150,7 @@ class MailTemplate(models.Model):
     subject = models.CharField(_('Subject'), max_length=100)
     from_email = models.ForeignKey(
         MailFromEmail, null=True, blank=True,
-        verbose_name=_('From email'), default=DEFAULT_FROM_EMAIL,
+        verbose_name=_('Message from'), default=DEFAULT_FROM_EMAIL,
         help_text=_('If not specified, then used default.'),
         on_delete=models.SET_NULL)
     bcc_email = models.ManyToManyField(
@@ -162,7 +164,9 @@ class MailTemplate(models.Model):
         _('Number of retries'), default=1)
     priority = models.SmallIntegerField(
         _('Priority'), default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
-    is_html = models.BooleanField(_('Is html'), default=True)
+    is_html = models.BooleanField(
+        _('Is html'), default=True,
+        help_text=_('For sms/tts must be text not html'))
     is_admin = models.BooleanField(_('For admin'), default=False)
     is_active = models.BooleanField(_('Is active'), default=True)
     enable_log = models.BooleanField(_('Logging enabled'), default=True)
@@ -174,7 +178,7 @@ class MailTemplate(models.Model):
     context_note = models.TextField(
         _('Context note'), null=True, blank=True,
         help_text=_(
-            'This is simple note field for context variables with description'
+            'This is simple note field for context variables with description.'
         )
     )
     interval = models.PositiveIntegerField(
@@ -333,7 +337,7 @@ class MailLog(models.Model):
 
 class MailLogEmail(models.Model):
     log = models.ForeignKey(MailLog)
-    email = models.EmailField()
+    email = models.CharField(max_length=75)
     mail_type = models.CharField(_('Mail type'), choices=(
         ('cc', 'CC'),
         ('bcc', 'BCC'),
@@ -389,7 +393,9 @@ class MailGroup(models.Model):
 
 class MailGroupEmail(models.Model):
     name = models.CharField(_('Username'), max_length=100)
-    email = models.EmailField(_('Email'))
+    email = models.CharField(
+        _('Email'), max_length=75,
+        help_text='For sms/tts you must specify number')
     group = models.ForeignKey(
         MailGroup, verbose_name=_('Group'), related_name='emails')
 

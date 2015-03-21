@@ -29,15 +29,17 @@ def celery_supported():
 
 
 def send_db_mail(slug, recipient, *args, **kwargs):
-    from dbmail.defaults import CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY
+    from django.utils.importlib import import_module
+    from dbmail.defaults import (
+        CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, BACKEND)
     from dbmail.models import MailTemplate
-    from dbmail.send_mail import SendMail
 
     args = (slug, recipient) + args
     send_after = kwargs.pop('send_after', None)
     send_at_date = kwargs.pop('send_at_date', None)
     _use_celery = kwargs.pop('use_celery', ENABLE_CELERY)
     use_celery = ENABLE_CELERY and _use_celery
+    backend = kwargs.pop('backend', BACKEND['mail'])
 
     if celery_supported() and use_celery is True:
         import tasks
@@ -47,6 +49,7 @@ def send_db_mail(slug, recipient, *args, **kwargs):
         send_after = send_after if send_after else template.interval
         if max_retries is None and template.num_of_retries:
             kwargs['max_retries'] = template.num_of_retries
+        kwargs['backend'] = backend
 
         options = {
             'args': args, 'kwargs': kwargs,
@@ -62,7 +65,22 @@ def send_db_mail(slug, recipient, *args, **kwargs):
         if template.is_active:
             return tasks.send_db_mail.apply_async(**options)
     else:
-        return SendMail(*args, **kwargs).send(is_celery=False)
+        module = import_module(backend)
+        return module.SendMail(*args, **kwargs).send(is_celery=False)
+
+
+def send_db_sms(*args, **kwargs):
+    from dbmail.defaults import BACKEND
+
+    kwargs['backend'] = kwargs.pop('backend', BACKEND['sms'])
+    return send_db_mail(*args, **kwargs)
+
+
+def send_db_tts(*args, **kwargs):
+    from dbmail.defaults import BACKEND
+
+    kwargs['backend'] = kwargs.pop('backend', BACKEND['tts'])
+    return send_db_mail(*args, **kwargs)
 
 
 def initial_signals():

@@ -23,6 +23,7 @@ READ_ONLY_ENABLED = get_settings('DB_MAILER_READ_ONLY_ENABLED', True)
 UPLOAD_TO = get_settings('DB_MAILER_UPLOAD_TO', 'mail_files')
 DEFAULT_CATEGORY = get_settings('DB_MAILER_DEFAULT_CATEGORY', None)
 DEFAULT_FROM_EMAIL = get_settings('DB_MAILER_DEFAULT_FROM_EMAIL', None)
+DEFAULT_SMS_FROM = get_settings('DB_MAILER_DEFAULT_SMS_FROM', None)
 DEFAULT_PRIORITY = get_settings('DB_MAILER_DEFAULT_PRIORITY', 6)
 TEMPLATES_PER_PAGE = get_settings('DB_MAILER_TEMPLATES_PER_PAGE', 20)
 SEND_RETRY = get_settings('DB_MAILER_SEND_RETRY', 3)
@@ -72,3 +73,14 @@ TRACK_HTML = get_settings(
     '<table bgcolor="white"><tr><td><font size="-1" color="black">'
     '<img src="%(url)s" width="16" height="16" alt="" title="" border="0">'
     '</font></td></tr></table></center>')
+
+BACKEND = get_settings('DB_MAILER_BACKEND', {
+    'mail': 'dbmail.backends.mail',
+    'tts': 'dbmail.backends.tts',
+    'sms': 'dbmail.backends.sms',
+})
+
+SMS_PROVIDER = get_settings(
+    'DB_MAILER_SMS_PROVIDER', 'dbmail.providers.nexmo.sms')
+TTS_PROVIDER = get_settings(
+    'DB_MAILER_TTS_PROVIDER', 'dbmail.providers.nexmo.tts')

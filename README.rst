@@ -79,6 +79,7 @@ Usage examples
         MyModel.objects.get(pk=1),
 
         # Optional kwargs:
+        # backend='dbmail.backends.mail',
         # from_email='from@example.com'
         # cc=['cc@example.com'],
         # bcc=['bcc@example.com'],
@@ -99,6 +100,107 @@ Usage examples
         #
         # use_celery=True,
     )
+
+
+SMS API
+-------
+
+.. code-block:: python
+
+    from dbmail import send_db_sms
+
+
+    send_db_sms(
+        # slug which defined on db template
+        slug='welcome',
+
+        # recipient can be list, or str separated with comma or simple string
+        # '+79031234567' or +79031234567, +79031234568, +79031234569' or
+        # ['+79031234567', '+79031234568'] or string Mail group slug
+        recipient='+79031234567',
+
+        # All *args params will be accessible on template context
+        {
+            'username': request.user.username,
+            'full_name': request.user.get_full_name(),
+            'signup_date': request.user.date_joined
+        },
+
+        # You can access to all model fields. For m2m and fk fields, you should use module_name
+        MyModel.objects.get(pk=1),
+
+        # Optional kwargs:
+        # backend='dbmail.backends.sms',
+        # from_email='DBMail'
+        # user=User.objects.get(pk=1),
+        #
+        # language='ru',
+        #
+        # queue='default',
+        # retry_delay=300,
+        # max_retries=3,
+        # retry=True,
+        # time_limit=30,
+        # send_after=60,
+        #
+        # use_celery=True,
+    )
+
+
+
+TTS API
+-------
+
+.. code-block:: python
+
+    from dbmail import send_db_tts
+
+
+    send_db_tts(
+        # slug which defined on db template
+        slug='welcome',
+
+        # recipient can be list, or str separated with comma or simple string
+        # '+79031234567' or +79031234567, +79031234568, +79031234569' or
+        # ['+79031234567', '+79031234568'] or string Mail group slug
+        recipient='+79031234567',
+
+        # All *args params will be accessible on template context
+        {
+            'username': request.user.username,
+            'full_name': request.user.get_full_name(),
+            'signup_date': request.user.date_joined
+        },
+
+        # You can access to all model fields. For m2m and fk fields, you should use module_name
+        MyModel.objects.get(pk=1),
+
+        # Optional kwargs:
+        # backend='dbmail.backends.tts',
+        # from_email='DBMail'
+        # user=User.objects.get(pk=1),
+        #
+        # language='ru',
+        #
+        # queue='default',
+        # retry_delay=300,
+        # max_retries=3,
+        # retry=True,
+        # time_limit=30,
+        # send_after=60,
+        #
+        # use_celery=True,
+    )
+
+
+*Text to speech supported by default provider. But maybe not supported by your provider.*
+
+
+DBMail Backends
+---------------
+By default ``django-dbmail`` used 3 built-in backends (Mail/Sms/Tts).
+But nothing prevents to write your own backend to work with all that you want.
+
 
 
 Local demo installation

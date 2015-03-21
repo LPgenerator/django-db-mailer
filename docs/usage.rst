@@ -76,6 +76,98 @@ Send mail API with comments for all available options:
 *For track information about read - add dbmail into urls.*
 
 
+SMS API
+-------
+
+.. code-block:: python
+
+    from dbmail import send_db_sms
+
+
+    send_db_sms(
+        # slug which defined on db template
+        slug='welcome',
+
+        # recipient can be list, or str separated with comma or simple string
+        # '+79031234567' or +79031234567, +79031234568, +79031234569' or
+        # ['+79031234567', '+79031234568'] or string Mail group slug
+        recipient='+79031234567',
+
+        # All *args params will be accessible on template context
+        {
+            'username': request.user.username,
+            'full_name': request.user.get_full_name(),
+            'signup_date': request.user.date_joined
+        },
+
+        # You can access to all model fields. For m2m and fk fields, you should use module_name
+        MyModel.objects.get(pk=1),
+
+        # Optional kwargs:
+        # from_email='DBMail'
+        # user=User.objects.get(pk=1),
+        #
+        # language='ru',
+        #
+        # queue='default',
+        # retry_delay=300,
+        # max_retries=3,
+        # retry=True,
+        # time_limit=30,
+        # send_after=60,
+        #
+        # use_celery=True,
+    )
+
+
+
+TTS API
+-------
+
+.. code-block:: python
+
+    from dbmail import send_db_tts
+
+
+    send_db_tts(
+        # slug which defined on db template
+        slug='welcome',
+
+        # recipient can be list, or str separated with comma or simple string
+        # '+79031234567' or +79031234567, +79031234568, +79031234569' or
+        # ['+79031234567', '+79031234568'] or string Mail group slug
+        recipient='+79031234567',
+
+        # All *args params will be accessible on template context
+        {
+            'username': request.user.username,
+            'full_name': request.user.get_full_name(),
+            'signup_date': request.user.date_joined
+        },
+
+        # You can access to all model fields. For m2m and fk fields, you should use module_name
+        MyModel.objects.get(pk=1),
+
+        # Optional kwargs:
+        # from_email='DBMail'
+        # user=User.objects.get(pk=1),
+        #
+        # language='ru',
+        #
+        # queue='default',
+        # retry_delay=300,
+        # max_retries=3,
+        # retry=True,
+        # time_limit=30,
+        # send_after=60,
+        #
+        # use_celery=True,
+    )
+
+
+*Text to speech supported by default provider. But maybe not supported by your provider.*
+
+
 Web API
 -------
 You can use this app with different languages. For example on mobile apps,
