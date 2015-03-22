@@ -14,7 +14,8 @@ class BoxcarError(Exception):
 def send(token, title, **kwargs):
     """
     Site: https://boxcar.io/
-    API: http://help.boxcar.io/knowledgebase/articles/306788-how-to-send-a-notification-to-boxcar-users
+    API: http://help.boxcar.io/knowledgebase/
+            articles/306788-how-to-send-a-notification-to-boxcar-users
     Desc: Best app for system administrators
     """
     headers = {
