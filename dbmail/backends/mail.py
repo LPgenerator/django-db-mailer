@@ -12,13 +12,13 @@ from django.utils.importlib import import_module
 from django.contrib.sites.models import Site
 from django.template import Template, Context
 from django.core.mail import get_connection
-from django.utils.html import strip_tags
 from django.utils import translation
 from django.conf import settings
 from django.core import signing
 
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
+from dbmail.utils import clean_html
 from dbmail import get_version
 from dbmail import defaults
 
@@ -132,7 +132,7 @@ class Sender(object):
 
     def _send_html_message(self):
         msg = EmailMultiAlternatives(
-            self._subject, strip_tags(self._message), cc=self._cc,
+            self._subject, clean_html(self._message), cc=self._cc,
             from_email=self._from_email, to=self._recipient_list,
             bcc=self._bcc, connection=self._get_connection(), **self._kwargs
         )

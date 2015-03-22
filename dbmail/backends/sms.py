@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 
 from django.utils.importlib import import_module
-from django.utils.html import strip_tags
 from django.conf import settings
 
 from dbmail.defaults import SMS_PROVIDER, DEFAULT_SMS_FROM
 from dbmail.backends.mail import Sender as SenderBase
+from dbmail.utils import clean_html
 
 
 class Sender(SenderBase):
@@ -30,7 +30,7 @@ class Sender(SenderBase):
     def _send(self):
         self._provider = self._provider or self.provider
         module = import_module(self._provider)
-        message = strip_tags(self._message)
+        message = clean_html(self._message)
         for phone in self._recipient_list:
             if self._from_email:
                 module.send(

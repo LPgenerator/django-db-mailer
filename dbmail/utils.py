@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+from django.utils.importlib import import_module
+from django.utils.html import strip_tags
+
 
 def premailer_transform(text):
     try:
@@ -22,3 +25,19 @@ def get_ip(request):
         pass
 
     return request.META['REMOTE_ADDR'].split(',')[-1].strip()
+
+
+def html2text(message):
+    try:
+        from html2text import html2text
+
+        return html2text(message)
+    except ImportError:
+        return strip_tags(message)
+
+
+def clean_html(message):
+    from dbmail.defaults import MESSAGE_HTML2TEXT
+
+    module = import_module(MESSAGE_HTML2TEXT)
+    return module.html2text(message)

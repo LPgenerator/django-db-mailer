@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 
 from django.utils.importlib import import_module
-from django.utils.html import strip_tags
 
 from dbmail.defaults import DEFAULT_PUSH_FROM, PUSH_PROVIDER
 from dbmail.backends.sms import Sender as SenderBase
+from dbmail.utils import clean_html
 
 
 class Sender(SenderBase):
@@ -21,7 +21,7 @@ class Sender(SenderBase):
     def _send(self):
         self._provider = self._provider or self.provider
         module = import_module(self._provider)
-        message = strip_tags(self._message)
+        message = clean_html(self._message)
         for phone in self._recipient_list:
             options = self._kwargs.copy()
             options['event'] = self._kwargs.pop('event', self._subject)

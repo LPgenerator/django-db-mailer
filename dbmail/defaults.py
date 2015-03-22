@@ -90,6 +90,9 @@ TTS_PROVIDER = get_settings(
 PUSH_PROVIDER = get_settings(
     'DB_MAILER_PUSH_PROVIDER', 'dbmail.providers.prowl.push')
 
+MESSAGE_HTML2TEXT = get_settings(
+    'DB_MAILER_MESSAGE_HTML2TEXT', 'dbmail.utils')
+
 IGNORE_BROWSE_APP = get_settings(
     'DB_MAILER_IGNORE_BROWSE_APP', [
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',

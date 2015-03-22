@@ -162,3 +162,12 @@ App settings
     # Parse.com provider settings
     PARSE_APP_ID = ""
     PARSE_API_KEY = ""
+
+    # Apps which will be ignored on model browser
+    DB_MAILER_IGNORE_BROWSE_APP = [
+        'south', 'dbmail', 'sessions', 'admin', 'djcelery',
+        'auth', 'reversion', 'contenttypes'
+    ]
+
+    # Function for transform html to text
+    DB_MAILER_MESSAGE_HTML2TEXT = 'dbmail.utils'
