@@ -11,6 +11,18 @@ class ProwlError(Exception):
     pass
 
 
+def from_unicode(text, text_length=None):
+    try:
+        text = text.encode('utf-8', 'ignore')
+    except UnicodeDecodeError:
+        pass
+
+    if text_length is not None:
+        text = text[0:text_length]
+
+    return text
+
+
 def send(api_key, description, **kwargs):
     """
     Site: http://prowlapp.com
@@ -22,10 +34,14 @@ def send(api_key, description, **kwargs):
         "Content-type": "application/x-www-form-urlencoded"
     }
 
+    application = from_unicode(kwargs.pop("app", settings.PROWL_APP), 256)
+    event = from_unicode(kwargs.pop("event", 'Alert'), 1024)
+    description = from_unicode(description, 10000)
+
     data = {
         "apikey": api_key,
-        "application": kwargs.pop("app", settings.PROWL_APP),
-        "event": kwargs.pop("event"),
+        "application": application,
+        "event": event,
         "description": description,
         "priority": kwargs.pop("priority", 1)
     }
