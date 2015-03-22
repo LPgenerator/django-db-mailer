@@ -89,3 +89,9 @@ TTS_PROVIDER = get_settings(
     'DB_MAILER_TTS_PROVIDER', 'dbmail.providers.nexmo.tts')
 PUSH_PROVIDER = get_settings(
     'DB_MAILER_PUSH_PROVIDER', 'dbmail.providers.prowl.push')
+
+IGNORE_BROWSE_APP = get_settings(
+    'DB_MAILER_IGNORE_BROWSE_APP', [
+        'south', 'dbmail', 'sessions', 'admin', 'djcelery',
+        'auth', 'reversion', 'contenttypes'
+    ])

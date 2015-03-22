@@ -104,6 +104,8 @@ class MailTemplateAdmin(ModelAdmin):
     def get_apps_view(self, request, pk):
         apps_list = {}
         for ct in ContentType.objects.all():
+            if ct.app_label in defaults.IGNORE_BROWSE_APP:
+                continue
             if ct.app_label not in apps_list:
                 apps_list[ct.app_label] = [ct]
             elif ct.model_class():
