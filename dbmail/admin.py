@@ -86,7 +86,8 @@ class MailTemplateAdmin(ModelAdmin):
         if request.user.email:
             send_test_msg(
                 pk, request.user.email, request.user,
-                use_celery=defaults.USE_CELERY_FOR_ADMIN_TEST)
+                use_celery=defaults.USE_CELERY_FOR_ADMIN_TEST,
+                backend=defaults.BACKEND['mail'])
             messages.success(request, _('Email was sent.'))
         else:
             messages.error(
