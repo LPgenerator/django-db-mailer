@@ -13,6 +13,13 @@ Django-Db-Mailer
 .. image:: https://readthedocs.org/projects/django-db-mailer/badge/?version=latest
     :target: http://django-db-mailer.readthedocs.org/
     :alt: Documentation Status
+.. image:: https://pypip.in/wheel/django-db-mailer/badge.png
+    :target: https://pypi.python.org/pypi/django-db-mailer/
+    :alt: Wheel
+.. image:: https://pypip.in/license/django-db-mailer/badge.png
+    :target: https://pypi.python.org/pypi/django-db-mailer/
+    :alt: License
+
 
 Documentation available at `Read the Docs <http://django-db-mailer.readthedocs.org/>`_.
 
