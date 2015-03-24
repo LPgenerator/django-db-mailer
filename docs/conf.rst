@@ -163,6 +163,10 @@ App settings
     PARSE_APP_ID = ""
     PARSE_API_KEY = ""
 
+    # Pushover.net provider settings
+    PUSHOVER_TOKEN = ""
+    PUSHOVER_APP = "DBMail"
+
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',
