@@ -273,6 +273,16 @@ Demo installation
     $ docker exec -i -t dbmail /bin/bash
     $ cd /mailer/
 
+**Vagrant**
+
+.. code-block:: bash
+
+    $ git clone --depth 1 https://github.com/LPgenerator/django-db-mailer.git db-mailer
+    $ cd db-mailer
+    $ vagrant up
+    $ vagrant ssh
+    $ cd /mailer/
+
 
 **OS X/Linux**
 
