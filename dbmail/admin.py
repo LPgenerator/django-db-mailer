@@ -68,6 +68,7 @@ class MailTemplateAdmin(ModelAdmin):
     date_hierarchy = 'created'
     list_per_page = defaults.TEMPLATES_PER_PAGE
     inlines = [MailTemplateFileAdmin]
+    prepopulated_fields = {'slug': ('name',)}
 
     class Media:
         try:
@@ -140,17 +141,15 @@ class MailTemplateAdmin(ModelAdmin):
         )
         return admin_urls + urls
 
-    def get_form(self, request, obj=None, **kwargs):
-        if obj is not None:
-            self.prepopulated_fields = {}
-            if defaults.READ_ONLY_ENABLED:
-                self.readonly_fields = ['slug', 'context_note']
-        else:
-            self.prepopulated_fields = {'slug': ('name',)}
-            self.readonly_fields = []
+    def get_readonly_fields(self, request, obj=None):
+        if obj is not None and defaults.READ_ONLY_ENABLED:
+            return ['slug', 'context_note']
+        return super(MailTemplateAdmin, self).get_readonly_fields(request, obj)
 
-        return super(MailTemplateAdmin, self).get_form(
-            request, obj, **kwargs)
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj is not None:
+            return {}
+        return super(MailTemplateAdmin, self).get_prepopulated_fields(request, obj)
 
 
 class MailLogEmailInline(admin.TabularInline):
@@ -212,12 +211,12 @@ class MailGroupAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if obj is not None and defaults.READ_ONLY_ENABLED:
             return ['slug']
-        return self.readonly_fields
+        return super(MailGroupAdmin, self).get_readonly_fields(request, obj)
 
     def get_prepopulated_fields(self, request, obj=None):
         if obj is not None:
             return {}
-        return self.prepopulated_fields
+        return super(MailGroupAdmin, self).get_prepopulated_fields(request, obj)
 
 
 class MailFromEmailAdmin(admin.ModelAdmin):
