@@ -1,4 +1,4 @@
-django==1.4.16
+django==1.4.20
 django-bootstrap-static==2.3.2
 django-debug-toolbar>=1.2.1
 django-extensions>=1.4.0
@@ -27,3 +27,5 @@ premailer>=2.7.0
 pytz>=2014.10
 
 -e git+https://github.com/hint/django-admin-jqueryui.git#egg=django-admin-jqueryui
+
+django-db-mailer

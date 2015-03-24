@@ -259,8 +259,23 @@ By default ``django-dbmail`` used 4 built-in backends (Mail/Sms/Tts/Push).
 But nothing prevents to write your own backend to work with all that you want.
 
 
-Local demo installation
------------------------
+Demo installation
+-----------------
+
+**Docker**
+
+.. code-block:: bash
+
+    $ git clone --depth 1 https://github.com/LPgenerator/django-db-mailer.git db-mailer
+    $ cd db-mailer
+    $ docker build -t dbmail .
+    $ docker run -it -d -p 8000:8000 --name dbmail dbmail
+    $ docker exec -i -t dbmail /bin/bash
+    $ cd /mailer/
+
+
+**OS X/Linux**
+
 
 .. code-block:: bash
 
@@ -276,6 +291,7 @@ Local demo installation
     $ python manage.py syncdb --noinput
     $ python manage.py migrate --noinput
     $ python manage.py createsuperuser --username admin --email admin@local.host
+    $ redis-server >& /dev/null &
     $ python manage.py runserver >& /dev/null &
     $ python manage.py celeryd -Q default >& /dev/null &
 
