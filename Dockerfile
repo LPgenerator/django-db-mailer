@@ -13,6 +13,6 @@ RUN python /mailer/manage.py syncdb --noinput
 RUN python /mailer/manage.py migrate --noinput
 RUN python /mailer/manage.py loaddata /mailer/auth.json
 
-CMD /bin/bash -c 'python manage.py celeryd -Q default >& /dev/null & redis-server >& /dev/null & python /mailer/manage.py runserver 0.0.0.0:8000'
+CMD /bin/bash -c 'python /mailer/manage.py celeryd -Q default >& /dev/null & redis-server >& /dev/null & python /mailer/manage.py runserver 0.0.0.0:8000'
 
 EXPOSE 8000
