@@ -149,7 +149,8 @@ class MailTemplateAdmin(ModelAdmin):
     def get_prepopulated_fields(self, request, obj=None):
         if obj is not None:
             return {}
-        return super(MailTemplateAdmin, self).get_prepopulated_fields(request, obj)
+        return super(MailTemplateAdmin, self).get_prepopulated_fields(
+            request, obj)
 
 
 class MailLogEmailInline(admin.TabularInline):
@@ -216,7 +217,8 @@ class MailGroupAdmin(admin.ModelAdmin):
     def get_prepopulated_fields(self, request, obj=None):
         if obj is not None:
             return {}
-        return super(MailGroupAdmin, self).get_prepopulated_fields(request, obj)
+        return super(MailGroupAdmin, self).get_prepopulated_fields(
+            request, obj)
 
 
 class MailFromEmailAdmin(admin.ModelAdmin):
