@@ -5,9 +5,9 @@ Credits
 Development Lead
 ----------------
 
-* GoTLiuM InSPiRiT <gotlium@gmail.com>
+* GoTLiuM InSPiRiT (`gotlium <https://github.com/gotlium>`_)
 
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Sergey Nikitin (`nikitinsm <https://github.com/nikitinsm>`_)
