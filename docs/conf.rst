@@ -167,6 +167,11 @@ App settings
     PUSHOVER_TOKEN = ""
     PUSHOVER_APP = "DBMail"
 
+    # PubNub.com provider settings
+    PUBNUB_PUB_KEY = ""
+    PUBNUB_SUB_KEY = ""
+    PUBNUB_SEC_KEY = ""
+
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',
