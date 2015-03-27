@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html data-ng-app>
+<head>
+    <title>Desktop Notifications</title>
+    <link rel="stylesheet" href="//ttsvetko.github.io/HTML5-Desktop-Notifications/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//ttsvetko.github.io/HTML5-Desktop-Notifications/css/style.css" />
+    <script src="//cdn.pubnub.com/pubnub-dev.js"></script>
+</head>
+<body data-ng-controller="NotifyDemo">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <a class="brand" href="#">Desktop Notifications Demo Page</a>
+        </div>
+    </div>
+
+    <div class="{{status}}" data-ng-hide="permissionsGranted" data-ng-bind-html-unsafe="message" data-ng-click="requestPermission()"></div>
+
+    <form name="notificationForm"">
+        <input type="text" data-ng-model="notification.title" data-ng-required="true" data-ng-disabled="!permissionsGranted" placeholder="Notification Title" />
+        <input type="text" data-ng-model="notification.body" data-ng-disabled="!permissionsGranted" placeholder="Notification body" />
+        <input type="text" data-ng-model="notification.icon" data-ng-disabled="true" placeholder="Icon" />
+        <button class="btn btn-primary" data-ng-disabled="!notification.title || !permissionsGranted" data-ng-click="showNotification()">Display Notification</button>
+    </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="//ttsvetko.github.io/HTML5-Desktop-Notifications/js/desktop-notify.js"></script>
+    <script src="//ttsvetko.github.io/HTML5-Desktop-Notifications/js/main.js"></script>
+
+    <script type="text/javascript">
+        var dbmail = PUBNUB.init({
+            publish_key: 'pub-c-bde5f28c-262b-4b13-a0f3-4f1221670d25',
+            subscribe_key: 'sub-c-ce14a1d4-d0db-11e4-9de3-02ee2ddab7fe'
+        });
+
+        dbmail.subscribe({
+            channel: 'dbmail',
+            message: function (m) {
+                notify.createNotification('Django DB Mailer', {
+                    body: m.text,
+                    icon: "http://ttsvetko.github.io/HTML5-Desktop-Notifications/images/chat.ico"
+                });
+            },
+            connect: publish
+        });
+
+        function publish() {
+            dbmail.publish({
+                channel: 'dbmail',
+                message: {"text": "Hello, World!"}
+            });
+        }
+        ;
+    </script>
+
+</body>
+</html>

@@ -11,6 +11,8 @@ urlpatterns = patterns(
     url(r'^rosetta/', include('rosetta.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^dbmail/', include('dbmail.urls')),
+
+    url('^browser_notification/$', "demo.views.browser_notification"),
 ) + staticfiles_urlpatterns()
 
 if VERSION < (1, 7):
