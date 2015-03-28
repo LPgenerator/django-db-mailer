@@ -1,0 +1,1 @@
+api_key=ZzriUzE&slug=welcome&recipient=root@local.host

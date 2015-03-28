@@ -22,7 +22,7 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 TIME_ZONE = 'Europe/Moscow'
 LANGUAGE_CODE = 'en-us'
@@ -119,7 +119,11 @@ if django.VERSION >= (1, 7):
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['console'],
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -130,14 +134,19 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            #'formatter': 'verbose'
         }
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
-        },
+        }
     }
 }
 
@@ -165,6 +174,8 @@ try:
     }
 
     CELERY_IGNORE_RESULT = True
+    CELERY_ACCEPT_CONTENT = ['pickle']
+    REDIS_CONNECT_RETRY = True
 except ImportError:
     pass
 

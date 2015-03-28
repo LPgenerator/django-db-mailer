@@ -259,6 +259,9 @@ or sms:
 curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=%2B79031234567&backend=sms'
 
 
+*API bandwidth is 1k+ rps on i7 2.3GHz*
+
+
 DB template
 -----------
 Simple example to create template from the shell:

@@ -49,10 +49,26 @@ run: kill_server
 
 run-server: run
 
+.PHONY: run-uwsgi-server
+# target: run-uwsgi-server - Run uWSGI server
+run-uwsgi-server:
+	@cd demo && uwsgi --http-socket 127.0.0.1:9000 --master --processes 8 \
+	--home ~/.virtualenvs/django-db-mailer --wsgi demo.wsgi \
+	--no-orphans --vacuum --http-keepalive \
+	--optimize 2 --buffer-size 65536 --post-buffering 32768 \
+	--cpu-affinity 1 --max-requests 10000 \
+	--limit-as 1024 --listen 1024 \
+	--enable-threads --threads 8 --thunder-lock --disable-logging
+
 .PHONY: run-celery
 # target: run-celery - Run celery daemon
 run-celery:
-	@cd demo && python manage.py celeryd --loglevel=info -Q default --maxtasksperchild=10000
+	@cd demo && python manage.py celeryd -E -Q default -l INFO -c 8 --traceback -v 3
+
+.PHONY: run-ab
+# target: run-ab - Run apache bench
+run-ab:
+	@ab -k -t 10 -p demo/api.data.txt -c 100 -n 1000 http://127.0.0.1:9000/dbmail/api/
 
 .PHONY: shell
 # target: shell - Run project shell

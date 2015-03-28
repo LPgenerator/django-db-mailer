@@ -458,6 +458,8 @@ External API usage
     $ apt-get install curl || brew install curl
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host&backend=mail'
 
+*API bandwidth is 1k+ rps on i7 2.3GHz*
+
 
 Publications
 ------------
