@@ -19,7 +19,7 @@ class SignalReceiver(object):
     def __init__(self, sender, **kwargs):
         self.sender = sender
         self.kwargs = kwargs
-        self._kwargs = kwargs
+        self._kwargs = kwargs.copy()
         self.site = Site.objects.get_current()
         self.instance = kwargs.get('instance')
         self.pk = self.instance and self.instance.pk or None
@@ -43,6 +43,7 @@ class SignalReceiver(object):
             return self.signal.group.slug
 
         email_list = Template(self.signal.rules).render(Context(self.kwargs))
+        self.kwargs.pop('users', None)
         return email_list.strip().replace('\r', '').replace('\n', '')
 
     def get_interval(self):
@@ -80,11 +81,14 @@ class SignalReceiver(object):
 
         email_list = self.get_email_list()
         if email_list and not self.signal.is_sent(self.pk):
-            send_db_mail(
-                self.signal.template.slug, email_list, self.site,
-                self.kwargs, self.instance, queue=SIGNALS_MAIL_QUEUE,
-                **self.get_interval()
-            )
+            for email in email_list.split(","):
+                email = email.strip()
+                if email:
+                    send_db_mail(
+                        self.signal.template.slug, email, self.site,
+                        self.kwargs, self.instance, queue=SIGNALS_MAIL_QUEUE,
+                        **self.get_interval()
+                    )
             self.signal.mark_as_sent(self.pk)
 
     def _dispatch_deferred_task(self):
