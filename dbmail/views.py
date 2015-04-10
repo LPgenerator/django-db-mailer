@@ -64,5 +64,5 @@ def mail_read_tracker(request, encrypted):
 
     return HttpResponse(
         content=defaults.TRACK_PIXEL[1],
-        mimetype=defaults.TRACK_PIXEL[0],
+        content_type=defaults.TRACK_PIXEL[0],
     )
