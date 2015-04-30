@@ -233,8 +233,8 @@ class Sender(object):
             try:
                 self._send()
                 break
-            except Exception, msg:
-                print '[dbmail]', msg.__unicode__()
+            except Exception as exc:
+                print('[dbmail] %s' % exc)
                 if self._template.num_of_retries == self._num:
                     raise
                 time.sleep(defaults.SEND_RETRY_DELAY_DIRECT)

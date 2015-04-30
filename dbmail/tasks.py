@@ -19,7 +19,7 @@ def db_sender(*args, **kwargs):
 
     try:
         return backend.Sender(*args, **kwargs).send(is_celery=True)
-    except Exception, exc:
+    except Exception as exc:
         if retry is True and max_retries:
             raise db_sender.retry(
                 retry=retry, max_retries=max_retries,
@@ -71,7 +71,7 @@ def mail_track(http_meta, encrypted):
             track_log[0].save()
     except (signing.BadSignature, MailLog.DoesNotExist):
         pass
-    except Exception, exc:
+    except Exception as exc:
         raise mail_track.retry(
             retry=True, max_retries=SEND_RETRY,
             countdown=SEND_RETRY_DELAY, exc=exc,

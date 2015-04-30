@@ -117,7 +117,10 @@ class MailTemplateAdmin(ModelAdmin):
         fields = dict()
         if pk and get_model(app, model):
             for f in get_model(app, model)._meta.fields:
-                fields[f.name] = unicode(f.verbose_name)
+                try:
+                    fields[f.name] = unicode(f.verbose_name)
+                except NameError:
+                    fields[f.name] = f.verbose_name
         return render(request, 'dbmail/browse.html', {'fields_list': fields})
 
     def get_urls(self):
