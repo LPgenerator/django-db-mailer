@@ -69,6 +69,10 @@ def mail_track(http_meta, encrypted):
             )
         else:
             track_log[0].save()
-
     except (signing.BadSignature, MailLog.DoesNotExist):
         pass
+    except Exception, exc:
+        raise mail_track.retry(
+            retry=True, max_retries=SEND_RETRY,
+            countdown=SEND_RETRY_DELAY, exc=exc,
+        )
