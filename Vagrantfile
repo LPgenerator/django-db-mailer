@@ -3,7 +3,7 @@
 # Options {{{
 #
 APP_VM_NAME = "dbmail"
-APP_MEMORY = "512"
+APP_MEMORY = "1024"
 APP_CPUS = "2"
 #
 # }}}
