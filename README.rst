@@ -1,22 +1,22 @@
 Django-Db-Mailer
-----------------
+================
 
 .. image:: https://api.travis-ci.org/LPgenerator/django-db-mailer.png?branch=development
     :alt: Build Status
     :target: https://travis-ci.org/LPgenerator/django-db-mailer
-.. image:: https://pypip.in/v/django-db-mailer/badge.png
+.. image:: https://img.shields.io/badge/python-2.6,2.7,pypy-blue.svg
+    :alt: Python 2.6, 2.7, pypy
+    :target: https://pypi.python.org/pypi/django-db-mailer/
+.. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
     :target: https://crate.io/packages/django-db-mailer/
-.. image:: https://pypip.in/d/django-db-mailer/badge.png
+.. image:: https://img.shields.io/pypi/dm/django-db-mailer.svg
     :alt: Downloads from PyPi
     :target: https://crate.io/packages/django-db-mailer/
 .. image:: https://readthedocs.org/projects/django-db-mailer/badge/?version=latest
     :target: http://django-db-mailer.readthedocs.org/
     :alt: Documentation Status
-.. image:: https://pypip.in/wheel/django-db-mailer/badge.png
-    :target: https://pypi.python.org/pypi/django-db-mailer/
-    :alt: Wheel
-.. image:: https://pypip.in/license/django-db-mailer/badge.png
+.. image:: https://img.shields.io/badge/license-GPLv2-green.svg
     :target: https://pypi.python.org/pypi/django-db-mailer/
     :alt: License
 
