@@ -58,7 +58,7 @@ SIGNAL_DEFERRED_DISPATCHER = get_settings(
 SIGNAL_DB_DEFERRED_PURGE = get_settings(
     'DB_MAILER_SIGNAL_DB_DEFERRED_PURGE', True)
 
-TRACK_ENABLE = get_settings('DB_MAILER_TRACK_ENABLE', False)
+TRACK_ENABLE = get_settings('DB_MAILER_TRACK_ENABLE', True)
 TRACK_PIXEL = get_settings(
     'DB_MAILER_TRACK_PIXEL',
     [

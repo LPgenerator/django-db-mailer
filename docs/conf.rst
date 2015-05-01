@@ -118,7 +118,7 @@ App settings
     # If tracking is enabled, Logging must be enabled to.
     # DbMail urls must be configured.
     # Site framework must configured and installed.
-    DB_MAILER_TRACK_ENABLE = False
+    DB_MAILER_TRACK_ENABLE = True
 
     # Tracking image content and mime type
     DB_MAILER_TRACK_PIXEL = [

@@ -112,6 +112,8 @@ class Sender(object):
 
     def _get_msg_with_track(self):
         message = self._message
+        if defaults.TRACK_ENABLE is False:
+            return message
         if ENABLE_LOGGING and self._template.enable_log:
             try:
                 domain = Site.objects.get_current().domain
