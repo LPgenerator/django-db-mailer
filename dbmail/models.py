@@ -18,6 +18,7 @@ from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL, BACKEND, _BACKEND)
 
+from dbmail import python_2_unicode_compatible
 from dbmail.utils import premailer_transform
 from dbmail.fields import HTMLField
 from dbmail import initial_signals
@@ -30,12 +31,13 @@ def _upload_mail_file(instance, filename):
         return os.path.join(UPLOAD_TO, filename)
 
 
+@python_2_unicode_compatible
 class MailCategory(models.Model):
     name = models.CharField(_('Category'), max_length=25, unique=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -43,6 +45,7 @@ class MailCategory(models.Model):
         verbose_name_plural = _('Mail categories')
 
 
+@python_2_unicode_compatible
 class MailFromEmailCredential(models.Model):
     host = models.CharField(_('Host'), max_length=50)
     port = models.PositiveIntegerField(_('Port'))
@@ -67,7 +70,7 @@ class MailFromEmailCredential(models.Model):
         super(MailFromEmailCredential, self).save(*args, **kwargs)
         self._clean_cache()
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s/%s' % (self.username, self.host)
 
     class Meta:
@@ -75,6 +78,7 @@ class MailFromEmailCredential(models.Model):
         verbose_name_plural = _('Mail auth settings')
 
 
+@python_2_unicode_compatible
 class MailFromEmail(models.Model):
     name = models.CharField(_('Name'), max_length=100)
     email = models.CharField(
@@ -112,7 +116,7 @@ class MailFromEmail(models.Model):
         super(MailFromEmail, self).save(*args, **kwargs)
         self._clean_template_cache()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -120,6 +124,7 @@ class MailFromEmail(models.Model):
         verbose_name_plural = _('Mail from')
 
 
+@python_2_unicode_compatible
 class MailBcc(models.Model):
     email = models.EmailField(_('Email'), unique=True)
     is_active = models.BooleanField(_('Is active'), default=True)
@@ -137,7 +142,7 @@ class MailBcc(models.Model):
         self.__clean_cache()
         super(MailBcc, self).delete(using)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.email
 
     class Meta:
@@ -145,6 +150,7 @@ class MailBcc(models.Model):
         verbose_name_plural = _('Mail Bcc')
 
 
+@python_2_unicode_compatible
 class MailTemplate(models.Model):
     name = models.CharField(_('Template name'), max_length=100, db_index=True)
     subject = models.CharField(_('Subject'), max_length=100)
@@ -242,7 +248,7 @@ class MailTemplate(models.Model):
         self._clean_cache()
         super(MailTemplate, self).delete(using)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -250,6 +256,7 @@ class MailTemplate(models.Model):
         verbose_name_plural = _('Mail templates')
 
 
+@python_2_unicode_compatible
 class MailFile(models.Model):
     template = models.ForeignKey(
         MailTemplate, verbose_name=_('Template'), related_name='files')
@@ -267,7 +274,7 @@ class MailFile(models.Model):
         self._clean_cache()
         super(MailFile, self).delete(using)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -275,10 +282,11 @@ class MailFile(models.Model):
         verbose_name_plural = _('Mail files')
 
 
+@python_2_unicode_compatible
 class MailLogException(models.Model):
     name = models.CharField(_('Exception'), max_length=150, unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -286,6 +294,7 @@ class MailLogException(models.Model):
         verbose_name_plural = _('Mail Exception')
 
 
+@python_2_unicode_compatible
 class MailLog(models.Model):
     is_sent = models.BooleanField(_('Is sent'), default=True, db_index=True)
     template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
@@ -336,7 +345,7 @@ class MailLog(models.Model):
         date = now() - datetime.timedelta(days=days)
         cls.objects.filter(created__lte=date).delete()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.template.name
 
     class Meta:
@@ -344,6 +353,7 @@ class MailLog(models.Model):
         verbose_name_plural = _('Mail logs')
 
 
+@python_2_unicode_compatible
 class MailLogEmail(models.Model):
     log = models.ForeignKey(MailLog)
     email = models.CharField(_('Recipient'), max_length=75)
@@ -353,7 +363,7 @@ class MailLogEmail(models.Model):
         ('to', 'TO'),
     ), max_length=3)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.email
 
     class Meta:
@@ -361,6 +371,7 @@ class MailLogEmail(models.Model):
         verbose_name_plural = _('Mail log emails')
 
 
+@python_2_unicode_compatible
 class MailGroup(models.Model):
     name = models.CharField(_('Group name'), max_length=100)
     slug = models.SlugField(_('Slug'), unique=True)
@@ -392,7 +403,7 @@ class MailGroup(models.Model):
         self.clean_cache()
         super(MailGroup, self).delete(using)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -400,6 +411,7 @@ class MailGroup(models.Model):
         verbose_name_plural = _('Mail groups')
 
 
+@python_2_unicode_compatible
 class MailGroupEmail(models.Model):
     name = models.CharField(_('Username'), max_length=100)
     email = models.CharField(
@@ -416,7 +428,7 @@ class MailGroupEmail(models.Model):
         self.group.clean_cache()
         super(MailGroupEmail, self).delete(using)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.email
 
     class Meta:
@@ -425,6 +437,7 @@ class MailGroupEmail(models.Model):
         unique_together = (('email', 'group',),)
 
 
+@python_2_unicode_compatible
 class Signal(models.Model):
     SIGNALS = (
         'pre_save',
@@ -486,7 +499,7 @@ class Signal(models.Model):
                 model=self.model, model_pk=pk, signal=self
             )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -494,13 +507,14 @@ class Signal(models.Model):
         verbose_name_plural = _('Mail signals')
 
 
+@python_2_unicode_compatible
 class SignalLog(models.Model):
     model = models.ForeignKey('contenttypes.ContentType')
     model_pk = models.BigIntegerField()
     signal = models.ForeignKey(Signal)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.signal.name
 
     class Meta:
@@ -540,6 +554,7 @@ class SignalDeferredDispatch(models.Model):
             index_together = (('eta', 'done'),)
 
 
+@python_2_unicode_compatible
 class ApiKey(models.Model):
     name = models.CharField(_('Name'), max_length=25)
     api_key = models.CharField(_('Api key'), max_length=32, unique=True)
@@ -563,7 +578,7 @@ class ApiKey(models.Model):
         self._clean_cache()
         super(ApiKey, self).delete(using)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -571,6 +586,7 @@ class ApiKey(models.Model):
         verbose_name_plural = _('Mail API')
 
 
+@python_2_unicode_compatible
 class MailLogTrack(models.Model):
     mail_log = models.ForeignKey(MailLog, verbose_name=_('Log'))
     counter = models.PositiveIntegerField(_('Counter'), default=0)
@@ -615,7 +631,7 @@ class MailLogTrack(models.Model):
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.mail_log.template.name
 
     class Meta:

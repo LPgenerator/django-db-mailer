@@ -33,6 +33,11 @@ class SignalReceiver(object):
         self.kwargs['date_time'] = datetime.datetime.now()
 
     def get_signal_list(self):
+        if not hasattr(self.sender._meta, 'module_name'):
+            return Signal.objects.filter(
+                model__model=self.sender._meta.model_name,
+                is_active=True
+            )
         return Signal.objects.filter(
             model__model=self.sender._meta.module_name,
             is_active=True
@@ -95,7 +100,7 @@ class SignalReceiver(object):
         self._kwargs['signal_pk'] = self.signal.pk
 
         if SIGNAL_DEFERRED_DISPATCHER == 'celery':
-            import tasks
+            from dbmail import tasks
 
             tasks.deferred_signal.apply_async(
                 args=[self.sender], kwargs=self._kwargs,

@@ -45,4 +45,4 @@ class Command(BaseCommand):
         send_test_msg(
             options['pk'], options['email'], **self.get_kwargs(options)
         )
-        print "Done. Message was sent."
+        print("Done. Message was sent.")

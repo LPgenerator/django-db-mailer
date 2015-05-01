@@ -9,8 +9,8 @@ def premailer_transform(text):
         from premailer import transform
 
         return transform(text)
-    except Exception, msg:
-        print msg.__str__()
+    except Exception as err:
+        print(err)
         return text
 
 
