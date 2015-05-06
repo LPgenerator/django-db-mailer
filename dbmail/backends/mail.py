@@ -93,22 +93,36 @@ class Sender(object):
             pprint.pprint(data)
         return data
 
-    def _get_str_by_language(self, field):
-        template = getattr(self._template, field)
+    def _get_str_by_language(self, field, template=None):
+        obj = template if template else self._template
+        template = getattr(obj, field)
         if self._language is not None:
             field = '%s_%s' % (field, self._language)
-            if hasattr(self._template, field):
-                if getattr(self._template, field):
-                    template = getattr(self._template, field)
+            if hasattr(obj, field):
+                if getattr(obj, field):
+                    template = getattr(obj, field)
         return template
 
     def _get_subject(self):
         return self._render_template(
             self._get_str_by_language('subject'), self._context)
 
-    def _get_message(self):
+    def _get_message_with_base(self):
+        self._context['content'] = self._render_template(
+            self._get_str_by_language('message'), self._context)
+        return self._render_template(
+            self._get_str_by_language('message', self._template.base),
+            self._context
+        )
+
+    def _get_standard_message(self):
         return self._render_template(
             self._get_str_by_language('message'), self._context)
+
+    def _get_message(self):
+        if self._template.base:
+            return self._get_message_with_base()
+        return self._get_standard_message()
 
     def _get_msg_with_track(self):
         message = self._message

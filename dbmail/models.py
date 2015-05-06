@@ -46,6 +46,23 @@ class MailCategory(models.Model):
 
 
 @python_2_unicode_compatible
+class MailBaseTemplate(models.Model):
+    name = models.CharField(_('Name'), max_length=100, unique=True)
+    message = HTMLField(
+        _('Body'), help_text=_(
+            'Basic template for mail messages. {{content}} tag for msg.'))
+    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Mail base template')
+        verbose_name_plural = _('Mail base templates')
+
+
+@python_2_unicode_compatible
 class MailFromEmailCredential(models.Model):
     host = models.CharField(_('Host'), max_length=50)
     port = models.PositiveIntegerField(_('Port'))
@@ -179,6 +196,9 @@ class MailTemplate(models.Model):
     category = models.ForeignKey(
         MailCategory, null=True, blank=True,
         verbose_name=_('Category'), default=DEFAULT_CATEGORY)
+    base = models.ForeignKey(
+        MailBaseTemplate, null=True, blank=True,
+        verbose_name=_('Basic template'))
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
     context_note = models.TextField(
@@ -224,7 +244,7 @@ class MailTemplate(models.Model):
         if obj is not None:
             return obj
 
-        obj = cls.objects.select_related('from_email').get(slug=slug)
+        obj = cls.objects.select_related('from_email', 'base').get(slug=slug)
         bcc_list = [o.email for o in obj.bcc_email.filter(is_active=1)]
         files_list = list(obj.files.all())
         auth_credentials = obj.from_email and obj.from_email.get_auth()

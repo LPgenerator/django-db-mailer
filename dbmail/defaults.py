@@ -47,6 +47,7 @@ ALLOWED_MODELS_ON_ADMIN = get_settings('DB_MAILER_ALLOWED_MODELS_ON_ADMIN', [
     'ApiKey',
     'MailBcc',
     'MailLogTrack',
+    'MailBaseTemplate',
 ])
 AUTH_USER_MODEL = get_settings('AUTH_USER_MODEL', 'auth.User')
 USE_CELERY_FOR_ADMIN_TEST = get_settings(
