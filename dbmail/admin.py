@@ -304,7 +304,7 @@ class MailLogTrackAdmin(admin.ModelAdmin):
         return request.method != 'POST'
 
 
-class MailBaseTemplateAdmin(admin.ModelAdmin):
+class MailBaseTemplateAdmin(ModelAdmin):
     list_display = ('name', 'created', 'updated', 'id',)
     list_filter = ('created', 'updated',)
     search_fields = ('name', 'message')

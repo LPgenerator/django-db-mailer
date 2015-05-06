@@ -249,4 +249,4 @@ msgid "Basic template"
 msgstr "Базовый шаблон"
 
 msgid "Basic template for mail messages. {{content}} tag for msg."
-msgstr "Основные шаблон для почтовых сообщений. {{content}} для сообщений."
+msgstr "Основной шаблон для почтовых сообщений. {{content}} для сообщений."
