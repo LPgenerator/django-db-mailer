@@ -4,6 +4,9 @@ Django-Db-Mailer
 .. image:: https://api.travis-ci.org/LPgenerator/django-db-mailer.png?branch=development
     :alt: Build Status
     :target: https://travis-ci.org/LPgenerator/django-db-mailer
+.. image:: https://landscape.io/github/LPgenerator/django-db-mailer/master/landscape.svg
+   :target: https://landscape.io/github/LPgenerator/django-db-mailer/master
+   :alt: Code Health
 .. image:: https://img.shields.io/badge/python-2.6,2.7,pypy-blue.svg
     :alt: Python 2.6, 2.7, pypy
     :target: https://pypi.python.org/pypi/django-db-mailer/

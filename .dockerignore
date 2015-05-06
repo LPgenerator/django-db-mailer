@@ -1,0 +1,7 @@
+.vagrant
+.tox
+*.egg-info
+.coverage
+screenshots
+.idea
+.git
