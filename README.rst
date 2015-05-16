@@ -378,7 +378,7 @@ To enable editor, you may install and configure ``django-tinymce`` or ``django-c
 
 **Theme**
 
-``django-db-mailer`` supported from box ``django-grappelli`` skin. Information about compatibility available `here <https://pypi.python.org/pypi/django-grappelli/2.5.3>`_.
+``django-db-mailer`` supported from box ``django-grappelli`` and ``django-suit`` skin. Information about compatibility available `here <https://pypi.python.org/pypi/django-grappelli/2.5.3>`_.
 
 **Queue**
 

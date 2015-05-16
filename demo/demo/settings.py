@@ -84,6 +84,8 @@ INSTALLED_APPS = []
 
 if 'test' not in sys.argv:
     INSTALLED_APPS += [
+        # 'suit',
+        'grappelli.dashboard',
         'grappelli',
     ]
 
@@ -200,6 +202,16 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+SUIT_CONFIG = {
+    'ADMIN_NAME': 'Django DB Mailer',
+    'SEARCH_URL': '',
+    'MENU': (
+        {'app': 'dbmail', 'label': 'DBMailer', 'icon': 'icon-align-justify'},
+    )
+}
+
+GRAPPELLI_ADMIN_TITLE = 'Django DB Mailer'
+GRAPPELLI_INDEX_DASHBOARD = 'demo.dashboard.DBMailerDashboard'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'Django <no_reply@local.host>'

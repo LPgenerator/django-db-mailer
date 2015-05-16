@@ -19,6 +19,7 @@ redis>=2.10.3
 wheel>=0.24.0
 
 django-grappelli==2.4.10
+django-suit==0.2.13
 django-celery==3.1.16
 kombu==3.0.24
 billiard==3.3.0.19
