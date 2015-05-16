@@ -13,9 +13,12 @@ urlpatterns = patterns(
     url(r'^dbmail/', include('dbmail.urls')),
 
     url('^browser_notification/$', "demo.views.browser_notification"),
+    url(r'^ckeditor/', include('ckeditor.urls')),
 ) + staticfiles_urlpatterns()
 
+'''
 if VERSION < (1, 7):
     urlpatterns += patterns(
         '', url(r'^tinymce/', include('tinymce.urls')),
     )
+'''

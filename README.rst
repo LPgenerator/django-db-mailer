@@ -374,7 +374,7 @@ Find information about compatibility with your Django versions `here <http://dja
 
 **Editor**
 
-To enable editor, you may install and configure ``django-tinymce`` app.
+To enable editor, you may install and configure ``django-tinymce`` or ``django-ckeditor`` app.
 
 **Theme**
 

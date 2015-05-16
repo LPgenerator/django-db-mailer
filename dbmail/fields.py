@@ -12,3 +12,10 @@ if app_installed('tinymce'):
 
     except ImportError:
         pass
+
+if app_installed('ckeditor'):
+    try:
+        from ckeditor.fields import RichTextField as HTMLField
+
+    except ImportError:
+        pass

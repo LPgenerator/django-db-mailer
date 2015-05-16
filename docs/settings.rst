@@ -135,6 +135,8 @@ and app will be work with Django 1.4+.
 .. code-block:: bash
 
     $ pip install django-tinymce
+    # OR
+    $ pip install django-ckeditor
 
 .. code-block:: python
 

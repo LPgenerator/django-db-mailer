@@ -36,6 +36,8 @@ USE_TZ = True
 
 SITE_ID = 1
 
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
@@ -104,7 +106,8 @@ if 'test' not in sys.argv:
         'reversion',
         'reversion_compare',
         'djcelery',
-        'tinymce',
+        # 'tinymce',
+        'ckeditor',
         'rosetta',
         'south',
     ]
@@ -185,6 +188,18 @@ TINYMCE_DEFAULT_CONFIG = {
     'cleanup_on_startup': True,
     'custom_undo_redo_levels': 10,
 }
+
+CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'uploads')
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+        'height': 300,
+        'width': '100%',
+        'allowedContent': True,
+    },
+}
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'Django <no_reply@local.host>'
