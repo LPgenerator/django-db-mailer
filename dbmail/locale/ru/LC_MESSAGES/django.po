@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-12 13:09+0400\n"
-"PO-Revision-Date: 2015-03-21 23:34+0230\n"
+"PO-Revision-Date: 2015-05-25 14:05+0230\n"
 "Last-Translator:   <gotlium@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -244,3 +244,15 @@ msgstr "Для уведомлений отличных от почтовых, т
 msgid "For sms/tts/push you must specify name or number"
 msgstr ""
 "Для Отправителей отличных от почтовых, необходимо указывать Имя или Номер"
+
+msgid "Basic template"
+msgstr "Базовый шаблон"
+
+msgid "Mail base templates"
+msgstr "Базовые шаблоны"
+
+msgid "Mail base template"
+msgstr "Базовый шаблон"
+
+msgid "Basic template for mail messages. {{content}} tag for msg."
+msgstr "Основной шаблон для почтовых сообщений. {{content}} для сообщений."

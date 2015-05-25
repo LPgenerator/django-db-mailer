@@ -15,7 +15,7 @@ from django.contrib import admin
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey, MailBcc,
-    MailGroup, MailGroupEmail, MailFile, MailFromEmail,
+    MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailBaseTemplate,
     MailFromEmailCredential, MailLogTrack
 )
 from dbmail import app_installed
@@ -304,6 +304,12 @@ class MailLogTrackAdmin(admin.ModelAdmin):
         return request.method != 'POST'
 
 
+class MailBaseTemplateAdmin(ModelAdmin):
+    list_display = ('name', 'created', 'updated', 'id',)
+    list_filter = ('created', 'updated',)
+    search_fields = ('name', 'message')
+
+
 def admin_register(model):
     model_name = model.__name__
     if model_name in defaults.ALLOWED_MODELS_ON_ADMIN:
@@ -315,6 +321,7 @@ def admin_register(model):
 
 
 admin_register(MailFromEmailCredential)
+admin_register(MailBaseTemplate)
 admin_register(MailFromEmail)
 admin_register(MailLogTrack)
 admin_register(MailCategory)
