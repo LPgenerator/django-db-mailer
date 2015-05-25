@@ -180,3 +180,6 @@ App settings
 
     # Function for transform html to text
     DB_MAILER_MESSAGE_HTML2TEXT = 'dbmail.utils'
+
+    # Path to HTMLField class.
+    DB_MAILER_MODEL_HTMLFIELD = 'django.db.models.TextField'
