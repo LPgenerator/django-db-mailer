@@ -282,7 +282,7 @@ Demo installation
 
     $ git clone --depth 1 https://github.com/LPgenerator/django-db-mailer.git db-mailer
     $ cd db-mailer
-    $ vagrant up
+    $ vagrant up --provider virtualbox
     $ vagrant ssh
     $ cd /mailer/
 
