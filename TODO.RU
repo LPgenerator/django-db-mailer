@@ -33,6 +33,7 @@ Version: 2.5
 Version: 3.0
 ------------
 * [-] Python 3.x (в третьей версии батарейки)
+* [-] Необходимо пофиксить import_module, заменив на import_by_string. Мысли тут https://github.com/LPgenerator/django-db-mailer/pull/16
 
 
 Backlog:
