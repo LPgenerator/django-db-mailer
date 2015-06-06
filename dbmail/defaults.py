@@ -99,3 +99,6 @@ IGNORE_BROWSE_APP = get_settings(
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',
         'auth', 'reversion', 'contenttypes'
     ])
+
+MODEL_HTMLFIELD = get_settings(
+    'DB_MAILER_MODEL_HTMLFIELD', 'django.db.models.TextField')
