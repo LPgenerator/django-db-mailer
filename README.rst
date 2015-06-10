@@ -357,7 +357,7 @@ Check mail logs:
     pprint([model_to_dict(obj) for obj in MailLog.objects.all()])
 
 
-Open app on browser:
+Open app in browser (login and password is admin/admin):
 
 .. code-block:: bash
 
