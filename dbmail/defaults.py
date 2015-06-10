@@ -101,4 +101,4 @@ IGNORE_BROWSE_APP = get_settings(
     ])
 
 MODEL_HTMLFIELD = get_settings(
-    'DB_MAILER_MODEL_HTMLFIELD', 'django.db.models.TextField')
+    'DB_MAILER_MODEL_HTMLFIELD', 'dbmail.fields.HTMLField')

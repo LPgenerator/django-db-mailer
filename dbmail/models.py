@@ -16,12 +16,15 @@ from django import VERSION
 
 from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
-    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL, BACKEND, _BACKEND)
+    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL,
+    BACKEND, _BACKEND, MODEL_HTMLFIELD)
 
+from dbmail import initial_signals, import_by_string
 from dbmail import python_2_unicode_compatible
 from dbmail.utils import premailer_transform
-from dbmail.fields import HTMLField
-from dbmail import initial_signals
+
+
+HTMLField = import_by_string(MODEL_HTMLFIELD)
 
 
 def _upload_mail_file(instance, filename):
