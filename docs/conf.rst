@@ -172,6 +172,11 @@ App settings
     PUBNUB_SUB_KEY = ""
     PUBNUB_SEC_KEY = ""
 
+    # iqsms.ru provider settings
+    IQSMS_API_LOGIN = ""
+    IQSMS_API_PASSWORD = ""
+    IQSMS_FROM = ""
+
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',
