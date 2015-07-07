@@ -18,7 +18,6 @@ def send(sms_to, sms_body, **kwargs):
     """
     Site: http://iqsms.ru/
     API: http://iqsms.ru/api/
-    Desc: Simple SMS gateway
     """
     headers = {
         "User-Agent": "DBMail/%s" % get_version(),
