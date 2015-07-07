@@ -1,8 +1,7 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from httplib import HTTPConnection
 from urllib import urlencode
-from base64 import b64encode
 
 from django.conf import settings
 
@@ -10,38 +9,36 @@ from dbmail.providers.prowl.push import from_unicode
 from dbmail import get_version
 
 
-class IQSMSError(Exception):
+class AeroSmsError(Exception):
     pass
 
 
 def send(sms_to, sms_body, **kwargs):
     """
-    Site: http://iqsms.ru/
-    API: http://iqsms.ru/api/
+    Site: http://smsaero.ru/
+    API: http://smsaero.ru/api/
     """
     headers = {
         "User-Agent": "DBMail/%s" % get_version(),
-        'Authorization': 'Basic %s' % b64encode(
-            "%s:%s" % (
-                settings.IQSMS_API_LOGIN, settings.IQSMS_API_PASSWORD
-            )).decode("ascii")
     }
 
     kwargs.update({
-        'phone': sms_to,
-        'text': from_unicode(sms_body),
-        'sender': kwargs.pop('sms_from', settings.IQSMS_FROM)
+        'user': settings.SMSAERO_API_LOGIN,
+        'password': settings.SMSAERO_API_PASSWORD,
+        'from': kwargs.pop('sms_from', settings.SMSAERO_FROM),
+        'to': sms_to.replace('+', ''),
+        'text': from_unicode(sms_body)
     })
 
-    http = HTTPConnection(kwargs.pop("api_url", "gate.iqsms.ru"))
+    http = HTTPConnection(kwargs.pop("api_url", "gate.smsaero.ru"))
     http.request("GET", "/send/?" + urlencode(kwargs), headers=headers)
     response = http.getresponse()
 
     if response.status != 200:
-        raise IQSMSError(response.reason)
+        raise AeroSmsError(response.reason)
 
     body = response.read().strip()
     if '=accepted' not in body:
-        raise IQSMSError(body)
+        raise AeroSmsError(body)
 
     return int(body.split('=')[0])

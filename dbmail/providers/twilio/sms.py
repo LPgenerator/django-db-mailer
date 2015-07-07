@@ -31,7 +31,7 @@ def send(sms_to, sms_body, **kwargs):
     }
 
     kwargs.update({
-        'From': settings.TWILIO_FROM,
+        'From': kwargs.pop('sms_from', settings.TWILIO_FROM),
         'To': sms_to,
         'Body': from_unicode(sms_body)
     })
