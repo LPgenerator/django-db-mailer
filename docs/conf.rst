@@ -154,7 +154,7 @@ App settings
     DB_MAILER_DEFAULT_SMS_FROM = None
 
     # Default Push notification from
-    DB_MAILER_DEFAULT_PUSH_FROM
+    DB_MAILER_DEFAULT_PUSH_FROM = None
 
     # Prowl provider settings
     PROWL_APP = 'DBMail'
@@ -176,6 +176,17 @@ App settings
     IQSMS_API_LOGIN = ""
     IQSMS_API_PASSWORD = ""
     IQSMS_FROM = ""
+
+    # twilio.com provider settings
+    TWILIO_ACCOUNT_SID = ""
+    TWILIO_AUTH_TOKEN = ""
+    TWILIO_FROM = ""
+
+    # smsaero.ru provider settings
+    SMSAERO_LOGIN = ""
+    SMSAERO_MD5_PASSWORD = ""
+    SMSAERO_FROM = ""
+
 
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [

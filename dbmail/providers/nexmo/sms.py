@@ -5,17 +5,14 @@ from json import loads
 
 from django.conf import settings
 
+from dbmail.providers.prowl.push import from_unicode
+
 
 class NexmoSmsError(Exception):
     pass
 
 
 def send(sms_to, sms_body, **kwargs):
-    try:
-        text = sms_body.encode('utf-8', 'ignore')
-    except UnicodeDecodeError:
-        text = sms_body
-
     api_url = kwargs.pop('api_url', 'https://rest.nexmo.com/sms/json')
     params = {
         'api_key': settings.NEXMO_USERNAME,
@@ -24,7 +21,7 @@ def send(sms_to, sms_body, **kwargs):
         'to': sms_to.replace('+', ''),
         'type': 'unicode',
         'lg': settings.NEXMO_LANG,
-        'text': text
+        'text': from_unicode(sms_body)
     }
     if kwargs:
         params.update(**kwargs)

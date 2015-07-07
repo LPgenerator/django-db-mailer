@@ -23,8 +23,8 @@ def send(sms_to, sms_body, **kwargs):
     }
 
     kwargs.update({
-        'user': settings.SMSAERO_API_LOGIN,
-        'password': settings.SMSAERO_API_PASSWORD,
+        'user': settings.SMSAERO_LOGIN,
+        'password': settings.SMSAERO_MD5_PASSWORD,
         'from': kwargs.pop('sms_from', settings.SMSAERO_FROM),
         'to': sms_to.replace('+', ''),
         'text': from_unicode(sms_body)
