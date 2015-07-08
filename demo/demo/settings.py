@@ -3,6 +3,7 @@
 import os
 import sys
 import django
+import dbmail
 
 PROJECT_ROOT = os.path.normpath(os.path.dirname(__file__))
 
@@ -203,14 +204,14 @@ CKEDITOR_CONFIGS = {
 }
 
 SUIT_CONFIG = {
-    'ADMIN_NAME': 'Django DB Mailer',
+    'ADMIN_NAME': 'Django DB Mailer v.%s' % dbmail.get_version(),
     'SEARCH_URL': '',
     'MENU': (
         {'app': 'dbmail', 'label': 'DBMailer', 'icon': 'icon-align-justify'},
     )
 }
 
-GRAPPELLI_ADMIN_TITLE = 'Django DB Mailer'
+GRAPPELLI_ADMIN_TITLE = 'Django DB Mailer v.%s' % dbmail.get_version()
 GRAPPELLI_INDEX_DASHBOARD = 'demo.dashboard.DBMailerDashboard'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
