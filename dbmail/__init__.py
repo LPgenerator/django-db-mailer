@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from datetime import datetime
 import sys
 
@@ -100,7 +102,7 @@ def send_db_push(*args, **kwargs):
 
 def send_db_subscription(*args, **kwargs):
     from dbmail.defaults import CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY
-    from dbmail.models import MailTemplate, MailSubscription
+    from dbmail.models import MailSubscription
 
     use_celery = ENABLE_CELERY and kwargs.pop('use_celery', ENABLE_CELERY)
     options = {
@@ -127,9 +129,9 @@ def initial_signals():
             break
     else:
         try:
-            from dbmail.signals import initial_signals
+            from dbmail.signals import initial_signals as init_signals
 
-            initial_signals()
+            init_signals()
         except (ImportError, DatabaseError, IntegrityError):
             pass
 
