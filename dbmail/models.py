@@ -768,13 +768,14 @@ class MailSubscription(models.Model):
         return cls.objects.filter(**kwargs)
 
     @classmethod
-    def notify(cls, slug, user_id, **kwargs):
+    def notify(cls, slug, user_id, sub_filter=None, **kwargs):
         from dbmail import db_sender, celery_supported
 
         now_hour = cls.get_current_hour()
+        sub_filter = sub_filter if isinstance(sub_filter, dict) else {}
         use_celery = celery_supported() and kwargs.pop('use_celery', True)
 
-        for method in cls.get_notification_list(user_id):
+        for method in cls.get_notification_list(user_id, **sub_filter):
             kwargs['send_at_date'] = None
             start_hour = cls.convert_to_date(method.start_hour)
             end_hour = cls.convert_to_date(method.end_hour)
