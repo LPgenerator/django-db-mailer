@@ -773,11 +773,10 @@ class MailSubscription(models.Model):
 
     @classmethod
     def notify(cls, slug, user_id=None, sub_filter=None, **kwargs):
-        from dbmail import db_sender, celery_supported
+        from dbmail import db_sender
 
         now_hour = cls.get_current_hour()
         sub_filter = sub_filter if isinstance(sub_filter, dict) else {}
-        use_celery = celery_supported() and kwargs.pop('use_celery', True)
 
         for method in cls.get_notification_list(user_id, **sub_filter):
             kwargs['send_at_date'] = None
@@ -785,7 +784,7 @@ class MailSubscription(models.Model):
             end_hour = cls.convert_to_date(method.end_hour)
 
             if not (start_hour <= now_hour <= end_hour):
-                if method.defer_at_allowed_hours and use_celery:
+                if method.defer_at_allowed_hours and kwargs['use_celery']:
                     kwargs['send_at_date'] = cls.mix_hour_with_date(
                         method.start_hour)
                 else:
@@ -821,8 +820,10 @@ class MailNotification(models.Model):
 
     @classmethod
     def notify(cls, user, mail_slug, group, **kwargs):
+        from dbmail import send_db_subscription
+
         for notify in cls.objects.filter(notify__user=user, group=group):
-            MailSubscription.notify(
+            send_db_subscription(
                 mail_slug, user.pk, {'pk': notify.pk}, **kwargs)
 '''
 

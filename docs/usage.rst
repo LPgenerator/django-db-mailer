@@ -287,6 +287,7 @@ Full stack (multiple) notification example for django.contrib.auth.models.users
 .. code-block:: python
 
     from dbmail.models import MailSubscription
+    from dbmail import send_db_subscription
 
     # Email notification
     MailSubscription.objects.create(
@@ -308,7 +309,7 @@ Full stack (multiple) notification example for django.contrib.auth.models.users
     )
 
     # Send notification to all devices
-    MailSubscription.notify('welcome', 1)
+    send_db_subscription('welcome', 1)
 
 
 If you want send notification for all subscribers, you can omit user_id
@@ -316,6 +317,7 @@ If you want send notification for all subscribers, you can omit user_id
 .. code-block:: python
 
     from dbmail.models import MailSubscription
+    from dbmail import send_db_subscription
 
     # Email notification
     MailSubscription.objects.create(
@@ -331,13 +333,4 @@ If you want send notification for all subscribers, you can omit user_id
     )
 
     # Send notification to all available user and devices
-    MailSubscription.notify('welcome')
-
-
-For do it at background:
-
-.. code-block:: python
-
-    from dbmail import send_db_subscription
-
-    send_db_subscription('welcome', 1)
+    send_db_subscription('welcome')

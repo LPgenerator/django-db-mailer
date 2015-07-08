@@ -99,9 +99,23 @@ def send_db_push(*args, **kwargs):
 
 
 def send_db_subscription(*args, **kwargs):
-    from dbmail.tasks import db_subscription
+    from dbmail.defaults import CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY
+    from dbmail.models import MailTemplate, MailSubscription
 
-    return db_subscription.apply_async(*args, **kwargs)
+    use_celery = ENABLE_CELERY and kwargs.pop('use_celery', ENABLE_CELERY)
+    options = {
+        'time_limit': kwargs.pop('time_limit', SEND_MAX_TIME),
+        'queue': kwargs.pop('queue', CELERY_QUEUE),
+        'args': args, 'kwargs': kwargs,
+    }
+
+    if celery_supported() and use_celery is True:
+        from dbmail.tasks import db_subscription
+
+        return db_subscription.apply_async(**options)
+    else:
+        kwargs['use_celery'] = use_celery
+        return MailSubscription.notify(*args, **kwargs)
 
 
 def initial_signals():
