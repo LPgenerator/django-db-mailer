@@ -293,7 +293,7 @@ Full stack (multiple) notification example for django.contrib.auth.models.users
         user_id=1,
         backend="dbmail.backends.mail",
         is_checked=True,
-        address="user@example.com"
+        address="user1@example.com"
     )
 
     # Push notification
@@ -320,14 +320,14 @@ If you want send notification for all subscribers, you can omit user_id
     # Email notification
     MailSubscription.objects.create(
         is_checked=True,
-        address="user@example.com"
+        address="user2@example.com"
     )
 
     # Push notification
     MailSubscription.objects.create(
         backend="dbmail.backends.push",
         is_checked=True,
-        address="d30NSrq10aO0hsyHDZ3"
+        address="d30NSrq10aO0hsyHDZ4"
     )
 
     # Send notification to all available user and devices

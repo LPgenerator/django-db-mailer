@@ -731,7 +731,7 @@ class MailSubscription(models.Model):
     defer_at_allowed_hours = models.BooleanField(
         _('Defer at allowed hours'), default=False)
     address = models.CharField(
-        _('Address'), max_length=60,  # unique=True,
+        _('Address'), max_length=60, unique=True,
         help_text=_('Must be phone number/email/token'))
 
     def send_confirmation_link(self, slug='subs-confirmation', **kwargs):
