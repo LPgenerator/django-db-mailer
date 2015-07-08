@@ -64,6 +64,7 @@ class MailTemplateAdmin(ModelAdmin):
         'name', 'subject', 'slug', 'message',)
     ordering = ('-id',)
     list_editable = ('category', 'priority', 'is_active',)
+    filter_horizontal = ('bcc_email',)
     list_display_links = ('name',)
     date_hierarchy = 'created'
     list_per_page = defaults.TEMPLATES_PER_PAGE

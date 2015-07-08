@@ -487,6 +487,9 @@ Screenshots
 .. image:: /screenshots/bcc_changelist.jpg
 .. image:: /screenshots/template_compare.jpg
 .. image:: /screenshots/tracking_edit.jpg
+.. image:: /screenshots/base_template_changelist.jpg
+.. image:: /screenshots/subscriptions_change.jpg
+.. image:: /screenshots/subscriptions_changelist.jpg
 
 
 Compatibility
