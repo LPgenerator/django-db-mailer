@@ -269,7 +269,7 @@ Demo installation
 
 .. code-block:: bash
 
-    $ git clone --depth 1 https://github.com/LPgenerator/django-db-mailer.git db-mailer
+    $ git clone --depth 1 -b master https://github.com/LPgenerator/django-db-mailer.git db-mailer
     $ cd db-mailer
     $ docker build -t dbmail .
     $ docker run -it -d -p 8000:8000 --name dbmail dbmail
@@ -280,7 +280,7 @@ Demo installation
 
 .. code-block:: bash
 
-    $ git clone --depth 1 https://github.com/LPgenerator/django-db-mailer.git db-mailer
+    $ git clone --depth 1 -b master https://github.com/LPgenerator/django-db-mailer.git db-mailer
     $ cd db-mailer
     $ vagrant up --provider virtualbox
     $ vagrant ssh
