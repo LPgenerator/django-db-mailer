@@ -85,6 +85,11 @@ run-redis:
 test:
 	@cd demo && ./manage.py test dbmail
 
+.PHONY: tox
+# target: tox - Run tests under tox
+tox:
+	@unset PYTHONPATH && tox
+
 .PHONY: coverage
 # target: coverage - Run tests with coverage
 coverage:

@@ -82,7 +82,7 @@ tests, including testing other Python versions with tox::
 
     $ make pep8
     $ make test
-    $ tox
+    $ make tox
 
 To get flake8 and tox, just pip install them into your virtualenv.
 

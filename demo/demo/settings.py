@@ -254,7 +254,7 @@ GEOIP_PATH = '/usr/share/GeoIP/'
 
 ############################################################
 
-if django.VERSION[:2] < (1, 6):
+if django.VERSION < (1, 6):
     TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 try:
