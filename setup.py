@@ -7,7 +7,7 @@ setup(
     version=get_version(),
     description='Django module to easily send emails using '
                 'django templates stored on database.',
-    keywords="django db mail email html text templates mailer",
+    keywords="django db mail email html text tts sms push templates mailer",
     long_description=open('README.rst').read(),
     author="GoTLiuM InSPiRiT",
     author_email='gotlium@gmail.com',
@@ -30,5 +30,9 @@ setup(
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
     ],
 )
