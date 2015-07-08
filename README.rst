@@ -8,7 +8,7 @@ Django-Db-Mailer
    :target: https://landscape.io/github/LPgenerator/django-db-mailer/master
    :alt: Code Health
 .. image:: https://img.shields.io/badge/python-2.6,2.7,pypy,3.4,pypy3-blue.svg
-    :alt: Python 2.6, 2.7, pypy, 3.4, pypy3
+    :alt: Python 2.6, 2.7, pypy,3.4,pypy3
     :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
@@ -29,7 +29,7 @@ Documentation available at `Read the Docs <http://django-db-mailer.readthedocs.o
 
 What's that
 -----------
-| Django module to easily send emails using django templates stored on database.
+| Django module to easily send emails/push/sms/tts using django templates stored on database.
 | From box you can use it with django-celery for send background messages.
 | Also you have opportunity to create reports from logs by mail categories and slug.
 | Groups with Recipients and send by model signal also available by default.
