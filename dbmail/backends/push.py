@@ -28,3 +28,12 @@ class Sender(SenderBase):
             if self._from_email:
                 options['app'] = self._from_email
             module.send(phone, message, **options)
+
+
+class SenderDebug(Sender):
+    def _send(self):
+        self.debug('Provider', self._provider or self.provider)
+        self.debug('Message', clean_html(self._message))
+        self.debug('Recipients', self._recipient_list)
+        self.debug('Event', self._subject)
+        self.debug('App', self._from_email)

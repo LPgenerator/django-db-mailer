@@ -143,6 +143,11 @@ App settings
     DB_MAILER_SMS_PROVIDER = 'dbmail.providers.nexmo.sms'
     DB_MAILER_TTS_PROVIDER = 'dbmail.providers.nexmo.tts'
 
+    # By default real api call is using.
+    # For log all requests to stdout - use True flag.
+    # Django DEBUG must be enabled.
+    DB_MAILER_DEBUG = False
+
 
     # TTS and SMS provider settings
     NEXMO_USERNAME = ''

@@ -4,6 +4,7 @@ import traceback
 import pprint
 import uuid
 import time
+import sys
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
@@ -269,3 +270,23 @@ class Sender(object):
                 self._err_exc = exc.__class__.__name__
                 self._store_log(False)
                 raise
+
+    def debug(self, key, value):
+        from django.utils.termcolors import colorize
+
+        if value:
+            sys.stdout.write(colorize(key, fg='green'))
+            sys.stdout.write(": ")
+            sys.stdout.write(colorize(repr(value), fg='white'))
+            sys.stdout.write("\n")
+
+
+class SenderDebug(Sender):
+    def _send(self):
+        self.debug('Provider', self._provider or 'default')
+        self.debug('Message', self._message)
+        self.debug('From', self._from_email)
+        self.debug('Recipients', self._recipient_list)
+        self.debug('CC', self._cc)
+        self.debug('BCC', self._bcc)
+        self.debug('Additional kwargs', self._kwargs)

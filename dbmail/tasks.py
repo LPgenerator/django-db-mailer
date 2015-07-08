@@ -3,7 +3,7 @@
 from django.core import signing
 from celery import task
 
-from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME
+from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG
 from dbmail.utils import get_ip
 
 
@@ -18,6 +18,8 @@ def db_sender(*args, **kwargs):
     retry = kwargs.pop('retry', True)
 
     try:
+        if DEBUG is True:
+            return backend.SenderDebug(*args, **kwargs).send(is_celery=True)
         return backend.Sender(*args, **kwargs).send(is_celery=True)
     except Exception as exc:
         if retry is True and max_retries:

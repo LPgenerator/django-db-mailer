@@ -37,3 +37,12 @@ class Sender(SenderBase):
                     phone, message, sms_from=self._from_email, **self._kwargs)
             else:
                 module.send(phone, message, **self._kwargs)
+
+
+class SenderDebug(Sender):
+    def _send(self):
+        self.debug('Provider', self._provider or self.provider)
+        self.debug('Message', clean_html(self._message))
+        self.debug('Recipients', self._recipient_list)
+        self.debug('Sms from', self._from_email)
+        self.debug('Additional params', self._kwargs)

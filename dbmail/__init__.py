@@ -31,7 +31,7 @@ def celery_supported():
 def db_sender(slug, recipient, *args, **kwargs):
     from django.utils.importlib import import_module
     from dbmail.defaults import (
-        CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, BACKEND)
+        CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, BACKEND, DEBUG)
     from dbmail.models import MailTemplate
 
     args = (slug, recipient) + args
@@ -65,6 +65,8 @@ def db_sender(slug, recipient, *args, **kwargs):
             return tasks.db_sender.apply_async(**options)
     else:
         module = import_module(backend)
+        if DEBUG is True:
+            return module.SenderDebug(*args, **kwargs).send(is_celery=False)
         return module.Sender(*args, **kwargs).send(is_celery=False)
 
 
