@@ -718,13 +718,20 @@ class MailSubscription(models.Model):
 
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
-    backend = models.CharField(choices=BACKENDS, max_length=50)
-    start_hour = models.CharField(default='00:00', max_length=5)
-    end_hour = models.CharField(default='23:59', max_length=5)
-    is_enabled = models.BooleanField(default=True, db_index=True)
-    is_checked = models.BooleanField(default=False, db_index=True)
-    defer_at_allowed_hours = models.BooleanField(default=False)
-    address = models.CharField(max_length=60)
+    backend = models.CharField(
+        _('Backend'), choices=BACKENDS, max_length=50)
+    start_hour = models.CharField(
+        _('Start hour'), default='00:00', max_length=5)
+    end_hour = models.CharField(_('End hour'), default='23:59', max_length=5)
+    is_enabled = models.BooleanField(
+        _('Is enabled'), default=True, db_index=True)
+    is_checked = models.BooleanField(
+        _('Is checked'), default=False, db_index=True)
+    defer_at_allowed_hours = models.BooleanField(
+        _('Defer at allowed hours'), default=False)
+    address = models.CharField(
+        _('Address'), max_length=60,
+        help_text=_('Must be phone number/email/token'))
 
     def send_confirmation_link(self, slug='subs-confirmation', **kwargs):
         from dbmail import db_sender
@@ -794,6 +801,7 @@ class MailSubscription(models.Model):
 
     class Meta:
         verbose_name = _('Mail Subscription')
+        verbose_name_plural = _('Mail Subscriptions')
 
 
 if VERSION < (1, 7):

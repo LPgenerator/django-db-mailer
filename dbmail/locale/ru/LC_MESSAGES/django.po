@@ -9,15 +9,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-12 13:09+0400\n"
-"PO-Revision-Date: 2015-05-25 14:05+0230\n"
+"PO-Revision-Date: 2015-07-08 07:43+0230\n"
 "Last-Translator:   <gotlium@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Translated-Using: django-rosetta 0.7.4\n"
+"X-Translated-Using: django-rosetta 0.7.6\n"
 
 msgid "Mail category"
 msgstr "Категория"
@@ -256,3 +256,33 @@ msgstr "Базовый шаблон"
 
 msgid "Basic template for mail messages. {{content}} tag for msg."
 msgstr "Основной шаблон для почтовых сообщений. {{content}} для сообщений."
+
+msgid "Backend"
+msgstr "Тип уведомления"
+
+msgid "Start hour"
+msgstr "Время начала"
+
+msgid "End hour"
+msgstr "Время конца"
+
+msgid "Is enabled"
+msgstr "Подключено"
+
+msgid "Is checked"
+msgstr "Проверено"
+
+msgid "Defer at allowed hours"
+msgstr "Отправить в разрешенное время"
+
+msgid "Address"
+msgstr "Адрес"
+
+msgid "Must be phone number/email/token"
+msgstr "Должно быть телефоном/почтовым адресом/токеном"
+
+msgid "Mail Subscription"
+msgstr "Подписки"
+
+msgid "Mail Subscriptions"
+msgstr "Подписки"
