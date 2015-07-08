@@ -7,8 +7,8 @@ Django-Db-Mailer
 .. image:: https://landscape.io/github/LPgenerator/django-db-mailer/master/landscape.svg
    :target: https://landscape.io/github/LPgenerator/django-db-mailer/master
    :alt: Code Health
-.. image:: https://img.shields.io/badge/python-2.6,2.7,pypy-blue.svg
-    :alt: Python 2.6, 2.7, pypy
+.. image:: https://img.shields.io/badge/python-2.6,2.7,pypy,3.4,pypy3-blue.svg
+    :alt: Python 2.6, 2.7, pypy, 3.4, pypy3
     :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
@@ -491,5 +491,5 @@ Screenshots
 
 Compatibility
 -------------
-* Python: 2.6, 2.7, 3.4
+* Python: 2.6, 2.7, pypy, 3.4, pypy3
 * Django: 1.4, 1.5, 1.6, 1.7, 1.8
