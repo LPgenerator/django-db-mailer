@@ -332,5 +332,19 @@ If you want send notification for all subscribers, you can omit user_id
         address="d30NSrq10aO0hsyHDZ4"
     )
 
-    # Send notification to all available user and devices
+    # Send notification to all available user (all devices)
     send_db_subscription('welcome')
+
+
+For all active users which registered at last 3 days ago (all devices):
+
+.. code-block:: python
+
+    from datetime import datetime, timedelta
+    from dbmail import send_db_subscription
+
+    send_db_subscription('welcome', None, {
+        'user__is_active': 1,
+        'user__date_joined__gte': datetime.now() - timedelta(days=3)
+    })
+
