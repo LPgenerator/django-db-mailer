@@ -98,6 +98,12 @@ def send_db_push(*args, **kwargs):
     return db_sender(*args, **kwargs)
 
 
+def send_db_subscription(*args, **kwargs):
+    from dbmail.tasks import db_subscription
+
+    return db_subscription.apply_async(*args, **kwargs)
+
+
 def initial_signals():
     from django.db.utils import DatabaseError, IntegrityError
 

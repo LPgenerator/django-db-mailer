@@ -278,3 +278,66 @@ Simple example to create template from the shell:
         slug="welcome",
         is_html=False,
     )
+
+
+Subscription api
+----------------
+Full stack (multiple) notification example for django.contrib.auth.models.users
+
+.. code-block:: python
+
+    from dbmail.models import MailSubscription
+
+    # Email notification
+    MailSubscription.objects.create(
+        user_id=1,
+        backend="dbmail.backends.mail",
+        is_checked=True,
+        address="user@example.com"
+    )
+
+    # Push notification
+    MailSubscription.objects.create(
+        user_id=1,
+        backend="dbmail.backends.push",
+        start_hour="08:00",
+        end_hour="20:00",
+        is_checked=True,
+        defer_at_allowed_hours=True,
+        address="d30NSrq10aO0hsyHDZ3"
+    )
+
+    # Send notification to all devices
+    MailSubscription.notify('welcome', 1)
+
+
+If you want send notification for all subscribers, you can omit user_id
+
+.. code-block:: python
+
+    from dbmail.models import MailSubscription
+
+    # Email notification
+    MailSubscription.objects.create(
+        is_checked=True,
+        address="user@example.com"
+    )
+
+    # Push notification
+    MailSubscription.objects.create(
+        backend="dbmail.backends.push",
+        is_checked=True,
+        address="d30NSrq10aO0hsyHDZ3"
+    )
+
+    # Send notification to all available user and devices
+    MailSubscription.notify('welcome')
+
+
+For do it at background:
+
+.. code-block:: python
+
+    from dbmail import send_db_subscription
+
+    send_db_subscription('welcome', 1)

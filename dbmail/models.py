@@ -27,6 +27,13 @@ from dbmail.utils import premailer_transform
 
 HTMLField = import_by_string(MODEL_HTMLFIELD)
 
+BACKENDS = (
+    ('dbmail.backends.mail', _('MailBox')),
+    ('dbmail.backends.push', _('Push')),
+    ('dbmail.backends.sms', _('SMS')),
+    ('dbmail.backends.tts', _('TTS')),
+)
+
 
 def _upload_mail_file(instance, filename):
     if instance is not None:
@@ -709,17 +716,11 @@ class MailLogTrack(models.Model):
 
 @python_2_unicode_compatible
 class MailSubscription(models.Model):
-    BACKENDS = (
-        ('dbmail.backends.mail', _('MailBox')),
-        ('dbmail.backends.push', _('Push')),
-        ('dbmail.backends.sms', _('SMS')),
-        ('dbmail.backends.tts', _('TTS')),
-    )
-
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
     backend = models.CharField(
-        _('Backend'), choices=BACKENDS, max_length=50)
+        _('Backend'), choices=BACKENDS, max_length=50,
+        default='dbmail.backends.mail')
     start_hour = models.CharField(
         _('Start hour'), default='00:00', max_length=5)
     end_hour = models.CharField(_('End hour'), default='23:59', max_length=5)
@@ -730,7 +731,7 @@ class MailSubscription(models.Model):
     defer_at_allowed_hours = models.BooleanField(
         _('Defer at allowed hours'), default=False)
     address = models.CharField(
-        _('Address'), max_length=60,
+        _('Address'), max_length=60,  # unique=True,
         help_text=_('Must be phone number/email/token'))
 
     def send_confirmation_link(self, slug='subs-confirmation', **kwargs):
@@ -763,12 +764,15 @@ class MailSubscription(models.Model):
         kwargs.update({
             'is_enabled': True,
             'is_checked': True,
-            'user_id': user_id,
         })
+        if user_id is not None:
+            kwargs.update({
+                'user_id': user_id,
+            })
         return cls.objects.filter(**kwargs)
 
     @classmethod
-    def notify(cls, slug, user_id, sub_filter=None, **kwargs):
+    def notify(cls, slug, user_id=None, sub_filter=None, **kwargs):
         from dbmail import db_sender, celery_supported
 
         now_hour = cls.get_current_hour()
@@ -798,12 +802,29 @@ class MailSubscription(models.Model):
             db_sender(use_slug, method.address, **kwargs)
 
     def __str__(self):
-        return self.user.username
+        if self.user:
+            return self.user.username
+        return self.address
 
     class Meta:
         verbose_name = _('Mail Subscription')
         verbose_name_plural = _('Mail Subscriptions')
 
+'''
+class MailSubscriptionGroup(models.Model):
+    group = models.CharField(max_length=100, unique=True)
+
+
+class MailNotification(models.Model):
+    group = models.ForeignKey(AbstractMailSubscriptionGroup)
+    notify = models.ManyToManyField(MailSubscription)
+
+    @classmethod
+    def notify(cls, user, mail_slug, group, **kwargs):
+        for notify in cls.objects.filter(notify__user=user, group=group):
+            MailSubscription.notify(
+                mail_slug, user.pk, {'pk': notify.pk}, **kwargs)
+'''
 
 if VERSION < (1, 7):
     initial_signals()

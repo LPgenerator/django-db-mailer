@@ -31,6 +31,13 @@ def db_sender(*args, **kwargs):
         raise
 
 
+@task(name='dbmail.subscription')
+def db_subscription(*args, **kwargs):
+    from dbmail.models import MailSubscription
+
+    MailSubscription.notify(*args, **kwargs)
+
+
 @task(name='dbmail.signal_receiver')
 def signal_receiver(*args, **kwargs):
     from dbmail.signals import SignalReceiver
