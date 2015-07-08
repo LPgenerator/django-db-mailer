@@ -286,3 +286,9 @@ msgstr "Подписки"
 
 msgid "Mail Subscriptions"
 msgstr "Подписки"
+
+msgid "Clean cache"
+msgstr "Сбросить кеш"
+
+msgid "Cache was successful removed"
+msgstr "Кеш успешно удален"

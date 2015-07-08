@@ -81,6 +81,17 @@ class MailTemplateAdmin(ModelAdmin):
                 '/static/dbmail/admin/js/dbmail.js',
             )
 
+    def changelist_view(self, request, extra_context=None):
+        self.change_list_template = 'dbmail/admin/change_list_link.html'
+        return super(MailTemplateAdmin, self).changelist_view(
+            request, extra_context=extra_context)
+
+    def clean_cache_view(self, request):
+        MailTemplate.clean_cache()
+        ApiKey.clean_cache()
+        messages.success(request, _('Cache was successful removed'))
+        return redirect('admin:dbmail_mailtemplate_changelist')
+
     def send_mail_view(self, request, pk):
         from dbmail.management.commands.dbmail_test_send import send_test_msg
 
@@ -140,6 +151,11 @@ class MailTemplateAdmin(ModelAdmin):
                 r'^(\d+)/sendmail/apps/',
                 self.admin_site.admin_view(self.get_apps_view),
                 name='send_mail_apps_view'
+            ),
+            url(
+                r'^reset/cache/',
+                self.admin_site.admin_view(self.clean_cache_view),
+                name='clean_cache_view'
             ),
         )
         return admin_urls + urls
