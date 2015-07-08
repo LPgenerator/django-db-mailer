@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
 from django.utils.timezone import now
 from django.core.cache import cache
+from django.utils import timezone
 from django.conf import settings
 from django.db import models
 from django import VERSION
@@ -704,6 +705,95 @@ class MailLogTrack(models.Model):
         self.detect_geo()
         self.detect_open()
         super(MailLogTrack, self).save(*args, **kwargs)
+
+
+@python_2_unicode_compatible
+class MailSubscription(models.Model):
+    BACKENDS = (
+        ('dbmail.backends.mail', _('MailBox')),
+        ('dbmail.backends.push', _('Push')),
+        ('dbmail.backends.sms', _('SMS')),
+        ('dbmail.backends.tts', _('TTS')),
+    )
+
+    user = models.ForeignKey(
+        AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
+    backend = models.CharField(choices=BACKENDS, max_length=50)
+    start_hour = models.CharField(default='00:00', max_length=5)
+    end_hour = models.CharField(default='23:59', max_length=5)
+    is_enabled = models.BooleanField(default=True, db_index=True)
+    is_checked = models.BooleanField(default=False, db_index=True)
+    defer_at_allowed_hours = models.BooleanField(default=False)
+    address = models.CharField(max_length=60)
+
+    def send_confirmation_link(self, slug='subs-confirmation', **kwargs):
+        from dbmail import db_sender
+
+        kwargs['backend'] = self.backend
+        db_sender(slug, self.address, **kwargs)
+
+    @staticmethod
+    def get_now():
+        return timezone.localtime(timezone.now())
+
+    @staticmethod
+    def get_current_hour():
+        current = timezone.localtime(timezone.now())
+        return datetime.timedelta(hours=current.hour, minutes=current.minute)
+
+    @staticmethod
+    def convert_to_date(value):
+        hour, minute = value.split(':')
+        return datetime.timedelta(hours=int(hour), minutes=int(minute))
+
+    @classmethod
+    def mix_hour_with_date(cls, value):
+        return datetime.datetime.strptime(
+            cls.get_now().strftime('%Y-%m-%d ') + value, '%Y-%m-%d %H:%M')
+
+    @classmethod
+    def get_notification_list(cls, user_id, **kwargs):
+        kwargs.update({
+            'is_enabled': True,
+            'is_checked': True,
+            'user_id': user_id,
+        })
+        return cls.objects.filter(**kwargs)
+
+    @classmethod
+    def notify(cls, slug, user_id, **kwargs):
+        from dbmail import db_sender, celery_supported
+
+        now_hour = cls.get_current_hour()
+        use_celery = celery_supported() and kwargs.pop('use_celery', True)
+
+        for method in cls.get_notification_list(user_id):
+            kwargs['send_at_date'] = None
+            start_hour = cls.convert_to_date(method.start_hour)
+            end_hour = cls.convert_to_date(method.end_hour)
+
+            if not (start_hour <= now_hour <= end_hour):
+                if method.defer_at_allowed_hours and use_celery:
+                    kwargs['send_at_date'] = cls.mix_hour_with_date(
+                        method.start_hour)
+                else:
+                    continue
+            kwargs['backend'] = method.backend
+
+            extra_slug = '%s-%s' % (slug, method.backend.split('.')[-1])
+            use_slug = slug
+            try:
+                if MailTemplate.get_template(slug=extra_slug):
+                    use_slug = extra_slug
+            except MailTemplate.DoesNotExist:
+                pass
+            db_sender(use_slug, method.address, **kwargs)
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = _('Mail Subscription')
 
 
 if VERSION < (1, 7):

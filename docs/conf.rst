@@ -142,6 +142,7 @@ App settings
     # Default providers for sms and text to speech. If you want use different providers, you can write simple function to do it. Look to examples at dbmail.providers.nexmo.sms.
     DB_MAILER_SMS_PROVIDER = 'dbmail.providers.nexmo.sms'
     DB_MAILER_TTS_PROVIDER = 'dbmail.providers.nexmo.tts'
+    DB_MAILER_PUSH_PROVIDER = 'dbmail.providers.prowl.push'
 
     # By default real api call is using.
     # For log all requests to stdout - use True flag.

@@ -16,7 +16,7 @@ from django.contrib import admin
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey, MailBcc,
     MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailBaseTemplate,
-    MailFromEmailCredential, MailLogTrack
+    MailFromEmailCredential, MailLogTrack, MailSubscription
 )
 from dbmail import app_installed
 from dbmail import defaults
@@ -310,6 +310,18 @@ class MailBaseTemplateAdmin(ModelAdmin):
     search_fields = ('name', 'message')
 
 
+class MailSubscriptionAdmin(admin.ModelAdmin):
+    list_display = (
+        'user', 'address', 'backend', 'start_hour', 'end_hour',
+        'is_enabled', 'is_checked', 'defer_at_allowed_hours',
+        'id',
+    )
+    list_filter = (
+        'backend', 'is_enabled', 'is_checked', 'defer_at_allowed_hours')
+    search_fields = (
+        'user__name', 'user__email', 'address')
+
+
 def admin_register(model):
     model_name = model.__name__
     if model_name in defaults.ALLOWED_MODELS_ON_ADMIN:
@@ -321,6 +333,7 @@ def admin_register(model):
 
 
 admin_register(MailFromEmailCredential)
+admin_register(MailSubscription)
 admin_register(MailBaseTemplate)
 admin_register(MailFromEmail)
 admin_register(MailLogTrack)
