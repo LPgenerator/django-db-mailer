@@ -41,6 +41,15 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpus", APP_CPUS]
     end
 
+    if Vagrant.has_plugin?("vagrant-cachier")
+        config.cache.scope = :box
+        config.vm.network :private_network, ip: "44.44.44.45"
+
+        config.cache.synced_folder_opts = {
+            type: :nfs,
+            mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+        }
+    end
 end
 #
 # }}}
