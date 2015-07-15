@@ -70,7 +70,7 @@ class Sender(object):
     def _get_connection(self):
         if self._template.auth_credentials:
             return self._kwargs.pop('connection', None) or get_connection(
-                **self._template.auth_credentials)
+                **self._template.from_email.get_auth())
         return self._kwargs.pop('connection', None)
 
     def _get_template(self):

@@ -98,8 +98,8 @@ class MailFromEmail(models.Model):
             return dict(
                 host=self.credential.host,
                 port=self.credential.port,
-                username=self.credential.username,
-                password=self.credential.password,
+                username=str(self.credential.username),
+                password=str(self.credential.password),
                 use_tls=self.credential.use_tls,
                 fail_silently=self.credential.fail_silently
             )
