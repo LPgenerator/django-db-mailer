@@ -31,7 +31,6 @@ def celery_supported():
 
 
 def db_sender(slug, recipient, *args, **kwargs):
-    from django.utils.importlib import import_module
     from dbmail.defaults import (
         CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, BACKEND, DEBUG)
     from dbmail.models import MailTemplate
@@ -185,7 +184,6 @@ def import_by_string(dotted_path):
         return import_string(dotted_path)
 
     # Django == 1.4
-
     from django.utils.importlib import import_module
 
     class_data = dotted_path.split('.')
@@ -195,3 +193,23 @@ def import_by_string(dotted_path):
     module = import_module(module_path)
     # Finally, we retrieve the Class
     return getattr(module, class_str)
+
+
+def import_module(*args, **kwargs):
+    try:
+        from django.utils.importlib import import_module
+    except ImportError:
+        from importlib import import_module
+    return import_module(*args, **kwargs)
+
+
+def get_model(*args, **kwargs):
+    try:
+        from django.db.models import get_model as _get_model
+    except ImportError:
+        # Django > 1.8
+        from django.apps import apps
+
+        def _get_model(*args, **kwargs):
+            return apps.get_model(*args, **kwargs)
+    return _get_model(*args, **kwargs)

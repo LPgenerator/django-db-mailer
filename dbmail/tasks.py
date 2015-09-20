@@ -9,7 +9,7 @@ from dbmail.utils import get_ip
 
 @task(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY)
 def db_sender(*args, **kwargs):
-    from django.utils.importlib import import_module
+    from dbmail import import_module
 
     retry_delay = kwargs.pop('retry_delay', SEND_RETRY_DELAY)
     time_limit = kwargs.pop('time_limit', SEND_MAX_TIME)

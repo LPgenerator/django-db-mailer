@@ -9,7 +9,6 @@ import sys
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.core.urlresolvers import reverse, NoReverseMatch
-from django.utils.importlib import import_module
 from django.contrib.sites.models import Site
 from django.template import Template, Context
 from django.core.mail import get_connection
@@ -20,6 +19,7 @@ from django.core import signing
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
 from dbmail.utils import clean_html
+from dbmail import import_module
 from dbmail import get_version
 from dbmail import defaults
 

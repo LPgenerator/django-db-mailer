@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-from django.utils.importlib import import_module
 from django.conf import settings
 
 from dbmail.defaults import SMS_PROVIDER, DEFAULT_SMS_FROM
 from dbmail.backends.mail import Sender as SenderBase
 from dbmail.utils import clean_html
+from dbmail import import_module
 
 
 class Sender(SenderBase):

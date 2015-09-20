@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-from django.utils.importlib import import_module
-
 from dbmail.defaults import DEFAULT_PUSH_FROM, PUSH_PROVIDER
 from dbmail.backends.sms import Sender as SenderBase
 from dbmail.utils import clean_html
+from dbmail import import_module
 
 
 class Sender(SenderBase):

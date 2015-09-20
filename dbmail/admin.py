@@ -9,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns, url
-from django.db.models import get_model
 from django.contrib import messages
 from django.contrib import admin
 
@@ -19,6 +18,7 @@ from dbmail.models import (
     MailFromEmailCredential, MailLogTrack, MailSubscription
 )
 from dbmail import app_installed
+from dbmail import get_model
 from dbmail import defaults
 
 ModelAdmin = admin.ModelAdmin
