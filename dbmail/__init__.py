@@ -135,6 +135,10 @@ def initial_signals():
             pass
 
 
+##
+# Compatibility section
+##
+
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 

@@ -271,7 +271,8 @@ class Sender(object):
                 self._store_log(False)
                 raise
 
-    def debug(self, key, value):
+    @staticmethod
+    def debug(key, value):
         from django.utils.termcolors import colorize
 
         if value:
