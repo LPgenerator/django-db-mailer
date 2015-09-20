@@ -205,3 +205,11 @@ App settings
 
     # Path to HTMLField class.
     DB_MAILER_MODEL_HTMLFIELD = 'django.db.models.TextField'
+
+    # You can use any backends designed as django email backend
+    # Example:
+    # - django.core.mail.backends.console.EmailBackend
+    # - postmark.django_backend.EmailBackend
+    # - django_ses.SESBackend and etc
+    # By default:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
