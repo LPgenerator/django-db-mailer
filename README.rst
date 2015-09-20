@@ -411,7 +411,7 @@ Update dbmail fields:
 
     $ ./manage.py sync_translation_fields --noinput
 
-**Postmark backend**
+**Postmark Django Backend**
 
 Install ``python-postmark`` app via pip. Configure your settings:
 
@@ -423,7 +423,7 @@ Install ``python-postmark`` app via pip. Configure your settings:
     EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
 
 
-**Amazon's Simple Email Service backend**
+**Amazon's Simple Email Service Django Backend**
 
 Install ``django-ses`` app via pip. Configure your settings:
 
