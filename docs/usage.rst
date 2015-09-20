@@ -291,7 +291,7 @@ Full stack (multiple) notification example for django.contrib.auth.models.users
 
     # Email notification
     MailSubscription.objects.create(
-        user_id=1,
+        user_id=1,  # you can omit user_id if user not registered
         backend="dbmail.backends.mail",
         is_checked=True,
         address="user1@example.com"
@@ -319,24 +319,24 @@ If you want send notification for all subscribers, you can omit user_id
     from dbmail.models import MailSubscription
     from dbmail import send_db_subscription
 
-    # Email notification
+    # Subscribe nonexistent user for email notification
     MailSubscription.objects.create(
         is_checked=True,
         address="user2@example.com"
     )
 
-    # Push notification
+    # Subscribe nonexistent user for push notification
     MailSubscription.objects.create(
         backend="dbmail.backends.push",
         is_checked=True,
         address="d30NSrq10aO0hsyHDZ4"
     )
 
-    # Send notification to all available user (all devices)
+    # Send notification to all available users (all devices)
     send_db_subscription('welcome')
 
 
-For all active users which registered at last 3 days ago (all devices):
+Send notification for all active users which registered at last 3 days ago (all devices):
 
 .. code-block:: python
 
@@ -347,4 +347,40 @@ For all active users which registered at last 3 days ago (all devices):
         'user__is_active': 1,
         'user__date_joined__gte': datetime.now() - timedelta(days=3)
     })
+
+
+Send confirmation email message:
+
+.. code-block:: python
+
+    from dbmail.models import MailSubscription
+    from django.core.signing import dumps
+
+    # subscribe user
+    sub_obj = MailSubscription.objects.create(
+        is_checked=False,
+        address="user3@example.com"
+    )
+
+    # create hash code for confirmation
+    kwargs['hash_code'] = dumps({'pk': sub_obj.pk})
+
+    # send message (create MailTemplate)
+    MailSubscription.send_confirmation_link(
+        slug='subs-confirmation', **kwargs
+    )
+
+
+Create your own view for confirmation:
+
+.. code-block:: python
+
+    from dbmail.models import MailSubscription
+    from django.core.signing import loads
+
+    def confirmation(hash_code):
+        data = loads(hash_code)
+        sub_obj = MailSubscription.objects.get(pk=data['pk'])
+        sub_obj.is_checked = True
+        sub_obj.save()
 
