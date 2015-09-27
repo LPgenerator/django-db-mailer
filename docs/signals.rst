@@ -27,3 +27,40 @@ But if you launch application on several instances, do it manually.
 For deferred tasks best way is a crontab command + database queue.
 You can add ``DB_MAILER_SIGNAL_DEFERRED_DISPATCHER = 'database'`` into project settings,
 and call crontab command ``send_dbmail_deferred_signal``.
+
+
+Sending signals
+---------------
+
+.. code-block:: python
+
+    from dbmail.exceptions import StopSendingException
+    from dbmail.signals import pre_send, post_send
+
+
+    def check_balance(*args, **kwargs):
+        if kwargs['sender']._backend.endswith('sms'):
+            balance = ...
+            if balance == 0:
+                raise StopSendingException
+
+    def decrease_balance(*args, **kwargs):
+        # decrease user balance
+        pass
+
+
+    pre_send.connect(check_balance)
+    post_send.connect(decrease_balance)
+
+
+When you want transmit some **kwargs to signal, you can use `signals_kwargs`.
+
+.. code-block:: python
+
+    from dbmail import send_db_mail
+
+    send_db_mail(
+        'welcome', 'user@example.com',
+        signals_kwargs={'user': User.objects.get(pk=1)}, use_celery=False
+    )
+

@@ -18,6 +18,7 @@ from django.core import signing
 
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
+from dbmail.exceptions import StopSendingException
 from dbmail.utils import clean_html
 from dbmail import import_module
 from dbmail import get_version
@@ -35,6 +36,7 @@ class Sender(object):
         self._language = kwargs.pop('language', None)
         self._backend = kwargs.pop('backend')
         self._provider = kwargs.pop('provider', None)
+        self._signals_kw = kwargs.pop('signals_kwargs', {})
 
         self._template = self._get_template()
         self._context = self._get_context(args)
@@ -257,14 +259,20 @@ class Sender(object):
                 time.sleep(defaults.SEND_RETRY_DELAY_DIRECT)
 
     def send(self, is_celery=True):
+        from dbmail.signals import pre_send, post_send
+
         if self._template.is_active:
             try:
+                pre_send.send(sender=self, **self._signals_kw)
                 if is_celery is True:
                     self._send()
                 else:
                     self._try_to_send()
                 self._store_log(True)
+                post_send.send(sender=self, **self._signals_kw)
                 return 'OK'
+            except StopSendingException:
+                return
             except Exception as exc:
                 self._err_msg = traceback.format_exc()
                 self._err_exc = exc.__class__.__name__
