@@ -790,14 +790,22 @@ class MailSubscriptionAbstract(models.Model):
                     continue
             kwargs['backend'] = method.backend
 
-            extra_slug = '%s-%s' % (slug, method.backend.split('.')[-1])
+            extra_slug = '%s-%s' % (slug, method.get_short_type())
             use_slug = slug
+
+            kwargs = method.update_notify_kwargs(**kwargs)
             try:
                 if MailTemplate.get_template(slug=extra_slug):
                     use_slug = extra_slug
             except MailTemplate.DoesNotExist:
                 pass
             db_sender(use_slug, method.address, **kwargs)
+
+    def update_notify_kwargs(self, **kwargs):
+        return kwargs
+
+    def get_short_type(self):
+        return self.backend.split('.')[-1]
 
     class Meta:
         abstract = True
