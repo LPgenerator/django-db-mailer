@@ -714,8 +714,7 @@ class MailLogTrack(models.Model):
         super(MailLogTrack, self).save(*args, **kwargs)
 
 
-@python_2_unicode_compatible
-class MailSubscription(models.Model):
+class MailSubscriptionAbstract(models.Model):
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
     backend = models.CharField(
@@ -800,14 +799,20 @@ class MailSubscription(models.Model):
                 pass
             db_sender(use_slug, method.address, **kwargs)
 
+    class Meta:
+        abstract = True
+
+
+@python_2_unicode_compatible
+class MailSubscription(MailSubscriptionAbstract):
+    class Meta:
+        verbose_name = _('Mail Subscription')
+        verbose_name_plural = _('Mail Subscriptions')
+
     def __str__(self):
         if self.user:
             return self.user.username
         return self.address
-
-    class Meta:
-        verbose_name = _('Mail Subscription')
-        verbose_name_plural = _('Mail Subscriptions')
 
 '''
 class MailSubscriptionGroup(models.Model):
