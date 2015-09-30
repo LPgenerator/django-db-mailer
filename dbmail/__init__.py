@@ -100,8 +100,10 @@ def send_db_push(*args, **kwargs):
 
 
 def send_db_subscription(*args, **kwargs):
-    from dbmail.defaults import CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY
-    from dbmail.models import MailSubscription
+    from dbmail.defaults import (
+        CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, MAIL_SUBSCRIPTION_MODEL)
+
+    MailSubscription = import_by_string(MAIL_SUBSCRIPTION_MODEL)
 
     use_celery = ENABLE_CELERY and kwargs.pop('use_celery', ENABLE_CELERY)
     options = {

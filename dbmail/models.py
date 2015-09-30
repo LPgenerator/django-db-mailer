@@ -714,8 +714,7 @@ class MailLogTrack(models.Model):
         super(MailLogTrack, self).save(*args, **kwargs)
 
 
-@python_2_unicode_compatible
-class MailSubscription(models.Model):
+class MailSubscriptionAbstract(models.Model):
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
     backend = models.CharField(
@@ -791,8 +790,10 @@ class MailSubscription(models.Model):
                     continue
             kwargs['backend'] = method.backend
 
-            extra_slug = '%s-%s' % (slug, method.backend.split('.')[-1])
+            extra_slug = '%s-%s' % (slug, method.get_short_type())
             use_slug = slug
+
+            kwargs = method.update_notify_kwargs(**kwargs)
             try:
                 if MailTemplate.get_template(slug=extra_slug):
                     use_slug = extra_slug
@@ -800,14 +801,26 @@ class MailSubscription(models.Model):
                 pass
             db_sender(use_slug, method.address, **kwargs)
 
+    def update_notify_kwargs(self, **kwargs):
+        return kwargs
+
+    def get_short_type(self):
+        return self.backend.split('.')[-1]
+
+    class Meta:
+        abstract = True
+
+
+@python_2_unicode_compatible
+class MailSubscription(MailSubscriptionAbstract):
+    class Meta:
+        verbose_name = _('Mail Subscription')
+        verbose_name_plural = _('Mail Subscriptions')
+
     def __str__(self):
         if self.user:
             return self.user.username
         return self.address
-
-    class Meta:
-        verbose_name = _('Mail Subscription')
-        verbose_name_plural = _('Mail Subscriptions')
 
 '''
 class MailSubscriptionGroup(models.Model):

@@ -33,7 +33,10 @@ def db_sender(*args, **kwargs):
 
 @task(name='dbmail.subscription')
 def db_subscription(*args, **kwargs):
-    from dbmail.models import MailSubscription
+    from dbmail import import_by_string
+    from dbmail.defaults import MAIL_SUBSCRIPTION_MODEL
+
+    MailSubscription = import_by_string(MAIL_SUBSCRIPTION_MODEL)
 
     MailSubscription.notify(*args, **kwargs)
 
