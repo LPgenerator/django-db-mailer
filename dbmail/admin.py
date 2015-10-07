@@ -39,6 +39,24 @@ if app_installed('reversion_compare'):
     except ImportError:
         pass
 
+if app_installed('modeltranslation'):
+    if app_installed('grappelli_modeltranslation'):
+        try:
+            from grappelli_modeltranslation.admin import TranslationAdmin
+            class TranslationModelAdmin(ModelAdmin, TranslationAdmin):
+                pass
+        except ImportError:
+            pass
+    else:
+        try:
+            from modeltranslation.admin import TabbedTranslationAdmin
+            class TranslationModelAdmin(ModelAdmin, TabbedTranslationAdmin):
+                pass
+        except:
+            pass
+else:
+    TranslationModelAdmin = ModelAdmin
+
 
 class MailCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'created', 'updated', 'id',)
@@ -51,7 +69,11 @@ class MailTemplateFileAdmin(admin.TabularInline):
     extra = 1
 
 
-class MailTemplateAdmin(ModelAdmin):
+class MailBaseTemplateAdmin(TranslationModelAdmin):
+    pass
+
+
+class MailTemplateAdmin(TranslationModelAdmin):
     list_display = (
         'name', 'category', 'from_email', 'slug', 'is_admin', 'is_html',
         'enable_log', 'is_active', 'num_of_retries', 'priority',
@@ -351,7 +373,6 @@ def admin_register(model):
 
 admin_register(MailFromEmailCredential)
 admin_register(MailSubscription)
-admin_register(MailBaseTemplate)
 admin_register(MailFromEmail)
 admin_register(MailLogTrack)
 admin_register(MailCategory)
