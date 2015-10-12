@@ -263,13 +263,14 @@ class Sender(object):
 
         if self._template.is_active:
             try:
-                pre_send.send(sender=self, **self._signals_kw)
+                pre_send.send(self.__class__, instace=self, **self._signals_kw)
                 if is_celery is True:
                     self._send()
                 else:
                     self._try_to_send()
                 self._store_log(True)
-                post_send.send(sender=self, **self._signals_kw)
+                post_send.send(
+                    self.__class__, instace=self, **self._signals_kw)
                 return 'OK'
             except StopSendingException:
                 return
