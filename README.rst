@@ -62,8 +62,8 @@ Mail API
     # New dbmail template
     MailTemplate.objects.create(
         name="Site welcome template",
-        subject="Welcome",
-        message="Welcome to our site. We are glad to see you.",
+        subject="[{{prefix}}] Welcome {{full_name}}!",
+        message="Hi, {{username}}. Welcome to our site.",
         slug="welcome",
         is_html=False,
     )
@@ -82,7 +82,8 @@ Mail API
         {
             'username': request.user.username,
             'full_name': request.user.get_full_name(),
-            'signup_date': request.user.date_joined
+            'signup_date': request.user.date_joined,
+            'prefix': "DbMail",
         },
 
         # You can access to all model fields. For m2m and fk fields, you should use module_name
