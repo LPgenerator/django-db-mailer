@@ -36,10 +36,12 @@ Sending signals
 
     from dbmail.exceptions import StopSendingException
     from dbmail.signals import pre_send, post_send
+    from dbmail.backends.sms import Sender as SmsSender
 
 
     def check_balance(*args, **kwargs):
-        if kwargs['sender']._backend.endswith('sms'):
+        # "if" condition is unnecessary due to the way we connect signal to handler
+        if kwargs['instance']._backend.endswith('sms'):
             balance = ...
             if balance == 0:
                 raise StopSendingException
@@ -49,8 +51,8 @@ Sending signals
         pass
 
 
-    pre_send.connect(check_balance)
-    post_send.connect(decrease_balance)
+    pre_send.connect(check_balance, sender=SmsSender)
+    post_send.connect(decrease_balance, sender=SmsSender)
 
 
 When you want transmit some **kwargs to signal, you can use `signals_kwargs`.

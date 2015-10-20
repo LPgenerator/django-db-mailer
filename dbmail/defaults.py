@@ -50,6 +50,8 @@ ALLOWED_MODELS_ON_ADMIN = get_settings('DB_MAILER_ALLOWED_MODELS_ON_ADMIN', [
     'MailBaseTemplate',
     'MailSubscription',
 ])
+MAIL_SUBSCRIPTION_MODEL = get_settings(
+    'DB_MAILER_MAIL_SUBSCRIPTION_MODEL', 'dbmail.models.MailSubscription')
 AUTH_USER_MODEL = get_settings('AUTH_USER_MODEL', 'auth.User')
 USE_CELERY_FOR_ADMIN_TEST = get_settings(
     'DB_MAILER_USE_CELERY_FOR_ADMIN_TEST', True)
