@@ -206,6 +206,9 @@ App settings
     # Path to HTMLField class.
     DB_MAILER_MODEL_HTMLFIELD = 'django.db.models.TextField'
 
+    # Path to MailSubscription class.
+    DB_MAILER_MAIL_SUBSCRIPTION_MODEL = 'dbmail.models.MailSubscription'
+
     # You can use any backends designed as django email backend
     # Example:
     # - django.core.mail.backends.console.EmailBackend

@@ -4,7 +4,7 @@ from datetime import datetime
 import sys
 
 
-VERSION = (2, 2, 0)
+VERSION = (2, 3, 'a')
 
 default_app_config = 'dbmail.apps.DBMailConfig'
 
@@ -31,7 +31,6 @@ def celery_supported():
 
 
 def db_sender(slug, recipient, *args, **kwargs):
-    from django.utils.importlib import import_module
     from dbmail.defaults import (
         CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, BACKEND, DEBUG)
     from dbmail.models import MailTemplate
@@ -101,8 +100,10 @@ def send_db_push(*args, **kwargs):
 
 
 def send_db_subscription(*args, **kwargs):
-    from dbmail.defaults import CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY
-    from dbmail.models import MailSubscription
+    from dbmail.defaults import (
+        CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, MAIL_SUBSCRIPTION_MODEL)
+
+    MailSubscription = import_by_string(MAIL_SUBSCRIPTION_MODEL)
 
     use_celery = ENABLE_CELERY and kwargs.pop('use_celery', ENABLE_CELERY)
     options = {
@@ -135,6 +136,10 @@ def initial_signals():
         except (ImportError, DatabaseError, IntegrityError):
             pass
 
+
+##
+# Compatibility section
+##
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
@@ -185,7 +190,6 @@ def import_by_string(dotted_path):
         return import_string(dotted_path)
 
     # Django == 1.4
-
     from django.utils.importlib import import_module
 
     class_data = dotted_path.split('.')
@@ -195,3 +199,23 @@ def import_by_string(dotted_path):
     module = import_module(module_path)
     # Finally, we retrieve the Class
     return getattr(module, class_str)
+
+
+def import_module(*args, **kwargs):
+    try:
+        from django.utils.importlib import import_module
+    except ImportError:
+        from importlib import import_module
+    return import_module(*args, **kwargs)
+
+
+def get_model(*args, **kwargs):
+    try:
+        from django.db.models import get_model as _get_model
+    except ImportError:
+        # Django > 1.8
+        from django.apps import apps
+
+        def _get_model(*args, **kwargs):
+            return apps.get_model(*args, **kwargs)
+    return _get_model(*args, **kwargs)

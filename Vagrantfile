@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
     # SSH forward
     config.ssh.forward_agent = true
 
-    # Configure VirtualBox
+    # VirtualBox configuration
     config.vm.provider :virtualbox do |vb|
         vb.gui = false
         vb.name = APP_VM_NAME
@@ -39,6 +39,11 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
         vb.customize ["modifyvm", :id, "--ioapic", "on"]
         vb.customize ["modifyvm", :id, "--cpus", APP_CPUS]
+    end
+
+    # LXC configuration
+    config.vm.provider :lxc do |lxc, override|
+        override.vm.box = "fgrehm/trusty64-lxc"
     end
 
     if Vagrant.has_plugin?("vagrant-cachier")
