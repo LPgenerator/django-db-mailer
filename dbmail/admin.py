@@ -366,6 +366,7 @@ def admin_register(model):
 
 admin_register(MailFromEmailCredential)
 admin_register(MailSubscription)
+admin_register(MailBaseTemplate)
 admin_register(MailFromEmail)
 admin_register(MailLogTrack)
 admin_register(MailCategory)
