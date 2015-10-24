@@ -42,6 +42,7 @@ if app_installed('modeltranslation'):
     if app_installed('grappelli_modeltranslation'):
         try:
             from grappelli_modeltranslation.admin import TranslationAdmin
+            
             class TranslationModelAdmin(ModelAdmin, TranslationAdmin):
                 pass
         except ImportError:
@@ -49,6 +50,7 @@ if app_installed('modeltranslation'):
     else:
         try:
             from modeltranslation.admin import TabbedTranslationAdmin
+            
             class TranslationModelAdmin(ModelAdmin, TabbedTranslationAdmin):
                 pass
         except ImportError:
