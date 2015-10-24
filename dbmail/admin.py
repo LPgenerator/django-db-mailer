@@ -2,7 +2,6 @@
 
 import os
 
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
@@ -39,6 +38,26 @@ if app_installed('reversion_compare'):
     except ImportError:
         pass
 
+TranslationModelAdmin = ModelAdmin
+
+if app_installed('modeltranslation'):
+    if app_installed('grappelli_modeltranslation'):
+        try:
+            from grappelli_modeltranslation.admin import TranslationAdmin
+            
+            class TranslationModelAdmin(ModelAdmin, TranslationAdmin):
+                pass
+        except ImportError:
+            pass
+    else:
+        try:
+            from modeltranslation.admin import TabbedTranslationAdmin
+            
+            class TranslationModelAdmin(ModelAdmin, TabbedTranslationAdmin):
+                pass
+        except ImportError:
+            pass
+
 
 class MailCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'created', 'updated', 'id',)
@@ -51,7 +70,11 @@ class MailTemplateFileAdmin(admin.TabularInline):
     extra = 1
 
 
-class MailTemplateAdmin(ModelAdmin):
+class MailBaseTemplateAdmin(TranslationModelAdmin):
+    pass
+
+
+class MailTemplateAdmin(TranslationModelAdmin):
     list_display = (
         'name', 'category', 'from_email', 'slug', 'is_admin', 'is_html',
         'enable_log', 'is_active', 'num_of_retries', 'priority',
@@ -72,15 +95,9 @@ class MailTemplateAdmin(ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
     class Media:
-        try:
-            js = (
-                static('dbmail/admin/js/dbmail.js'),
-            )
-        except ImproperlyConfigured:
-            js = (
-                '/media/dbmail/admin/js/dbmail.js',
-                '/static/dbmail/admin/js/dbmail.js',
-            )
+        js = (
+            'dbmail/admin/js/dbmail.js',
+        )
 
     def changelist_view(self, request, extra_context=None):
         self.change_list_template = 'dbmail/admin/change_list_link.html'

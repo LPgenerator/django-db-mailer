@@ -188,7 +188,7 @@ class MailTemplate(models.Model):
         help_text=_('If not specified, then used default.'),
         on_delete=models.SET_NULL)
     bcc_email = models.ManyToManyField(
-        MailBcc, verbose_name=_('Bcc'), blank=True, null=True,
+        MailBcc, verbose_name=_('Bcc'), blank=True,
         help_text='Blind carbon copy')
     message = HTMLField(_('Body'))
     slug = models.SlugField(
