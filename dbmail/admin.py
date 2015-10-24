@@ -38,6 +38,8 @@ if app_installed('reversion_compare'):
     except ImportError:
         pass
 
+TranslationModelAdmin = ModelAdmin
+
 if app_installed('modeltranslation'):
     if app_installed('grappelli_modeltranslation'):
         try:
@@ -55,8 +57,6 @@ if app_installed('modeltranslation'):
                 pass
         except ImportError:
             pass
-else:
-    TranslationModelAdmin = ModelAdmin
 
 
 class MailCategoryAdmin(admin.ModelAdmin):
