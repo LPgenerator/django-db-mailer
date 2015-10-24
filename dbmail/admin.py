@@ -2,7 +2,6 @@
 
 import os
 
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
@@ -94,15 +93,9 @@ class MailTemplateAdmin(TranslationModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
     class Media:
-        try:
-            js = (
-                static('dbmail/admin/js/dbmail.js'),
-            )
-        except ImproperlyConfigured:
-            js = (
-                '/media/dbmail/admin/js/dbmail.js',
-                '/static/dbmail/admin/js/dbmail.js',
-            )
+        js = (
+            'dbmail/admin/js/dbmail.js',
+        )
 
     def changelist_view(self, request, extra_context=None):
         self.change_list_template = 'dbmail/admin/change_list_link.html'
