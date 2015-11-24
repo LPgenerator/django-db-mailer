@@ -33,6 +33,7 @@ What's that
 | From box you can use it with django-celery for send background messages.
 | Also you have opportunity to create reports from logs by mail categories and slug.
 | Groups with Recipients and send by model signal also available by default.
+| Can be used without any depends from programming language as a external service.
 | That app very simple to install and use on your projects.
 
 
@@ -514,5 +515,5 @@ Screenshots
 
 Compatibility
 -------------
-* Python: 2.6, 2.7, pypy, 3.4, pypy3
-* Django: 1.4, 1.5, 1.6, 1.7, 1.8
+* Python: 2.6, 2.7, pypy, 3.4, 3.5, pypy3
+* Django: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9
