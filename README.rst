@@ -485,6 +485,18 @@ External API usage
 *API bandwidth is 1k+ rps on i7 2.3GHz*
 
 
+Responsive transactional HTML email templates
+---------------------------------------------
+Fixtures with Base transactional HTML email templates was added into dbmail fixtures.
+This templates was optimized for desktop clients, web clients, mobile clients, various devices, various providers.
+Thanks for Mailgun Team. You can use it as default basic templates on your project.
+
+.. code-block:: bash
+
+    python manage.py load_dbmail_base_templates
+
+
+
 Publications
 ------------
 * `Установка и использование с примерами на русском <http://habrahabr.ru/post/253445/>`_.
