@@ -193,6 +193,10 @@ App settings
     SMSAERO_MD5_PASSWORD = ""
     SMSAERO_FROM = ""
 
+    # Slack
+    SLACK_USERNAME = 'Robot'
+    SLACK_HOOCK_URL = 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX'
+    SLACK_CHANNEL = 'main'
 
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
