@@ -88,11 +88,22 @@ class Sender(object):
                 data.update(context)
             elif hasattr(context, '_meta'):
                 data.update(self._model_to_dict(context))
-                data.update({context._meta.module_name: context})
+                data.update({self._get_context_module_name(context): context})
 
         if settings.DEBUG and SHOW_CONTEXT:
             pprint.pprint(data)
         return data
+
+    @staticmethod
+    def _get_context_module_name(context):
+        from distutils.version import StrictVersion
+        import django
+
+        current_version = django.get_version()
+
+        if StrictVersion(current_version) < StrictVersion('1.8'):
+            return context._meta.module_name
+        return context._meta.model_name
 
     def _get_str_by_language(self, field, template=None):
         obj = template if template else self._template
