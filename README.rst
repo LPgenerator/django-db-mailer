@@ -463,6 +463,11 @@ That version do not include celery settings, bcc, api, mail settings, signals, m
 
 All app features available only with ``django-celery`` and with ``Redis``.
 
+.. code-block:: bash
+
+    $ pip install redis hiredis django-celery
+
+
 
 External API usage
 ------------------
