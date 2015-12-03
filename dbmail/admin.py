@@ -17,7 +17,11 @@ from dbmail.models import (
     MailFromEmailCredential, MailLogTrack, MailSubscription
 )
 from dbmail import app_installed
-from dbmail import get_model
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    from django.db.models.loading import get_model
 from dbmail import defaults
 
 ModelAdmin = admin.ModelAdmin
