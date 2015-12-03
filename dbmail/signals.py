@@ -7,6 +7,7 @@ from django.template import Template, Context
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from django.db.models import signals
+from django import dispatch
 
 from dbmail.defaults import (
     SIGNALS_QUEUE, SIGNALS_MAIL_QUEUE, SIGNAL_DEFERRED_DISPATCHER,
@@ -164,3 +165,7 @@ def initial_signals():
             signal_receiver, sender=signal.model.model_class(),
             dispatch_uid=signal.model.name
         )
+
+
+pre_send = dispatch.Signal()
+post_send = dispatch.Signal()

@@ -9,7 +9,6 @@ import sys
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.core.urlresolvers import reverse, NoReverseMatch
-from django.utils.importlib import import_module
 from django.contrib.sites.models import Site
 from django.template import Template, Context
 from django.core.mail import get_connection
@@ -19,7 +18,9 @@ from django.core import signing
 
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
 from dbmail.models import MailTemplate, MailLog, MailGroup
+from dbmail.exceptions import StopSendingException
 from dbmail.utils import clean_html
+from dbmail import import_module
 from dbmail import get_version
 from dbmail import defaults
 
@@ -35,6 +36,7 @@ class Sender(object):
         self._language = kwargs.pop('language', None)
         self._backend = kwargs.pop('backend')
         self._provider = kwargs.pop('provider', None)
+        self._signals_kw = kwargs.pop('signals_kwargs', {})
 
         self._template = self._get_template()
         self._context = self._get_context(args)
@@ -88,11 +90,22 @@ class Sender(object):
                 data.update(context)
             elif hasattr(context, '_meta'):
                 data.update(self._model_to_dict(context))
-                data.update({context._meta.module_name: context})
+                data.update({self._get_context_module_name(context): context})
 
         if settings.DEBUG and SHOW_CONTEXT:
             pprint.pprint(data)
         return data
+
+    @staticmethod
+    def _get_context_module_name(context):
+        from distutils.version import StrictVersion
+        import django
+
+        current_version = django.get_version()
+
+        if StrictVersion(current_version) < StrictVersion('1.8'):
+            return context._meta.module_name
+        return context._meta.model_name
 
     def _get_str_by_language(self, field, template=None):
         obj = template if template else self._template
@@ -257,21 +270,29 @@ class Sender(object):
                 time.sleep(defaults.SEND_RETRY_DELAY_DIRECT)
 
     def send(self, is_celery=True):
+        from dbmail.signals import pre_send, post_send
+
         if self._template.is_active:
             try:
+                pre_send.send(self.__class__, instace=self, **self._signals_kw)
                 if is_celery is True:
                     self._send()
                 else:
                     self._try_to_send()
                 self._store_log(True)
+                post_send.send(
+                    self.__class__, instace=self, **self._signals_kw)
                 return 'OK'
+            except StopSendingException:
+                return
             except Exception as exc:
                 self._err_msg = traceback.format_exc()
                 self._err_exc = exc.__class__.__name__
                 self._store_log(False)
                 raise
 
-    def debug(self, key, value):
+    @staticmethod
+    def debug(key, value):
         from django.utils.termcolors import colorize
 
         if value:

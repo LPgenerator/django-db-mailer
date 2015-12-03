@@ -4,4 +4,4 @@ include AUTHORS.rst
 include CONTRIBUTING.rst
 include requirements/*
 recursive-exclude * .DS_Store
-recursive-include dbmail *.html *.js *.py *.po *.mo
+recursive-include dbmail *.html *.js *.py *.po *.mo *.json

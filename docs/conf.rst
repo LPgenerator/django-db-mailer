@@ -193,6 +193,10 @@ App settings
     SMSAERO_MD5_PASSWORD = ""
     SMSAERO_FROM = ""
 
+    # Slack
+    SLACK_USERNAME = 'Robot'
+    SLACK_HOOCK_URL = 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX'
+    SLACK_CHANNEL = 'main'
 
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
@@ -205,6 +209,9 @@ App settings
 
     # Path to HTMLField class.
     DB_MAILER_MODEL_HTMLFIELD = 'django.db.models.TextField'
+
+    # Path to MailSubscription class.
+    DB_MAILER_MAIL_SUBSCRIPTION_MODEL = 'dbmail.models.MailSubscription'
 
     # You can use any backends designed as django email backend
     # Example:

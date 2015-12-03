@@ -16,6 +16,7 @@ setup(
     package_data={'dbmail': [
         'locale/*/LC_MESSAGES/django.*',
         'static/dbmail/admin/js/*.js',
+        'fixtures/*.json',
     ]},
     include_package_data=True,
     install_requires=[
@@ -34,6 +35,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],

@@ -63,8 +63,8 @@ Mail API
     # New dbmail template
     MailTemplate.objects.create(
         name="Site welcome template",
-        subject="Welcome",
-        message="Welcome to our site. We are glad to see you.",
+        subject="[{{prefix}}] Welcome {{full_name}}!",
+        message="Hi, {{username}}. Welcome to our site.",
         slug="welcome",
         is_html=False,
     )
@@ -83,7 +83,8 @@ Mail API
         {
             'username': request.user.username,
             'full_name': request.user.get_full_name(),
-            'signup_date': request.user.date_joined
+            'signup_date': request.user.date_joined,
+            'prefix': "DbMail",
         },
 
         # You can access to all model fields. For m2m and fk fields, you should use module_name
@@ -412,7 +413,7 @@ Update dbmail fields:
 
     $ ./manage.py sync_translation_fields --noinput
 
-**Postmark backend**
+**Postmark Django Backend**
 
 Install ``python-postmark`` app via pip. Configure your settings:
 
@@ -424,7 +425,7 @@ Install ``python-postmark`` app via pip. Configure your settings:
     EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
 
 
-**Amazon's Simple Email Service backend**
+**Amazon's Simple Email Service Django Backend**
 
 Install ``django-ses`` app via pip. Configure your settings:
 
@@ -463,6 +464,11 @@ That version do not include celery settings, bcc, api, mail settings, signals, m
 
 All app features available only with ``django-celery`` and with ``Redis``.
 
+.. code-block:: bash
+
+    $ pip install redis hiredis django-celery
+
+
 
 External API usage
 ------------------
@@ -483,6 +489,18 @@ External API usage
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host&backend=mail'
 
 *API bandwidth is 1k+ rps on i7 2.3GHz*
+
+
+Responsive transactional HTML email templates
+---------------------------------------------
+Fixtures with Base transactional HTML email templates was added into dbmail fixtures.
+This templates was optimized for desktop clients, web clients, mobile clients, various devices, various providers.
+Thanks for Mailgun Team. You can use it as default basic templates on your project.
+
+.. code-block:: bash
+
+    python manage.py load_dbmail_base_templates
+
 
 
 Publications
