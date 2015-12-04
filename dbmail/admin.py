@@ -52,7 +52,7 @@ if app_installed('modeltranslation'):
         try:
             from modeltranslation.admin import TabbedTranslationAdmin
 
-            class TranslationModelAdmin(TabbedTranslationAdmin):
+            class TranslationModelAdmin(TabbedTranslationAdmin, ModelAdmin):
                 pass
         except ImportError:
             pass
