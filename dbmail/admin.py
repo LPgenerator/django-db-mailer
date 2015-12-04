@@ -3,7 +3,6 @@
 import os
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
@@ -53,7 +52,7 @@ if app_installed('modeltranslation'):
         try:
             from modeltranslation.admin import TabbedTranslationAdmin
 
-            class TranslationModelAdmin(ModelAdmin, TabbedTranslationAdmin):
+            class TranslationModelAdmin(TabbedTranslationAdmin):
                 pass
         except ImportError:
             pass
