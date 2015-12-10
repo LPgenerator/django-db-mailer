@@ -4,7 +4,7 @@ from datetime import datetime
 import sys
 
 
-VERSION = (2, 3, 1)
+VERSION = (2, 3, 2)
 
 default_app_config = 'dbmail.apps.DBMailConfig'
 
@@ -125,7 +125,8 @@ def initial_signals():
     from django.db.utils import DatabaseError, IntegrityError
 
     for cmd in ['schemamigration', 'migrate', 'syncdb',
-                'test', 'createsuperuser', 'makemigrations', 'collectstatic']:
+                'test', 'createsuperuser', 'makemigrations',
+                'collectstatic', 'compilemessages']:
         if cmd in sys.argv:
             break
     else:
