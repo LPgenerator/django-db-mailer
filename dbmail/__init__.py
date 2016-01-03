@@ -21,7 +21,7 @@ def app_installed(app):
 
 def celery_supported():
     try:
-        import tasks
+        from dbmail import tasks
 
         if not app_installed('djcelery'):
             raise ImportError
@@ -43,7 +43,7 @@ def db_sender(slug, recipient, *args, **kwargs):
     backend = kwargs.get('backend', BACKEND['mail'])
 
     if celery_supported() and use_celery is True:
-        import tasks
+        import dbmail.tasks
 
         template = MailTemplate.get_template(slug=slug)
         max_retries = kwargs.get('max_retries', None)
@@ -63,7 +63,7 @@ def db_sender(slug, recipient, *args, **kwargs):
         if send_after is not None:
             options.update({'countdown': send_after})
         if template.is_active:
-            return tasks.db_sender.apply_async(**options)
+            return dbmail.tasks.db_sender.apply_async(**options)
     else:
         module = import_module(backend)
         if DEBUG is True:
