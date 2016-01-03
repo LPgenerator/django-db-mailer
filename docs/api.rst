@@ -170,8 +170,8 @@ Node.js example
     var uri = 'http://127.0.0.1:8000/dbmail/api/';
     var data = {
         api_key: 'ZzriUzE',
-        'slug': 'welcome',
-        'recipient': 'root@local.host'
+        slug: 'welcome',
+        recipient: 'root@local.host'
     };
 
     request.post({

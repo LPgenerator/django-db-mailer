@@ -224,7 +224,7 @@ Push notification API
         slug='welcome',
 
         # recipient can be list, or str separated with comma or simple string
-        # '+34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a' or '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a, 34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b' or
+        # '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a' or '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a, 34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b' or
         # ['34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a', '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b'] or string Mail group slug
         recipient='34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8c',
 
