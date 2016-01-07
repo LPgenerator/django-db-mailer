@@ -7,15 +7,18 @@ Django-Db-Mailer
 .. image:: https://landscape.io/github/LPgenerator/django-db-mailer/master/landscape.svg
    :target: https://landscape.io/github/LPgenerator/django-db-mailer/master
    :alt: Code Health
-.. image:: https://img.shields.io/badge/python-2.6,2.7,pypy,3.4,pypy3-blue.svg
-    :alt: Python 2.6, 2.7, pypy,3.4,pypy3
+.. image:: https://api.codacy.com/project/badge/grade/ad1442e15215494499ed08b80d4c41c5
+    :target: https://www.codacy.com/app/gotlium/django-db-mailer
+    :alt: Codacy
+.. image:: https://img.shields.io/badge/python-2.6,2.7,3.4+,pypy,pypy3-blue.svg
+    :alt: Python 2.6, 2.7, 3.4+, pypy, pypy3
     :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
-    :target: https://crate.io/packages/django-db-mailer/
+    :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/dm/django-db-mailer.svg
     :alt: Downloads from PyPi
-    :target: https://crate.io/packages/django-db-mailer/
+    :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://readthedocs.org/projects/django-db-mailer/badge/?version=latest
     :target: http://django-db-mailer.readthedocs.org/
     :alt: Documentation Status
