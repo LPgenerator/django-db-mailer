@@ -181,7 +181,7 @@ class MailBcc(models.Model):
 @python_2_unicode_compatible
 class MailTemplate(models.Model):
     name = models.CharField(_('Template name'), max_length=100, db_index=True)
-    subject = models.CharField(_('Subject'), max_length=100)
+    subject = models.TextField(_('Subject'))
     from_email = models.ForeignKey(
         MailFromEmail, null=True, blank=True,
         verbose_name=_('Message from'), default=DEFAULT_FROM_EMAIL,
