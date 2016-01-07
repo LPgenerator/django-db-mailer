@@ -7,15 +7,18 @@ Django-Db-Mailer
 .. image:: https://landscape.io/github/LPgenerator/django-db-mailer/master/landscape.svg
    :target: https://landscape.io/github/LPgenerator/django-db-mailer/master
    :alt: Code Health
-.. image:: https://img.shields.io/badge/python-2.6,2.7,pypy,3.4,pypy3-blue.svg
-    :alt: Python 2.6, 2.7, pypy,3.4,pypy3
+.. image:: https://api.codacy.com/project/badge/grade/ad1442e15215494499ed08b80d4c41c5
+    :target: https://www.codacy.com/app/gotlium/django-db-mailer
+    :alt: Codacy
+.. image:: https://img.shields.io/badge/python-2.6,2.7,3.4+,pypy,pypy3-blue.svg
+    :alt: Python 2.6, 2.7, 3.4+, pypy, pypy3
     :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
-    :target: https://crate.io/packages/django-db-mailer/
+    :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/dm/django-db-mailer.svg
     :alt: Downloads from PyPi
-    :target: https://crate.io/packages/django-db-mailer/
+    :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://readthedocs.org/projects/django-db-mailer/badge/?version=latest
     :target: http://django-db-mailer.readthedocs.org/
     :alt: Documentation Status
@@ -33,6 +36,7 @@ What's that
 | From box you can use it with django-celery for send background messages.
 | Also you have opportunity to create reports from logs by mail categories and slug.
 | Groups with Recipients and send by model signal also available by default.
+| Can be used without any depends from programming language as a external service.
 | That app very simple to install and use on your projects.
 
 
@@ -463,6 +467,11 @@ That version do not include celery settings, bcc, api, mail settings, signals, m
 
 All app features available only with ``django-celery`` and with ``Redis``.
 
+.. code-block:: bash
+
+    $ pip install redis hiredis django-celery
+
+
 
 External API usage
 ------------------
@@ -483,6 +492,18 @@ External API usage
     $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=root@local.host&backend=mail'
 
 *API bandwidth is 1k+ rps on i7 2.3GHz*
+
+
+Responsive transactional HTML email templates
+---------------------------------------------
+Fixtures with Base transactional HTML email templates was added into dbmail fixtures.
+This templates was optimized for desktop clients, web clients, mobile clients, various devices, various providers.
+Thanks for Mailgun Team. You can use it as default basic templates on your project.
+
+.. code-block:: bash
+
+    python manage.py load_dbmail_base_templates
+
 
 
 Publications

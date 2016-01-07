@@ -365,7 +365,8 @@ class MailLog(models.Model):
         log = cls.objects.create(
             template=template, is_sent=is_sent, user=user,
             log_id=log_id, num_of_retries=num, error_message=msg,
-            error_exception=ex, backend=_BACKEND[backend], provider=provider
+            error_exception=ex, backend=_BACKEND.get(backend, backend),
+            provider=provider
         )
         cls.store_email_log(log, to, 'to')
         cls.store_email_log(log, cc, 'cc')
