@@ -727,11 +727,13 @@ class MailSubscriptionAbstract(models.Model):
         _('Address'), max_length=60, db_index=True,
         help_text=_('Must be phone number/email/token'))
 
-    def send_confirmation_link(self, slug='subs-confirmation', **kwargs):
+    def send_confirmation_link(
+            self, slug='subs-confirmation', *args, **kwargs):
+
         from dbmail import db_sender
 
         kwargs['backend'] = self.backend
-        db_sender(slug, self.address, **kwargs)
+        db_sender(slug, self.address, *args, **kwargs)
 
     @staticmethod
     def get_now():
