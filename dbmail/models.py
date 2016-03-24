@@ -768,9 +768,14 @@ class MailSubscriptionAbstract(models.Model):
 
     @classmethod
     def notify(cls, slug, user_id=None, sub_filter=None, **kwargs):
+
         from dbmail import db_sender
 
         now_hour = cls.get_current_hour()
+
+        context_dict = kwargs.pop('context', {})
+        context_instance = kwargs.pop('context_instance', None)
+
         sub_filter = sub_filter if isinstance(sub_filter, dict) else {}
 
         for method in cls.get_notification_list(user_id, **sub_filter):
@@ -795,7 +800,8 @@ class MailSubscriptionAbstract(models.Model):
                     use_slug = extra_slug
             except MailTemplate.DoesNotExist:
                 pass
-            db_sender(use_slug, method.address, **kwargs)
+            db_sender(use_slug, method.address, context_dict,
+                      context_instance, **kwargs)
 
     def update_notify_kwargs(self, **kwargs):
         return kwargs
