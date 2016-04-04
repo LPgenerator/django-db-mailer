@@ -227,7 +227,7 @@ Push notification API
         slug='welcome',
 
         # recipient can be list, or str separated with comma or simple string
-        # '+34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a' or '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a, 34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b' or
+        # '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a' or '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a, 34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b' or
         # ['34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8a', '34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8b'] or string Mail group slug
         recipient='34cc3e5f0d2abf2ca0f9af170bd8cd2372a22f8c',
 
@@ -536,5 +536,5 @@ Screenshots
 
 Compatibility
 -------------
-* Python: 2.6, 2.7, pypy, 3.4, 3.5, pypy3
+* Python: 2.7, pypy, 3.4, 3.5, pypy3
 * Django: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9

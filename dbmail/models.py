@@ -18,7 +18,7 @@ from django import VERSION
 from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL,
-    BACKEND, _BACKEND, MODEL_HTMLFIELD)
+    BACKEND, _BACKEND, BACKENDS_MODEL_CHOICES, MODEL_HTMLFIELD)
 
 from dbmail import initial_signals, import_by_string
 from dbmail import python_2_unicode_compatible
@@ -26,13 +26,6 @@ from dbmail.utils import premailer_transform
 
 
 HTMLField = import_by_string(MODEL_HTMLFIELD)
-
-BACKENDS = (
-    ('dbmail.backends.mail', _('MailBox')),
-    ('dbmail.backends.push', _('Push')),
-    ('dbmail.backends.sms', _('SMS')),
-    ('dbmail.backends.tts', _('TTS')),
-)
 
 
 def _upload_mail_file(instance, filename):
@@ -719,8 +712,8 @@ class MailSubscriptionAbstract(models.Model):
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
     backend = models.CharField(
-        _('Backend'), choices=BACKENDS, max_length=50,
-        default='dbmail.backends.mail')
+        _('Backend'), choices=BACKENDS_MODEL_CHOICES, max_length=50,
+        default=BACKEND.get('mail'))
     start_hour = models.CharField(
         _('Start hour'), default='00:00', max_length=5)
     end_hour = models.CharField(_('End hour'), default='23:59', max_length=5)
@@ -731,14 +724,16 @@ class MailSubscriptionAbstract(models.Model):
     defer_at_allowed_hours = models.BooleanField(
         _('Defer at allowed hours'), default=False)
     address = models.CharField(
-        _('Address'), max_length=60, unique=True,
+        _('Address'), max_length=60, db_index=True,
         help_text=_('Must be phone number/email/token'))
 
-    def send_confirmation_link(self, slug='subs-confirmation', **kwargs):
+    def send_confirmation_link(
+            self, slug='subs-confirmation', *args, **kwargs):
+
         from dbmail import db_sender
 
         kwargs['backend'] = self.backend
-        db_sender(slug, self.address, **kwargs)
+        db_sender(slug, self.address, *args, **kwargs)
 
     @staticmethod
     def get_now():
@@ -773,9 +768,14 @@ class MailSubscriptionAbstract(models.Model):
 
     @classmethod
     def notify(cls, slug, user_id=None, sub_filter=None, **kwargs):
+
         from dbmail import db_sender
 
         now_hour = cls.get_current_hour()
+
+        context_dict = kwargs.pop('context', {})
+        context_instance = kwargs.pop('context_instance', None)
+
         sub_filter = sub_filter if isinstance(sub_filter, dict) else {}
 
         for method in cls.get_notification_list(user_id, **sub_filter):
@@ -800,7 +800,8 @@ class MailSubscriptionAbstract(models.Model):
                     use_slug = extra_slug
             except MailTemplate.DoesNotExist:
                 pass
-            db_sender(use_slug, method.address, **kwargs)
+            db_sender(use_slug, method.address, context_dict,
+                      context_instance, **kwargs)
 
     def update_notify_kwargs(self, **kwargs):
         return kwargs
