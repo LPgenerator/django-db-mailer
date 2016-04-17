@@ -85,7 +85,7 @@ BACKEND = get_settings('DB_MAILER_BACKEND', {
     'sms': 'dbmail.backends.sms',
     'push': 'dbmail.backends.push',
 })
-_BACKEND = {v: k for k, v in BACKEND.iteritems()}
+_BACKEND = {v: k for k, v in BACKEND.items()}
 BACKENDS_MODEL_CHOICES = get_settings('DB_MAILER_BACKENDS_MODEL_CHOICES', (
     (BACKEND.get('mail'), _('MailBox')),
     (BACKEND.get('push'), _('Push')),
