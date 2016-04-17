@@ -201,6 +201,12 @@ App settings
     # Android GCM provider settings
     GCM_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
+    # Apple APNs provider settings
+    APNS_GW_HOST = 'gateway.push.apple.com'  # or gateway.sandbox.push.apple.com on production
+    APNS_GW_PORT = 2195
+    APNS_CERT_FILE = 'cert.pem'              # required. convert your p12 to pem
+    APNS_KEY_FILE = None
+
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',
