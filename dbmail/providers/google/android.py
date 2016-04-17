@@ -11,7 +11,7 @@ class GCMError(Exception):
     pass
 
 
-def send(users, message, **kwargs):
+def send(user, message, **kwargs):
     """
     Site: https://developers.google.com
     API: https://developers.google.com/cloud-messaging/
@@ -26,7 +26,7 @@ def send(users, message, **kwargs):
     hook_url = 'https://android.googleapis.com/gcm/send'
 
     data = {
-        "registration_ids": [users],
+        "registration_ids": [user],
         "data": {
             "title": kwargs.pop("event"),
             'message': message,

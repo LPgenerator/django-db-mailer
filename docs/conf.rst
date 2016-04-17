@@ -198,6 +198,9 @@ App settings
     SLACK_HOOCK_URL = 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX'
     SLACK_CHANNEL = 'main'
 
+    # Android GCM provider settings
+    GCM_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',
