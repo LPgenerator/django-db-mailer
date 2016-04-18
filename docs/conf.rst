@@ -207,6 +207,9 @@ App settings
     APNS_CERT_FILE = 'cert.pem'              # required. convert your p12 to pem
     APNS_KEY_FILE = None
 
+    # Windows MPNs provider settings
+    WP_CERT_FILE = None
+
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
         'south', 'dbmail', 'sessions', 'admin', 'djcelery',
