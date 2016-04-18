@@ -20,6 +20,7 @@ class APNsError(Exception):
     pass
 
 
+# todo: Switch to HTTP/2 push notification API
 def send(token_hex, message, **kwargs):
     """
     Site: https://apple.com

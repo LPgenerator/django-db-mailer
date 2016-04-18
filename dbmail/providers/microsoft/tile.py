@@ -38,4 +38,3 @@ def send(uri, message, **kwargs):
     kwargs['title'] = kwargs.pop("event", 'App')
     kwargs['text1'] = message
     return MPNSTile().send(uri, kwargs)
-
