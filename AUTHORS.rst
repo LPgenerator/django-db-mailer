@@ -17,3 +17,4 @@ Contributors
 * Andrei (`aloskutov-ki11 <https://github.com/aloskutov-ki11>`_)
 * Sergey Khaylov (`skhaylov <https://github.com/skhaylov>`_)
 * Ilya Streltsov (`ilstreltsov <https://github.com/ilstreltsov>`_)
+* Antoine Nguyen  (`tonioo <https://github.com/tonioo>`_)
