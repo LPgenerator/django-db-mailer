@@ -36,10 +36,12 @@ Sending signals
 
     from dbmail.exceptions import StopSendingException
     from dbmail.signals import pre_send, post_send
+    from dbmail.backends.sms import Sender as SmsSender
 
 
     def check_balance(*args, **kwargs):
-        if kwargs['sender']._backend.endswith('sms'):
+        # "if" condition is unnecessary due to the way we connect signal to handler
+        if kwargs['instance']._backend.endswith('sms'):
             balance = ...
             if balance == 0:
                 raise StopSendingException
@@ -49,8 +51,8 @@ Sending signals
         pass
 
 
-    pre_send.connect(check_balance)
-    post_send.connect(decrease_balance)
+    pre_send.connect(check_balance, sender=SmsSender)
+    post_send.connect(decrease_balance, sender=SmsSender)
 
 
 When you want transmit some **kwargs to signal, you can use `signals_kwargs`.
@@ -64,3 +66,29 @@ When you want transmit some **kwargs to signal, you can use `signals_kwargs`.
         signals_kwargs={'user': User.objects.get(pk=1)}, use_celery=False
     )
 
+
+When using MailSubscriptionAbstract model, you may want to check instance for uniqueness before creating it.
+In this case you should use either model meta option "unique-together"
+or use pre-save signal, that raises IntegrityError in case of duplicates.
+
+.. code-block:: python
+
+    from django.db import models
+
+    def check_address_is_unique(sender, instance, **kwargs):
+        if not (instance.is_checked and instance.is_enabled):
+            return
+
+        query = sender.objects.filter(
+            is_checked=True,
+            is_enabled=True,
+            address=instance.address,
+            backend=instance.backend
+        )
+        if instance.pk:
+            query = query.exclude(pk=instance.pk)
+        if query.exists():
+            raise IntegrityError('address must be unique')
+
+    models.signals.pre_save.connect(
+        check_address_is_unique, sender=MailSubscription)

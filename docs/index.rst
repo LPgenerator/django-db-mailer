@@ -15,10 +15,11 @@ Contents
   commands
   signals
   conf
+  api
+  custom_backend
   dev_install
   contributing
   authors
-
 
 Contributing
 ------------

@@ -3,7 +3,6 @@
 import os
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, render
 from django.core.urlresolvers import reverse
@@ -44,7 +43,7 @@ if app_installed('modeltranslation'):
     if app_installed('grappelli_modeltranslation'):
         try:
             from grappelli_modeltranslation.admin import TranslationAdmin
-            
+
             class TranslationModelAdmin(ModelAdmin, TranslationAdmin):
                 pass
         except ImportError:
@@ -52,8 +51,8 @@ if app_installed('modeltranslation'):
     else:
         try:
             from modeltranslation.admin import TabbedTranslationAdmin
-            
-            class TranslationModelAdmin(ModelAdmin, TabbedTranslationAdmin):
+
+            class TranslationModelAdmin(TabbedTranslationAdmin, ModelAdmin):
                 pass
         except ImportError:
             pass
@@ -68,10 +67,6 @@ class MailCategoryAdmin(admin.ModelAdmin):
 class MailTemplateFileAdmin(admin.TabularInline):
     model = MailFile
     extra = 1
-
-
-class MailBaseTemplateAdmin(TranslationModelAdmin):
-    pass
 
 
 class MailTemplateAdmin(TranslationModelAdmin):
@@ -338,7 +333,7 @@ class MailLogTrackAdmin(admin.ModelAdmin):
         return request.method != 'POST'
 
 
-class MailBaseTemplateAdmin(ModelAdmin):
+class MailBaseTemplateAdmin(TranslationModelAdmin):
     list_display = ('name', 'created', 'updated', 'id',)
     list_filter = ('created', 'updated',)
     search_fields = ('name', 'message')

@@ -16,6 +16,7 @@ setup(
     package_data={'dbmail': [
         'locale/*/LC_MESSAGES/django.*',
         'static/dbmail/admin/js/*.js',
+        'fixtures/*.json',
     ]},
     include_package_data=True,
     install_requires=[
