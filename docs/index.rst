@@ -17,6 +17,7 @@ Contents
   conf
   api
   custom_backend
+  providers
   dev_install
   contributing
   authors
