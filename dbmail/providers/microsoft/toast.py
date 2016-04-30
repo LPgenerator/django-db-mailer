@@ -12,6 +12,7 @@ class MPNSToast(MPNSBase):
         self.sub(toast, '{WPNotification}Text2', 'text2', payload)
         self.sub(toast, '{WPNotification}Sound', 'sound', payload)
         self.sub(toast, '{WPNotification}Param', 'param', payload)
+        self.sub(toast, '{WPNotification}Path', 'path', payload)
         return self.serialize_tree(ElementTree.ElementTree(root))
 
 
