@@ -267,6 +267,46 @@ By default ``django-dbmail`` used 4 built-in backends (Mail/Sms/Tts/Push).
 But nothing prevents to write your own backend to work with all that you want.
 
 
+DBMail Providers
+----------------
+Battery have some built-in providers for most popular services, which will be
+used without any dependencies with built-in backends.
+
+**Push notifications for mobile apps:**
+
+* Apple APNs/APNs2
+* Google GCM
+* Microsoft Tile/Toast/Raw
+* BoxCar
+* Parse
+
+**Notifications for team:**
+
+* Slack/Mattermost
+* Boxcar
+* Prowl
+* Pushover
+
+**Browser notifications:**
+
+* Centrifugo
+* PubNub
+* BoxCar
+
+**SMS notifications:**
+
+* Nexmo
+* Twilio
+* IQsms
+* SmsAero
+
+**Mail notifications:**
+
+* SendinBlue
+
+*You can find providers settings on docs.*
+
+
 Demo installation
 -----------------
 
