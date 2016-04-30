@@ -9,7 +9,7 @@ from urllib2 import urlopen, Request
 from django.conf import settings
 
 
-class HTTPError(Exception):
+class CentrifugoError(Exception):
     pass
 
 
@@ -33,5 +33,5 @@ def send(channel, data, **kwargs):
         timeout=10
     )
     if response.code != 200:
-        raise HTTPError(response.read())
+        raise CentrifugoError(response.read())
     return True

@@ -10,7 +10,7 @@ Django-Db-Mailer
 .. image:: https://api.codacy.com/project/badge/grade/ad1442e15215494499ed08b80d4c41c5
     :target: https://www.codacy.com/app/gotlium/django-db-mailer
     :alt: Codacy
-.. image:: https://img.shields.io/badge/python-2.6,2.7,3.4+,pypy,pypy3-blue.svg
+.. image:: https://img.shields.io/badge/python-2.7,3.4+,pypy,pypy3-blue.svg
     :alt: Python 2.6, 2.7, 3.4+, pypy, pypy3
     :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg

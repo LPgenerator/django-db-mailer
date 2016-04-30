@@ -56,7 +56,7 @@ Let's try:
 Slack backend example
 ---------------------
 
-You're own backend, which send message to slack channel.
+You're own backend, which send message to Slack channel.
 
 
 .. code-block:: python
