@@ -149,71 +149,11 @@ App settings
     # Django DEBUG must be enabled.
     DB_MAILER_DEBUG = False
 
-
-    # TTS and SMS provider settings
-    NEXMO_USERNAME = ''
-    NEXMO_PASSWORD = ''
-    NEXMO_FROM = 'DBMail'
-    NEXMO_LANG = 'en-us'
-
     # Default SMS from
     DB_MAILER_DEFAULT_SMS_FROM = None
 
     # Default Push notification from
     DB_MAILER_DEFAULT_PUSH_FROM = None
-
-    # Prowl provider settings
-    PROWL_APP = 'DBMail'
-
-    # Parse.com provider settings
-    PARSE_APP_ID = ""
-    PARSE_API_KEY = ""
-
-    # Pushover.net provider settings
-    PUSHOVER_TOKEN = ""
-    PUSHOVER_APP = "DBMail"
-
-    # PubNub.com provider settings
-    PUBNUB_PUB_KEY = ""
-    PUBNUB_SUB_KEY = ""
-    PUBNUB_SEC_KEY = ""
-
-    # iqsms.ru provider settings
-    IQSMS_API_LOGIN = ""
-    IQSMS_API_PASSWORD = ""
-    IQSMS_FROM = ""
-
-    # twilio.com provider settings
-    TWILIO_ACCOUNT_SID = ""
-    TWILIO_AUTH_TOKEN = ""
-    TWILIO_FROM = ""
-
-    # smsaero.ru provider settings
-    SMSAERO_LOGIN = ""
-    SMSAERO_MD5_PASSWORD = ""
-    SMSAERO_FROM = ""
-
-    # Slack
-    SLACK_USERNAME = 'Robot'
-    SLACK_HOOCK_URL = 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX'
-    SLACK_CHANNEL = 'main'
-
-    # Android GCM provider settings
-    GCM_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-
-    # Apple APNs provider settings
-    APNS_GW_HOST = 'gateway.sandbox.push.apple.com'  # or gateway.push.apple.com on production
-    APNS_GW_PORT = 2195
-    APNS_CERT_FILE = 'cert.pem'                      # required. convert your p12 to pem
-    APNS_KEY_FILE = None
-
-    # Apple APNs via HTTP/2 protocol
-    APNS_GW_HOST = 'api.development.push.apple.com'  # or api.push.apple.com on production
-    APNS_GW_PORT = 443                               # or alternative 2197
-    APNS_CERT_FILE = 'cert.pem'                      # required. convert your p12 to pem
-
-    # Windows MPNs provider settings
-    WP_CERT_FILE = None
 
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
@@ -237,3 +177,147 @@ App settings
     # - django_ses.SESBackend and etc
     # By default:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+Providers settings
+==================
+
+Apple APNs
+----------
+
+.. code-block:: python
+
+    # Apple APNs provider settings
+    APNS_GW_HOST = 'gateway.sandbox.push.apple.com'  # or gateway.push.apple.com on production
+    APNS_GW_PORT = 2195
+    APNS_CERT_FILE = 'cert.pem'                      # required. convert your p12 to pem
+    APNS_KEY_FILE = None
+
+    # Apple APNs via HTTP/2 protocol
+    APNS_GW_HOST = 'api.development.push.apple.com'  # or api.push.apple.com on production
+    APNS_GW_PORT = 443                               # or alternative 2197
+    APNS_CERT_FILE = 'cert.pem'                      # required. convert your p12 to pem
+
+
+Google GCM
+----------
+
+.. code-block:: python
+
+    # Android GCM provider settings
+    GCM_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
+
+Microsoft MPNs
+--------------
+
+.. code-block:: python
+
+    # Windows MPNs provider settings
+    WP_CERT_FILE = None
+
+
+Centrifugo
+----------
+
+.. code-block:: python
+
+    # Centrifugo provider settings
+    CENTRIFUGO_TOKEN = 'secret'
+    CENTRIFUGO_API = 'https://centrifugo.herokuapp.com/api/'
+
+
+Nexmo
+-----
+
+.. code-block:: python
+
+    # nexmo.com (TTS and SMS)
+    NEXMO_USERNAME = ''
+    NEXMO_PASSWORD = ''
+    NEXMO_FROM = 'DBMail'
+    NEXMO_LANG = 'en-us'
+
+
+Prowl
+-----
+
+.. code-block:: python
+
+    # prowlapp.com provider settings
+    PROWL_APP = 'DBMail'
+
+
+Parse
+-----
+
+.. code-block:: python
+
+    # parse.com provider settings
+    PARSE_APP_ID = ""
+    PARSE_API_KEY = ""
+
+
+PushOver
+----------
+
+.. code-block:: python
+
+    # pushover.net provider settings
+    PUSHOVER_TOKEN = ""
+    PUSHOVER_APP = "DBMail"
+
+
+PubNub
+------
+
+.. code-block:: python
+
+    # pubnub.com provider settings
+    PUBNUB_PUB_KEY = ""
+    PUBNUB_SUB_KEY = ""
+    PUBNUB_SEC_KEY = ""
+
+
+Twilio
+------
+
+.. code-block:: python
+
+    # twilio.com provider settings
+    TWILIO_ACCOUNT_SID = ""
+    TWILIO_AUTH_TOKEN = ""
+    TWILIO_FROM = ""
+
+
+IQSms
+-----
+
+.. code-block:: python
+
+    # iqsms.ru provider settings
+    IQSMS_API_LOGIN = ""
+    IQSMS_API_PASSWORD = ""
+    IQSMS_FROM = ""
+
+
+SmsAero
+-------
+
+.. code-block:: python
+
+    # smsaero.ru
+    SMSAERO_LOGIN = ""
+    SMSAERO_MD5_PASSWORD = ""
+    SMSAERO_FROM = ""
+
+
+Slack/Mattermost
+----------------
+
+.. code-block:: python
+
+    # slack.com / mattermost.org
+    SLACK_USERNAME = 'Robot'
+    SLACK_HOOCK_URL = 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX'
+    SLACK_CHANNEL = 'main'
