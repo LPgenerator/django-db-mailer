@@ -202,10 +202,15 @@ App settings
     GCM_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
     # Apple APNs provider settings
-    APNS_GW_HOST = 'gateway.push.apple.com'  # or gateway.sandbox.push.apple.com on production
+    APNS_GW_HOST = 'gateway.sandbox.push.apple.com'  # or gateway.push.apple.com on production
     APNS_GW_PORT = 2195
-    APNS_CERT_FILE = 'cert.pem'              # required. convert your p12 to pem
+    APNS_CERT_FILE = 'cert.pem'                      # required. convert your p12 to pem
     APNS_KEY_FILE = None
+
+    # Apple APNs via HTTP/2 protocol
+    APNS_GW_HOST = 'api.development.push.apple.com'  # or api.push.apple.com on production
+    APNS_GW_PORT = 443                               # or alternative 2197
+    APNS_CERT_FILE = 'cert.pem'                      # required. convert your p12 to pem
 
     # Windows MPNs provider settings
     WP_CERT_FILE = None

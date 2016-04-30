@@ -1,0 +1,2 @@
+class APNsError(Exception):
+    pass

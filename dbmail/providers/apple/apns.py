@@ -13,14 +13,10 @@ except ImportError:
 
 from django.conf import settings
 
+from dbmail.providers.apple.errors import APNsError
 from dbmail import PY3
 
 
-class APNsError(Exception):
-    pass
-
-
-# todo: Switch to HTTP/2 push notification API
 def send(token_hex, message, **kwargs):
     """
     Site: https://apple.com
