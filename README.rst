@@ -488,13 +488,25 @@ Install ``django-ses`` app via pip. Configure your settings:
 
 *Note: You can use any backends designed as django email backend*
 
-**Tracking**:
+**Tracking**
 
 .. code-block:: bash
 
     $ pip install httpagentparser django-ipware
 
 For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
+
+**MJML**
+
+MJML is a markup language designed to reduce the pain of coding a responsive email.
+Install ``django-mjml`` app via pip and ``mjml`` via npm. And configure your settings:
+
+.. code-block:: python
+
+    INSTALLED_APPS = (
+      ...,
+      'mjml',
+    )
 
 
 **Older versions**
