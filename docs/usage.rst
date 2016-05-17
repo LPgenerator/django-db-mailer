@@ -256,7 +256,7 @@ or sms:
 
 .. code-block:: bash
 
-curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=%2B79031234567&backend=sms'
+    $ curl -X POST http://127.0.0.1:8000/dbmail/api/ --data 'api_key=ZzriUzE&slug=welcome&recipient=%2B79031234567&backend=sms'
 
 
 *API bandwidth is 1k+ rps on i7 2.3GHz*
@@ -280,7 +280,7 @@ Simple example to create template from the shell:
     )
 
 
-Subscription api
+Subscription API
 ----------------
 Full stack (multiple) notification example for django.contrib.auth.models.users
 
