@@ -127,3 +127,28 @@ Centrifugo Push
         event='registration',
         uid='12345',
     )
+
+
+PushAll Service
+---------------
+
+.. code-block:: python
+
+    send_db_push(
+        'welcome',
+        'broadcast',
+        {
+            'name': 'User'
+        },
+        provider='dbmail.providers.pushall.push',
+
+        # Not limited args
+        title='MyApp',
+        # uid='12345',  # only for unicast
+        # icon='example.com/icon.png',
+        # url='example.com',
+        # hidden=0,
+        # encode='utf8',
+        # priority=1,
+        # ttl=86400,
+    )

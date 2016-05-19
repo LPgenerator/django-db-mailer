@@ -321,3 +321,19 @@ Slack/Mattermost
     SLACK_USERNAME = 'Robot'
     SLACK_HOOCK_URL = 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX'
     SLACK_CHANNEL = 'main'
+
+
+PushAll
+-------
+
+.. code-block:: python
+
+    # pushall.ru
+    PUSHALL_API_KEYS = {
+        'default': {
+            'title': 'AppName',
+            'key': 'KEY',
+            'id': 'ID',
+            'priority': '1',
+        }
+    }

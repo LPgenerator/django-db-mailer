@@ -167,7 +167,7 @@ or write own function to use your provider
 
 .. code-block:: python
 
-    def send_over_own_provder(slug, *args, **kwargs):
+    def send_over_own_provider(slug, *args, **kwargs):
         from dbmail import db_sender
 
         # can be one of built-in, or custom backend
