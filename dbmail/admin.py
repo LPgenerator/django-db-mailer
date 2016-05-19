@@ -149,8 +149,7 @@ class MailTemplateAdmin(TranslationModelAdmin):
 
     def get_urls(self):
         urls = super(MailTemplateAdmin, self).get_urls()
-        admin_urls = patterns(
-            '',
+        admin_urls = [
             url(
                 r'^(\d+)/sendmail/$',
                 self.admin_site.admin_view(self.send_mail_view),
@@ -170,7 +169,7 @@ class MailTemplateAdmin(TranslationModelAdmin):
                 self.admin_site.admin_view(self.clean_cache_view),
                 name='clean_cache_view'
             ),
-        )
+        ]
         return admin_urls + urls
 
     def get_readonly_fields(self, request, obj=None):
