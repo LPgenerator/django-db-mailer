@@ -79,23 +79,26 @@ def send_db_mail(*args, **kwargs):
 
 
 def send_db_sms(*args, **kwargs):
-    from dbmail.defaults import BACKEND
+    from dbmail.defaults import BACKEND, SMS_QUEUE
 
     kwargs['backend'] = kwargs.pop('backend', BACKEND['sms'])
+    kwargs['queue'] = kwargs.pop('queue', SMS_QUEUE)
     return db_sender(*args, **kwargs)
 
 
 def send_db_tts(*args, **kwargs):
-    from dbmail.defaults import BACKEND
+    from dbmail.defaults import BACKEND, TTS_QUEUE
 
     kwargs['backend'] = kwargs.pop('backend', BACKEND['tts'])
+    kwargs['queue'] = kwargs.pop('queue', TTS_QUEUE)
     return db_sender(*args, **kwargs)
 
 
 def send_db_push(*args, **kwargs):
-    from dbmail.defaults import BACKEND
+    from dbmail.defaults import BACKEND, PUSH_QUEUE
 
     kwargs['backend'] = kwargs.pop('backend', BACKEND['push'])
+    kwargs['queue'] = kwargs.pop('queue', PUSH_QUEUE)
     return db_sender(*args, **kwargs)
 
 

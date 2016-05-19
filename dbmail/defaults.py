@@ -15,6 +15,9 @@ PRIORITY_STEPS = get_settings('DB_MAILER_PRIORITY_STEPS', (
     (9, _("Deferred")),
 ))
 CELERY_QUEUE = get_settings('DB_MAILER_CELERY_QUEUE', 'default')
+PUSH_QUEUE = get_settings('DB_MAILER_PUSH_QUEUE', 'default')
+SMS_QUEUE = get_settings('DB_MAILER_SMS_QUEUE', 'default')
+TTS_QUEUE = get_settings('DB_MAILER_TTS_QUEUE', 'default')
 SIGNALS_QUEUE = get_settings('DB_MAILER_SIGNALS_QUEUE', 'default')
 SIGNALS_MAIL_QUEUE = get_settings('DB_MAILER_SIGNALS_MAIL_QUEUE', 'default')
 ENABLE_CELERY = get_settings('DB_MAILER_ENABLE_CELERY', True)

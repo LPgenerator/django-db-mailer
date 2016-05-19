@@ -10,8 +10,8 @@ Django-Db-Mailer
 .. image:: https://api.codacy.com/project/badge/grade/ad1442e15215494499ed08b80d4c41c5
     :target: https://www.codacy.com/app/gotlium/django-db-mailer
     :alt: Codacy
-.. image:: https://img.shields.io/badge/python-2.6,2.7,3.4+,pypy,pypy3-blue.svg
-    :alt: Python 2.6, 2.7, 3.4+, pypy, pypy3
+.. image:: https://img.shields.io/badge/python-2.7,3.4+,pypy,pypy3-blue.svg
+    :alt: Python 2.7, 3.4+, pypy, pypy3
     :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
@@ -267,6 +267,48 @@ By default ``django-dbmail`` used 4 built-in backends (Mail/Sms/Tts/Push).
 But nothing prevents to write your own backend to work with all that you want.
 
 
+DBMail Providers
+----------------
+Battery have some built-in providers for most popular services, which will be
+used without any dependencies with built-in backends.
+
+**Push notifications for mobile apps:**
+
+* Apple APNs/APNs2
+* Google GCM
+* Microsoft Tile/Toast/Raw
+* BoxCar
+* Parse
+
+**Notifications for team:**
+
+* Slack/Mattermost
+* Boxcar
+* Prowl
+* Pushover
+* PushAll
+
+**Browser notifications:**
+
+* Centrifugo
+* PubNub
+* BoxCar
+* PushAll
+
+**SMS notifications:**
+
+* Nexmo
+* Twilio
+* IQsms
+* SmsAero
+
+**Mail notifications:**
+
+* SendinBlue
+
+*You can find providers settings on docs.*
+
+
 Demo installation
 -----------------
 
@@ -448,13 +490,25 @@ Install ``django-ses`` app via pip. Configure your settings:
 
 *Note: You can use any backends designed as django email backend*
 
-**Tracking**:
+**Tracking**
 
 .. code-block:: bash
 
     $ pip install httpagentparser django-ipware
 
 For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
+
+**MJML**
+
+MJML is a markup language designed to reduce the pain of coding a responsive email.
+Install ``django-mjml`` app via pip and ``mjml`` via npm. And configure your settings:
+
+.. code-block:: python
+
+    INSTALLED_APPS = (
+      ...,
+      'mjml',
+    )
 
 
 **Older versions**

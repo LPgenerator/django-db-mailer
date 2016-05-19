@@ -16,7 +16,8 @@ Contents
   signals
   conf
   api
-  custom_backend
+  custom_backends_and_providers
+  providers
   dev_install
   contributing
   authors
