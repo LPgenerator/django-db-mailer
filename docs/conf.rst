@@ -19,11 +19,14 @@ App settings
     )
 
     # Best practice is use mail messages with priorities with different queue
-    # and worker. On this constant you can specify which queue will be using
-    # to send mail. For the different work you need specify workers on settings
+    # and worker. On this constants you can specify which queue will be using
+    # to send msg. For the different work you need specify workers on settings
     # with tasks routing or etc. By default django-db-mailer used default
     # queue. Do not forget run celery working with specified queue.
     DB_MAILER_CELERY_QUEUE = 'default'
+    DB_MAILER_PUSH_QUEUE = 'default'
+    DB_MAILER_SMS_QUEUE = 'default'
+    DB_MAILER_TTS_QUEUE = 'default'
 
     # By default celery is enabled. If djcelery is not on INSTALLED_APPS,
     # this option is useless. When djcelery on INSTALLED_APPS, and you want
