@@ -11,7 +11,7 @@ Django-Db-Mailer
     :target: https://www.codacy.com/app/gotlium/django-db-mailer
     :alt: Codacy
 .. image:: https://img.shields.io/badge/python-2.7,3.4+,pypy,pypy3-blue.svg
-    :alt: Python 2.6, 2.7, 3.4+, pypy, pypy3
+    :alt: Python 2.7, 3.4+, pypy, pypy3
     :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
@@ -286,12 +286,14 @@ used without any dependencies with built-in backends.
 * Boxcar
 * Prowl
 * Pushover
+* PushAll
 
 **Browser notifications:**
 
 * Centrifugo
 * PubNub
 * BoxCar
+* PushAll
 
 **SMS notifications:**
 
