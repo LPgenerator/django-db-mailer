@@ -742,8 +742,9 @@ class MailSubscriptionAbstract(models.Model):
             return timezone.localtime(timezone.now())
         return d
 
-    def get_current_hour(self):
-        current = self.get_now()
+    @staticmethod
+    def get_current_hour():
+        current = MailSubscriptionAbstract.get_now()
         return datetime.timedelta(hours=current.hour, minutes=current.minute)
 
     @staticmethod
