@@ -4,9 +4,9 @@ Usage
 To use ``django-db-mailer`` on the your project - Add and Configure mail templates on the admin page.
 
 
-High level API
---------------
-Send mail API with comments for all available options:
+Mail API
+--------
+SendMail API with all available options:
 
 .. code-block:: python
 
@@ -71,7 +71,13 @@ Send mail API with comments for all available options:
         # and email can not be delivered by celery.
         # Or some part of your app run on instance, where celery is not used.
         use_celery=True,
+
+        # ...
+        # another named arguments, which supported by specified backend
+        # ...
     )
+
+*``slug`` and ``recipient`` is not a named arguments.*
 
 *For track information about read - add dbmail into urls.*
 

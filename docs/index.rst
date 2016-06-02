@@ -12,10 +12,10 @@ Contents
   installation
   settings
   usage
-  commands
   signals
   conf
   api
+  commands
   custom_backends_and_providers
   providers
   demo
