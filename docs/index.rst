@@ -18,6 +18,7 @@ Contents
   api
   custom_backends_and_providers
   providers
+  demo
   dev_install
   contributing
   authors

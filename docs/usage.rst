@@ -264,7 +264,7 @@ or sms:
 
 DB template
 -----------
-Simple example to create template from the shell:
+Simple example to create template from shell:
 
 .. code-block:: python
 
@@ -273,10 +273,10 @@ Simple example to create template from the shell:
     # Create new dbmail template.
     MailTemplate.objects.create(
         name="Site welcome template",
-        subject="Welcome",
-        message="Welcome to our site. We are glad to see you.",
+        subject="[{{prefix}}] Welcome {{full_name}}",
+        message="Hi, {{username}}. Welcome to our site.",
         slug="welcome",
-        is_html=False,
+        is_html=True,
     )
 
 

@@ -48,7 +48,7 @@ Configure project default SMTP settings::
     DEFAULT_FROM_EMAIL = 'User <noreply@gmail.com>'
 
 
-Also you can configure smtp options for dbmail on the admin. But maybe other apps,
+Also you can configure smtp options for dbmail on the admin interface. But maybe other apps,
 like ``django-registration`` is used default project settings.
 
 
@@ -60,6 +60,7 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 .. code-block:: bash
 
     $ pip install redis django-celery
+
 
 .. code-block:: python
 
@@ -86,6 +87,7 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 
     djcelery.setup_loader()
 
+
 .. code-block:: bash
 
     $ python manage.py celeryd --loglevel=debug -Q default
@@ -93,6 +95,7 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 
 
 *Note: Do not forget define on command line queue name.*
+
 
 ``django-db-mailer`` can work without any third-party apps, but if you want to use all
 available app features and send emails on the background with priorities and scheduler,
