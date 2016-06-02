@@ -213,4 +213,25 @@ Update dbmail fields:
 
     $ pip install httpagentparser django-ipware
 
+
+Add url patterns into urls.py:
+
+.. code-block:: python
+
+    urlpatterns += patterns(
+        '', url(r'^dbmail/', include('dbmail.urls')),
+    )
+
+
+Enable tracking and logging on settings:
+
+.. code-block:: python
+
+    DB_MAILER_TRACK_ENABLE = True
+    DB_MAILER_ENABLE_LOGGING = True
+
+
 For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
+Tracking templates must be HTML, not TXT. Celery workers must be launched, if celery is enabled.
+Django ``sites`` framework must be configured properly and have a real domain name record.
+To debug, open raw message and you can see html which specified on ``DB_MAILER_TRACK_HTML``.
