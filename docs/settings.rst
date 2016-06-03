@@ -237,4 +237,5 @@ Enable tracking and logging on settings:
 For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
 Tracking templates must be HTML, not TXT. Celery workers must be launched, if celery is enabled.
 Django ``sites`` framework must be configured properly and have a real domain name record.
+``LibGeoIP`` and ``MaxMind`` database must be installed and properly configured.
 To debug, open raw message and you can see html which specified on ``DB_MAILER_TRACK_HTML``.
