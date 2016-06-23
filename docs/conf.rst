@@ -27,6 +27,7 @@ App settings
     DB_MAILER_PUSH_QUEUE = 'default'
     DB_MAILER_SMS_QUEUE = 'default'
     DB_MAILER_TTS_QUEUE = 'default'
+    DB_MAILER_SUBSCRIPTION_QUEUE = 'default'
 
     # By default celery is enabled. If djcelery is not on INSTALLED_APPS,
     # this option is useless. When djcelery on INSTALLED_APPS, and you want
