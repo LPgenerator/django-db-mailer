@@ -125,11 +125,11 @@ After registration you must be have ``API KEY`` and ``APP ID``.
     ...
 
 
-6. Open your page to setup notification
+6. Open page to setup notification
 
 .. code-block:: bash
 
-    $ open '/Applications/Google Chrome.app' --args https://web-push.localhost.dev
+    $ open '/Applications/Google Chrome.app' --args https://localhost:8000/web-push/
 
 
 7. Install ``pywebpush`` app
@@ -286,8 +286,8 @@ Safari examples
     ...
     <script>
         function enableSafariWebPush() {
-            var websitePushID = "web.ru.lpgenerator";
-            var webServiceUrl = "https://localhost:8000";
+            var websitePushID = "web.dev.localhost";
+            var webServiceUrl = "https://localhost:8000/web-push/";
             var dataToIdentifyUser = {UserId: "123123"};
 
             var checkRemotePermission = function (permissionData) {
@@ -321,7 +321,7 @@ Safari examples
     ...
 
 
-13. Open your page to setup notification
+13. Open page to setup notification
 
 .. code-block:: bash
 
@@ -347,7 +347,7 @@ Safari examples
 Local demo
 ----------
 
-You can test by demo which found on ``dbmail`` repo or use samples
+You can test by demo which found on  repo or use samples
 
 1. Run server
 
@@ -366,4 +366,4 @@ You can test by demo which found on ``dbmail`` repo or use samples
     $ open '/Applications/Google Chrome.app' --args https://localhost:8000/web-push/
 
 
-*Note: Import to KeyChain server certs*
+*Note: Import server certs into KeyChain*
