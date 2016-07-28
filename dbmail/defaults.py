@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import os
+
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -104,6 +106,8 @@ TTS_PROVIDER = get_settings(
     'DB_MAILER_TTS_PROVIDER', 'dbmail.providers.nexmo.tts')
 PUSH_PROVIDER = get_settings(
     'DB_MAILER_PUSH_PROVIDER', 'dbmail.providers.prowl.push')
+SAFARI_PUSH_PATH = get_settings(
+    'DB_MAILER_SAFARI_PUSH_PATH', settings.STATIC_ROOT or '.')
 
 MESSAGE_HTML2TEXT = get_settings(
     'DB_MAILER_MESSAGE_HTML2TEXT', 'dbmail.utils')

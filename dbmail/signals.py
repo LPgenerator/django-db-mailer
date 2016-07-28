@@ -169,3 +169,10 @@ def initial_signals():
 
 pre_send = dispatch.Signal()
 post_send = dispatch.Signal()
+
+safari_subscribe = dispatch.Signal()
+safari_unsubscribe = dispatch.Signal()
+safari_error_log = dispatch.Signal()
+
+push_subscribe = dispatch.Signal()
+push_unsubscribe = dispatch.Signal()

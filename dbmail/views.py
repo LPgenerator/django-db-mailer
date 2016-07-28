@@ -1,15 +1,21 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import sys
+import os
 
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, Http404
+from django.views.generic import View
 from django.core.cache import cache
 
 from dbmail.models import ApiKey
 from dbmail import db_sender
 from dbmail import defaults
+
+from dbmail import signals
 
 
 allowed_fields = [
@@ -68,3 +74,53 @@ def mail_read_tracker(request, encrypted):
         content=defaults.TRACK_PIXEL[1],
         content_type=defaults.TRACK_PIXEL[0],
     )
+
+
+class PostCSRFMixin(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PostCSRFMixin, self).dispatch(request, *args, **kwargs)
+
+
+class SafariPushPackagesView(PostCSRFMixin):
+    def post(self, _, version, site_pid):
+        pp = os.path.join(defaults.SAFARI_PUSH_PATH, '%s.zip' % site_pid)
+        return HttpResponse(open(pp).read(), content_type='application/zip')
+
+
+class SafariSubscriptionView(PostCSRFMixin):
+    http_method_names = ['post', 'delete']
+
+    def post(self, _, **kwargs):
+        signals.safari_subscribe.send(self.__class__, instace=self, **kwargs)
+        return HttpResponse()
+
+    def delete(self, _, **kwargs):
+        signals.safari_unsubscribe.send(self.__class__, instace=self, **kwargs)
+        return HttpResponse()
+
+
+class SafariLogView(PostCSRFMixin):
+    def post(self, request, version):
+        err = json.loads(request.body)
+        signals.safari_error_log.send(self.__class__, instace=self, err=err)
+        sys.stderr.write(repr(err))
+        return HttpResponse()
+
+
+class PushSubscriptionView(View):
+    http_method_names = ['post', 'delete']
+
+    def _process(self, request, signal, **kwargs):
+        try:
+            kwargs.update(json.loads(request.body))
+            signal.send(self.__class__, instace=self, **kwargs)
+            return HttpResponse()
+        except ValueError:
+            return HttpResponseBadRequest()
+
+    def post(self, request, **kwargs):
+        return self._process(request, signals.push_subscribe, **kwargs)
+
+    def delete(self, request, **kwargs):
+        return self._process(request, signals.push_unsubscribe, **kwargs)
