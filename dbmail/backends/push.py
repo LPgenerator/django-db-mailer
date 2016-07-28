@@ -18,15 +18,22 @@ class Sender(SenderBase):
         return self._email_to_list(recipient)
 
     def _send(self):
-        self._provider = self._provider or self.provider
-        module = import_module(self._provider)
         message = clean_html(self._message)
-        for phone in self._recipient_list:
-            options = self._kwargs.copy()
-            options['event'] = self._kwargs.pop('event', self._subject)
-            if self._from_email:
-                options['app'] = self._from_email
-            module.send(phone, message, **options)
+
+        options = self._kwargs.copy()
+        push_url = self._kwargs.pop('push_url', self._context.get('push_url'))
+        options.update(
+            message=message,
+            event=self._kwargs.pop('event', self._subject),
+            push_url=push_url,
+            app=self._from_email
+        )
+
+        _provider = self._provider or self.provider
+        module = import_module(_provider)
+
+        for address in self._recipient_list:
+            module.send(address, **options)
 
 
 class SenderDebug(Sender):

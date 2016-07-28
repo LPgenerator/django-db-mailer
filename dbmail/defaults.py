@@ -116,5 +116,7 @@ IGNORE_BROWSE_APP = get_settings(
 
 MODEL_HTMLFIELD = get_settings(
     'DB_MAILER_MODEL_HTMLFIELD', 'dbmail.fields.HTMLField')
+MODEL_DATATEXTFIELD = get_settings(
+    'DB_MAILER_MODEL_DATA_TEXT_FIELD', 'dbmail.fields.DataTextField')
 
 DEBUG = settings.DEBUG and get_settings('DB_MAILER_DEBUG', False)
