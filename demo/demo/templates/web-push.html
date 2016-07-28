@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Push Notifications</title>
+    <link rel="manifest" href="/static/manifest.json">
+    <script>
+        function enableWebPush() {
+            var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+            var is_ff = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+            if ((is_chrome || is_ff) && 'serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js').then(function () {
+                    navigator.serviceWorker.ready.then(function (serviceWorkerRegistration) {
+                        serviceWorkerRegistration.pushManager.getSubscription().then(function (subscription) {
+                            if (!subscription) {
+                                serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true}).then(function (subscription_info) {
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open("POST", "/dbmail/web-push/subscribe/", true);
+                                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                                    xhr.setRequestHeader("X-CSRFToken", "{{ request.META.CSRF_COOKIE }}");
+                                    xhr.send(JSON.stringify(subscription_info));
+
+                                    document.getElementById('subscription').innerHTML = JSON.stringify(subscription_info);
+                                });
+                            }
+                            document.getElementById('subscription').innerHTML = JSON.stringify(subscription);
+                        });
+
+                    });
+                });
+            }
+        }
+
+        function enableSafariWebPush() {
+            var websitePushID = "web.ru.lpgenerator";
+            var webServiceUrl = "https://localhost:8000/dbmail/safari";
+            var dataToIdentifyUser = {UserId: "123123"};
+
+            var checkRemotePermission = function (permissionData) {
+                if (permissionData.permission === 'default') {
+                    window.safari.pushNotification.requestPermission(
+                            webServiceUrl,
+                            websitePushID,
+                            dataToIdentifyUser,
+                            checkRemotePermission
+                    );
+                }
+                else if (permissionData.permission === 'denied') {
+                    console.dir(arguments);
+                    alert("Access denied. Please, enable push notification from Safari settings.");
+                }
+                else if (permissionData.permission === 'granted') {
+                    document.getElementById('subscription').innerHTML = JSON.stringify(permissionData.deviceToken);
+                }
+            };
+
+            if ('safari' in window && 'pushNotification' in window.safari) {
+                checkRemotePermission(
+                        window.safari.pushNotification.permission(websitePushID)
+                );
+            }
+        }
+    </script>
+</head>
+<body onload="enableWebPush(); enableSafariWebPush();">
+<div id="subscription"></div>
+{% csrf_token %}
+</body>
+</html>

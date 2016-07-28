@@ -38,10 +38,14 @@ USE_TZ = True
 SITE_ID = 1
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_ROOT, 'static'),
+]
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -88,6 +92,7 @@ if 'test' not in sys.argv:
         # 'suit',
         'grappelli.dashboard',
         'grappelli',
+        'sslserver',
     ]
 
 INSTALLED_APPS += [
@@ -111,7 +116,7 @@ if 'test' not in sys.argv:
         'djcelery',
         # 'tinymce',
         'ckeditor',
-        'rosetta',
+        # 'rosetta',
         'south',
     ]
 
