@@ -16,6 +16,7 @@ Contents
   conf
   api
   commands
+  web_push
   custom_backends_and_providers
   providers
   demo
