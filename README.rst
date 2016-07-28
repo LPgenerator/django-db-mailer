@@ -277,19 +277,21 @@ used without any dependencies with built-in backends.
 * BoxCar
 * Parse
 
+**Browser notifications:**
+
+* GCM (Desktop: Google Chrome, FireFox; Mobile: Google Chrome on Android)
+* APNs (Desktop: Safari)
+* Centrifugo
+* PubNub
+* BoxCar
+* PushAll
+
 **Notifications for team:**
 
 * Slack/Mattermost
 * Boxcar
 * Prowl
 * Pushover
-* PushAll
-
-**Browser notifications:**
-
-* Centrifugo
-* PubNub
-* BoxCar
 * PushAll
 
 **SMS notifications:**
