@@ -16,9 +16,6 @@ Django-Db-Mailer
 .. image:: https://img.shields.io/pypi/v/django-db-mailer.svg
     :alt: Current version on PyPi
     :target: https://pypi.python.org/pypi/django-db-mailer/
-.. image:: https://img.shields.io/pypi/dm/django-db-mailer.svg
-    :alt: Downloads from PyPi
-    :target: https://pypi.python.org/pypi/django-db-mailer/
 .. image:: https://readthedocs.org/projects/django-db-mailer/badge/?version=latest
     :target: http://django-db-mailer.readthedocs.org/
     :alt: Documentation Status
