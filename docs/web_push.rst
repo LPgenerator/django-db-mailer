@@ -3,7 +3,18 @@
 Browsers Web Push notifications
 ===============================
 
-Supporting browsers: Chrome >= 50.0, FireFox >= 44.0, Safari >= 7, Google Chrome on Android
+Supporting browsers
+-------------------
+
+**Desktop**
+
+* Chrome >= 50.0
+* FireFox >= 44.0
+* Safari >= 7
+
+**Mobile**
+
+* Google Chrome (Android only)
 
 WebPush is working only with HTTPs.
 
