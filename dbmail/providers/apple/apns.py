@@ -33,8 +33,7 @@ def send(token_hex, message, **kwargs):
         }
     }
     data['aps'].update(kwargs)
-    payload = dumps(
-        data, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
+    payload = dumps(data, separators=(',', ':'))
 
     token = a2b_hex(token_hex)
     if is_enhanced is True:
