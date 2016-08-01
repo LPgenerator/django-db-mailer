@@ -5,6 +5,7 @@ from django.db import models
 from dbmail import app_installed
 
 HTMLField = models.TextField
+DataTextField = models.TextField
 
 if app_installed('tinymce'):
     try:

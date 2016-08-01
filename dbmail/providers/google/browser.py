@@ -10,7 +10,7 @@ class GCMError(Exception):
     pass
 
 
-def send(subscription_info, message, **kwargs):
+def send(reg_id, message, **kwargs):
     """
     Site: https://developers.google.com
     API: https://developers.google.com/web/updates/2016/03/web-push-encryption
@@ -20,9 +20,12 @@ def send(subscription_info, message, **kwargs):
     pip install 'pywebpush>=0.4.0'
     """
 
+    subscription_info = kwargs.pop('subscription_info')
+
     payload = {
         "title": kwargs.pop("event"),
         "body": message,
+        "url": kwargs.pop("push_url", None)
     }
     payload.update(kwargs)
 
