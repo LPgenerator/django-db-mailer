@@ -263,7 +263,7 @@ Parse
 
 
 PushOver
-----------
+--------
 
 .. code-block:: python
 
@@ -341,3 +341,15 @@ PushAll
             'priority': '1',
         }
     }
+
+
+SmsBliss
+--------
+
+.. code-block:: python
+
+    # smsbliss.ru/
+    SMSBLISS_API_URL = 'http://api.smsbliss.net/messages/v2/send.json'
+    SMSBLISS_LOGIN = ''
+    SMSBLISS_PASSWORD = ''
+    SMSBLISS_FROM = 'DbMail'
