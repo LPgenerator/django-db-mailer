@@ -19,7 +19,7 @@ from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL,
     BACKEND, _BACKEND, BACKENDS_MODEL_CHOICES, MODEL_HTMLFIELD,
-    MODEL_DATATEXTFIELD
+    MODEL_SUBSCRIPTION_DATA_FIELD
 )
 
 from dbmail import initial_signals, import_by_string
@@ -28,7 +28,8 @@ from dbmail.utils import premailer_transform
 
 
 HTMLField = import_by_string(MODEL_HTMLFIELD)
-DataTextField = import_by_string(MODEL_DATATEXTFIELD)
+SubscriptionDataField = import_by_string(MODEL_SUBSCRIPTION_DATA_FIELD)
+
 
 def _upload_mail_file(instance, filename):
     if instance is not None:
@@ -730,7 +731,7 @@ class MailSubscriptionAbstract(models.Model):
     address = models.CharField(
         _('Address'), max_length=60, db_index=True,
         help_text=_('Must be phone number/email/token'))
-    data = DataTextField(null=True, blank=True)
+    data = SubscriptionDataField(null=True, blank=True)
 
     def send_confirmation_link(
             self, slug='subs-confirmation', *args, **kwargs):

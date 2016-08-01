@@ -182,6 +182,9 @@ App settings
     # By default:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+    # Subscription data field
+    DB_MAILER_MODEL_SUBSCRIPTION_DATA_FIELD = 'dbmail.fields.DataTextField'
+
 
 Providers settings
 ==================
