@@ -343,15 +343,17 @@ Safari examples
 
 .. code-block:: python
 
-    from dbmail.providers.apple.apns2 import send
+    from dbmail import send_db_push
 
-    send(
-        '62B63D730...',
-        {
+    send_db_push(
+        'welcome',
+        '62B63D730C84E363627B95879CF13723B890249A4BA03BAC08004574DF17D2DA',
+        use_celery=False,
+        alert={
             "title": "Python",
             "body": "Hello, World!",
             "action": "View"
-        }, **{"url-args": ["..."]}
+        }, **{"url-args": ["https://localhost:8000/admin/"]}
     )
 
 
@@ -368,7 +370,45 @@ You can test by demo which found on  repo or use samples
     $ python manage.py runsslserver
 
 
-2. Open demo url
+2. Copy path to SSL certs
+
+.. code-block:: bash
+
+    export CERT_PATH=`python -c 'import os, sslserver; print(os.path.dirname(sslserver.__file__) + "/certs/development.crt")'`
+    echo $(CERT_PATH)
+
+
+3. Import certs to KeyChain
+
+Linux
+~~~~~
+
+.. code-block:: bash
+
+    sudo apt-get install -y ca-certificates
+    sudo cp "$CERT_PATH" /usr/local/share/ca-certificates/
+    sudo update-ca-certificates
+
+
+OS X
+~~~~
+
+.. code-block:: bash
+
+    sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "$CERT_PATH"
+
+
+Windows (possible will not working)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+    certutil -addstore "Root" "$CERT_PATH"
+        # or
+    certmgr.exe -add -all -c "$CERT_PATH" -s -r localMachine Root
+
+
+4. Open demo url
 
 .. code-block:: bash
 
@@ -376,5 +416,3 @@ You can test by demo which found on  repo or use samples
         # or
     $ open '/Applications/Google Chrome.app' --args https://localhost:8000/web-push/
 
-
-*Note: Import server certs into KeyChain*
