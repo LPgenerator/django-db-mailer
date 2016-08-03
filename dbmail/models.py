@@ -712,7 +712,7 @@ class MailLogTrack(models.Model):
 
 
 class MailSubscriptionAbstract(models.Model):
-    title = models.CharField(null=True, max_length=100, blank=True)
+    title = models.CharField(null=True, max_length=350, blank=True)
 
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
@@ -729,7 +729,7 @@ class MailSubscriptionAbstract(models.Model):
     defer_at_allowed_hours = models.BooleanField(
         _('Defer at allowed hours'), default=False)
     address = models.CharField(
-        _('Address'), max_length=60, db_index=True,
+        _('Address'), max_length=350, db_index=True,
         help_text=_('Must be phone number/email/token'))
     data = SubscriptionDataField(null=True, blank=True)
 

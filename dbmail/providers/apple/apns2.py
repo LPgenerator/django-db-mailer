@@ -4,6 +4,7 @@ from django.conf import settings
 from hyper import HTTP20Connection
 from hyper.tls import init_context
 
+from dbmail import defaults
 from dbmail.providers.apple.errors import APNsError
 
 
@@ -19,9 +20,17 @@ def send(token_hex, message, **kwargs):
 
     priority = kwargs.pop('priority', 10)
     topic = kwargs.pop('topic', None)
+
+    alert = {
+        "title": kwargs.pop("event"),
+        "body": message,
+        "action": kwargs.pop(
+            'apns_action', defaults.APNS_PROVIDER_DEFAULT_ACTION)
+    }
+
     data = {
         "aps": {
-            'alert': message,
+            'alert': alert,
             'content-available': kwargs.pop('content_available', 0) and 1
         }
     }

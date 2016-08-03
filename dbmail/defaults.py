@@ -122,5 +122,7 @@ MODEL_HTMLFIELD = get_settings(
     'DB_MAILER_MODEL_HTMLFIELD', 'dbmail.fields.HTMLField')
 MODEL_SUBSCRIPTION_DATA_FIELD = get_settings(
     'DB_MAILER_MODEL_SUBSCRIPTION_DATA_FIELD', 'dbmail.fields.DataTextField')
+APNS_PROVIDER_DEFAULT_ACTION = get_settings(
+    'DB_MAILER_APNS_PROVIDER_DEFAULT_ACTION', 'Show')
 
 DEBUG = settings.DEBUG and get_settings('DB_MAILER_DEBUG', False)
