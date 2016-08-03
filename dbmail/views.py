@@ -92,18 +92,18 @@ class SafariSubscriptionView(PostCSRFMixin):
     http_method_names = ['post', 'delete']
 
     def post(self, _, **kwargs):
-        signals.safari_subscribe.send(self.__class__, instace=self, **kwargs)
+        signals.safari_subscribe.send(self.__class__, instance=self, **kwargs)
         return HttpResponse()
 
     def delete(self, _, **kwargs):
-        signals.safari_unsubscribe.send(self.__class__, instace=self, **kwargs)
+        signals.safari_unsubscribe.send(self.__class__, instance=self, **kwargs)
         return HttpResponse()
 
 
 class SafariLogView(PostCSRFMixin):
     def post(self, request, version):
         err = json.loads(request.body)
-        signals.safari_error_log.send(self.__class__, instace=self, err=err)
+        signals.safari_error_log.send(self.__class__, instance=self, err=err)
         sys.stderr.write(repr(err))
         return HttpResponse()
 
@@ -114,7 +114,7 @@ class PushSubscriptionView(View):
     def _process(self, request, signal, **kwargs):
         try:
             kwargs.update(json.loads(request.body))
-            signal.send(self.__class__, instace=self, **kwargs)
+            signal.send(self.__class__, instance=self, **kwargs)
             return HttpResponse()
         except ValueError:
             return HttpResponseBadRequest()

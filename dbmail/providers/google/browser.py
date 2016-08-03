@@ -35,5 +35,5 @@ def send(reg_id, message, **kwargs):
         ttl=kwargs.pop("ttl", 60))
 
     if loads(body.text).get("failure") > 0:
-        raise GCMError(repr(body))
+        raise GCMError(body.text)
     return True

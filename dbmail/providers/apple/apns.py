@@ -13,6 +13,7 @@ except ImportError:
 
 from django.conf import settings
 
+from dbmail import defaults
 from dbmail.providers.apple.errors import APNsError
 from dbmail import PY3
 
@@ -26,9 +27,17 @@ def send(token_hex, message, **kwargs):
     is_enhanced = kwargs.pop('is_enhanced', False)
     identifier = kwargs.pop('identifier', 0)
     expiry = kwargs.pop('expiry', 0)
+
+    alert = {
+        "title": kwargs.pop("event"),
+        "body": message,
+        "action": kwargs.pop(
+            'apns_action', defaults.APNS_PROVIDER_DEFAULT_ACTION)
+    }
+
     data = {
         "aps": {
-            'alert': message,
+            'alert': alert,
             'content-available': kwargs.pop('content_available', 0) and 1
         }
     }
