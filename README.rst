@@ -300,10 +300,12 @@ used without any dependencies with built-in backends.
 * Twilio
 * IQsms
 * SmsAero
+* SmsBliss
 
 **Mail notifications:**
 
 * SendinBlue
+* Any, which designed as django email backend
 
 *You can find providers settings on docs.*
 
