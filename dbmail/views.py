@@ -99,7 +99,8 @@ class SafariSubscriptionView(PostCSRFMixin):
         return HttpResponse()
 
     def delete(self, _, **kwargs):
-        signals.safari_unsubscribe.send(self.__class__, instance=self, **kwargs)
+        signals.safari_unsubscribe.send(
+            self.__class__, instance=self, **kwargs)
         return HttpResponse()
 
 

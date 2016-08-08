@@ -185,6 +185,9 @@ App settings
     # Subscription data field
     DB_MAILER_MODEL_SUBSCRIPTION_DATA_FIELD = 'dbmail.fields.DataTextField'
 
+    # Default apns action
+    DB_MAILER_APNS_PROVIDER_DEFAULT_ACTION = 'Show'
+
 
 Providers settings
 ==================
