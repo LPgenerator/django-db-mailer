@@ -108,7 +108,6 @@ class SafariLogView(PostCSRFMixin):
     def post(self, request, version):
         err = json.loads(request.body)
         signals.safari_error_log.send(self.__class__, instance=self, err=err)
-        sys.stderr.write(repr(err))
         return HttpResponse()
 
 
