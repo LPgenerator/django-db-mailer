@@ -84,6 +84,9 @@ class PostCSRFMixin(View):
 
 class SafariPushPackagesView(PostCSRFMixin):
     def post(self, _, version, site_pid):
+        signals.safari_push_package.send(
+            self.__class__, instance=self, version=version, site_pid=site_pid)
+
         pp = os.path.join(defaults.SAFARI_PUSH_PATH, '%s.zip' % site_pid)
         return HttpResponse(open(pp).read(), content_type='application/zip')
 
@@ -105,7 +108,6 @@ class SafariLogView(PostCSRFMixin):
     def post(self, request, version):
         err = json.loads(request.body)
         signals.safari_error_log.send(self.__class__, instance=self, err=err)
-        sys.stderr.write(repr(err))
         return HttpResponse()
 
 

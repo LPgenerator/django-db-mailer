@@ -30,10 +30,11 @@ def send(reg_id, message, **kwargs):
     payload.update(kwargs)
 
     wp = WebPusher(subscription_info)
-    body = wp.send(
+    response = wp.send(
         dumps(payload), gcm_key=settings.GCM_KEY,
         ttl=kwargs.pop("ttl", 60))
 
-    if loads(body.text).get("failure") > 0:
-        raise GCMError(body.text)
+    if not response.ok or (
+            response.text and loads(response.text).get("failure") > 0):
+        raise GCMError(response.text)
     return True
