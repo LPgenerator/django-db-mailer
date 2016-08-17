@@ -18,3 +18,4 @@ Contributors
 * Sergey Khaylov (`skhaylov <https://github.com/skhaylov>`_)
 * Ilya Streltsov (`ilstreltsov <https://github.com/ilstreltsov>`_)
 * Antoine Nguyen  (`tonioo <https://github.com/tonioo>`_)
+* Tomáš Peterka (`katomaso <https://github.com/katomaso>`_)
