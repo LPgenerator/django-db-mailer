@@ -26,6 +26,8 @@ from dbmail import defaults
 
 
 class Sender(object):
+    provider = defaults.MAIL_PROVIDER
+
     def __init__(self, slug, recipient, *args, **kwargs):
         self._slug = slug
 
@@ -35,7 +37,7 @@ class Sender(object):
         self._user = kwargs.pop('user', None)
         self._language = kwargs.pop('language', None)
         self._backend = kwargs.pop('backend')
-        self._provider = kwargs.pop('provider', None)
+        self._provider = kwargs.pop('provider', self.provider)
         self._signals_kw = kwargs.pop('signals_kwargs', {})
 
         self._template = self._get_template()

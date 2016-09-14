@@ -28,7 +28,6 @@ class Sender(SenderBase):
         if self._from_email:
             options['app'] = self._from_email
 
-        self._provider = self._provider or self.provider
         module = import_module(self._provider)
 
         for address in self._recipient_list:
