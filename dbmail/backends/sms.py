@@ -28,7 +28,6 @@ class Sender(SenderBase):
         return self._email_to_list(recipient)
 
     def _send(self):
-        self._provider = self._provider or self.provider
         module = import_module(self._provider)
         message = clean_html(self._message)
         for phone in self._recipient_list:
