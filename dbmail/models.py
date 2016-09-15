@@ -384,7 +384,7 @@ class MailLog(models.Model):
 @python_2_unicode_compatible
 class MailLogEmail(models.Model):
     log = models.ForeignKey(MailLog)
-    email = models.CharField(_('Recipient'), max_length=75)
+    email = models.CharField(_('Recipient'), max_length=350)
     mail_type = models.CharField(_('Mail type'), choices=(
         ('cc', 'CC'),
         ('bcc', 'BCC'),
