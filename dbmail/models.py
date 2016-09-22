@@ -791,30 +791,33 @@ class MailSubscriptionAbstract(models.Model):
                 user_id, **sub_filter).values_list('pk', flat=True):
 
             method = cls.objects.get(pk=method_id)
+            method_kwargs = kwargs.copy()
 
-            kwargs['send_at_date'] = None
+            method_kwargs['send_at_date'] = None
             start_hour = cls.convert_to_date(method.start_hour)
             end_hour = cls.convert_to_date(method.end_hour)
 
             if not (start_hour <= now_hour <= end_hour):
-                if method.defer_at_allowed_hours and kwargs['use_celery']:
-                    kwargs['send_at_date'] = cls.mix_hour_with_date(
+                if (method.defer_at_allowed_hours and
+                        method_kwargs['use_celery']):
+
+                    method_kwargs['send_at_date'] = cls.mix_hour_with_date(
                         method.start_hour)
                 else:
                     continue
-            kwargs['backend'] = method.backend
+            method_kwargs['backend'] = method.backend
 
             extra_slug = '%s-%s' % (slug, method.get_short_type())
             use_slug = slug
 
-            kwargs = method.update_notify_kwargs(**kwargs)
+            method_kwargs = method.update_notify_kwargs(**method_kwargs)
             try:
                 if MailTemplate.get_template(slug=extra_slug):
                     use_slug = extra_slug
             except MailTemplate.DoesNotExist:
                 pass
             db_sender(use_slug, method.address, context_dict,
-                      context_instance, **kwargs)
+                      context_instance, **method_kwargs)
 
     def update_notify_kwargs(self, **kwargs):
         return kwargs
