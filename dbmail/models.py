@@ -311,10 +311,40 @@ class MailFile(models.Model):
 
 @python_2_unicode_compatible
 class MailLogException(models.Model):
+    cache_key = 'ignored_exceptions'
+    cache_version = 1
+
     name = models.CharField(_('Exception'), max_length=150, unique=True)
+    ignore = models.BooleanField(_('Ignore'), default=False)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super(MailLogException, self).save(*args, **kwargs)
+        self._clean_cache()
+
+    @classmethod
+    def get_ignored_exceptions(cls):
+        obj = cache.get(cls.cache_key, version=cls.cache_version)
+        if obj is not None:
+            return obj
+        obj = cls.objects.values_list('name', flat=True).filter(ignore=True)
+        cache.set(
+            cls.cache_key, obj, timeout=CACHE_TTL, version=cls.cache_version)
+        return obj
+
+    @classmethod
+    def get_or_create(cls, name):
+        obj, created = MailLogException.objects.get_or_create(name=name)
+        if created is True:
+            cls._clean_cache()
+        return obj
+
+    @classmethod
+    def _clean_cache(cls):
+        cache.delete(cls.cache_key, version=cls.cache_version)
+        cls.get_ignored_exceptions()
 
     class Meta:
         verbose_name = _('Mail Exception')
@@ -356,7 +386,7 @@ class MailLog(models.Model):
               user, num, msg='', ex=None, log_id=None,
               backend=None, provider=None):
         if ex is not None:
-            ex = MailLogException.objects.get_or_create(name=ex)[0]
+            ex = MailLogException.get_or_create(ex)
 
         log = cls.objects.create(
             template=template, is_sent=is_sent, user=user,

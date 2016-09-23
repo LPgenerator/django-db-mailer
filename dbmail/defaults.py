@@ -56,6 +56,7 @@ ALLOWED_MODELS_ON_ADMIN = get_settings('DB_MAILER_ALLOWED_MODELS_ON_ADMIN', [
     'MailLogTrack',
     'MailBaseTemplate',
     'MailSubscription',
+    'MailLogException',
 ])
 MAIL_SUBSCRIPTION_MODEL = get_settings(
     'DB_MAILER_MAIL_SUBSCRIPTION_MODEL', 'dbmail.models.MailSubscription')

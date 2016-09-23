@@ -16,8 +16,8 @@ from django.utils import translation
 from django.conf import settings
 from django.core import signing
 
+from dbmail.models import MailTemplate, MailLog, MailGroup, MailLogException
 from dbmail.defaults import SHOW_CONTEXT, ENABLE_LOGGING, ADD_HEADER
-from dbmail.models import MailTemplate, MailLog, MailGroup
 from dbmail.exceptions import StopSendingException
 from dbmail.utils import clean_html
 from dbmail import import_module
@@ -271,6 +271,9 @@ class Sender(object):
                     raise
                 time.sleep(defaults.SEND_RETRY_DELAY_DIRECT)
 
+    def _ignore_exception(self):
+        return self._err_exc in MailLogException.get_ignored_exceptions()
+
     def send(self, is_celery=True):
         from dbmail.signals import pre_send, post_send
 
@@ -291,6 +294,8 @@ class Sender(object):
                 self._err_msg = traceback.format_exc()
                 self._err_exc = exc.__class__.__name__
                 self._store_log(False)
+                if self._ignore_exception():
+                    return
                 raise
 
     @staticmethod
