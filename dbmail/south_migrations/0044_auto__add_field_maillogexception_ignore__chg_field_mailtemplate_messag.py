@@ -67,7 +67,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'MailBaseTemplate'},
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'message': ('ckeditor.fields.RichTextField', [], {}),
+            'message': ('django.db.models.fields.TextField', [], {}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
@@ -211,7 +211,7 @@ class Migration(SchemaMigration):
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_admin': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_html': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'message': ('ckeditor.fields.RichTextField', [], {}),
+            'message': ('django.db.models.fields.TextField', [], {}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
             'num_of_retries': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1'}),
             'priority': ('django.db.models.fields.SmallIntegerField', [], {'default': '6'}),
