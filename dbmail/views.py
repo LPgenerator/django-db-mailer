@@ -20,7 +20,7 @@ from dbmail import signals
 
 allowed_fields = [
     'api_key', 'slug', 'recipient', 'from_email', 'cc', 'bcc',
-    'queue', 'retry_delay', 'max_retries', 'retry',
+    'queue', 'retry_delay', 'max_retries', 'retry', 'language',
     'time_limit', 'send_after', 'backend', 'provider',
 ]
 
