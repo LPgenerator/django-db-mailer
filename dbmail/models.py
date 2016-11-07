@@ -338,7 +338,7 @@ class MailLog(models.Model):
         _('Log ID'), max_length=60, editable=False, db_index=True)
     backend = models.CharField(
         _('Backend'), max_length=25, editable=False, db_index=True,
-        choices=BACKEND.items(), default='mail')
+        choices=sorted(list(BACKEND.items())), default='mail')
     provider = models.CharField(
         _('Provider'), max_length=250, editable=False, db_index=True,
         default=None, null=True, blank=True)
