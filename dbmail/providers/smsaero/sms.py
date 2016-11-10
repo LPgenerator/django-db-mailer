@@ -45,7 +45,8 @@ def send(sms_to, sms_body, **kwargs):
     if response.status != 200:
         raise AeroSmsError(response.reason)
 
-    data = json.loads(response.read().decode(response.headers.get_content_charset()))
+    read = response.read().decode(response.headers.get_content_charset())
+    data = json.loads(read)
 
     status = None
     if 'result' in data:
