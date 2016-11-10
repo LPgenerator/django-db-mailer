@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 
 try:
-    from httplib import HTTPConnection
+    from httplib import HTTPSConnection
     from urllib import urlencode
 except ImportError:
-    from http.client import HTTPConnection
+    from http.client import HTTPSConnection
     from urllib.parse import urlencode
 
 from django.conf import settings
