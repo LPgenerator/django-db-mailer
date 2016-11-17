@@ -295,7 +295,7 @@ class Sender(object):
                     self.__class__,
                     instance=self,
                     exc_instance=exc,
-                    **self._signals_kw,
+                    **self._signals_kw
                 )
                 self._err_msg = traceback.format_exc()
                 self._err_exc = exc.__class__.__name__
