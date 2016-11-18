@@ -870,6 +870,7 @@ class MailSubscription(MailSubscriptionAbstract):
             return self.user.username
         return self.address
 
+
 '''
 class MailSubscriptionGroup(models.Model):
     group = models.CharField(max_length=100, unique=True)
