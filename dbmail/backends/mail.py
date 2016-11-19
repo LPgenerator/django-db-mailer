@@ -275,7 +275,7 @@ class Sender(object):
         return self._err_exc in MailLogException.get_ignored_exceptions()
 
     def send(self, is_celery=True):
-        from dbmail.signals import pre_send, post_send
+        from dbmail.signals import pre_send, post_send, post_exception
 
         if self._template.is_active:
             try:
@@ -291,6 +291,12 @@ class Sender(object):
             except StopSendingException:
                 return
             except Exception as exc:
+                post_exception.send(
+                    self.__class__,
+                    instance=self,
+                    exc_instance=exc,
+                    **self._signals_kw
+                )
                 self._err_msg = traceback.format_exc()
                 self._err_exc = exc.__class__.__name__
                 self._store_log(False)

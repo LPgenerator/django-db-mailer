@@ -169,6 +169,7 @@ def initial_signals():
 
 pre_send = dispatch.Signal()
 post_send = dispatch.Signal()
+post_exception = dispatch.Signal()
 
 safari_push_package = dispatch.Signal()
 safari_subscribe = dispatch.Signal()
