@@ -311,10 +311,40 @@ class MailFile(models.Model):
 
 @python_2_unicode_compatible
 class MailLogException(models.Model):
+    cache_key = 'ignored_exceptions'
+    cache_version = 1
+
     name = models.CharField(_('Exception'), max_length=150, unique=True)
+    ignore = models.BooleanField(_('Ignore'), default=False)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super(MailLogException, self).save(*args, **kwargs)
+        self._clean_cache()
+
+    @classmethod
+    def get_ignored_exceptions(cls):
+        obj = cache.get(cls.cache_key, version=cls.cache_version)
+        if obj is not None:
+            return obj
+        obj = cls.objects.values_list('name', flat=True).filter(ignore=True)
+        cache.set(
+            cls.cache_key, obj, timeout=CACHE_TTL, version=cls.cache_version)
+        return obj
+
+    @classmethod
+    def get_or_create(cls, name):
+        obj, created = MailLogException.objects.get_or_create(name=name)
+        if created is True:
+            cls._clean_cache()
+        return obj
+
+    @classmethod
+    def _clean_cache(cls):
+        cache.delete(cls.cache_key, version=cls.cache_version)
+        cls.get_ignored_exceptions()
 
     class Meta:
         verbose_name = _('Mail Exception')
@@ -356,7 +386,7 @@ class MailLog(models.Model):
               user, num, msg='', ex=None, log_id=None,
               backend=None, provider=None):
         if ex is not None:
-            ex = MailLogException.objects.get_or_create(name=ex)[0]
+            ex = MailLogException.get_or_create(ex)
 
         log = cls.objects.create(
             template=template, is_sent=is_sent, user=user,
@@ -384,7 +414,7 @@ class MailLog(models.Model):
 @python_2_unicode_compatible
 class MailLogEmail(models.Model):
     log = models.ForeignKey(MailLog)
-    email = models.CharField(_('Recipient'), max_length=75)
+    email = models.CharField(_('Recipient'), max_length=350)
     mail_type = models.CharField(_('Mail type'), choices=(
         ('cc', 'CC'),
         ('bcc', 'BCC'),
@@ -791,30 +821,33 @@ class MailSubscriptionAbstract(models.Model):
                 user_id, **sub_filter).values_list('pk', flat=True):
 
             method = cls.objects.get(pk=method_id)
+            method_kwargs = kwargs.copy()
 
-            kwargs['send_at_date'] = None
+            method_kwargs['send_at_date'] = None
             start_hour = cls.convert_to_date(method.start_hour)
             end_hour = cls.convert_to_date(method.end_hour)
 
             if not (start_hour <= now_hour <= end_hour):
-                if method.defer_at_allowed_hours and kwargs['use_celery']:
-                    kwargs['send_at_date'] = cls.mix_hour_with_date(
+                if (method.defer_at_allowed_hours and
+                        method_kwargs['use_celery']):
+
+                    method_kwargs['send_at_date'] = cls.mix_hour_with_date(
                         method.start_hour)
                 else:
                     continue
-            kwargs['backend'] = method.backend
+            method_kwargs['backend'] = method.backend
 
             extra_slug = '%s-%s' % (slug, method.get_short_type())
             use_slug = slug
 
-            kwargs = method.update_notify_kwargs(**kwargs)
+            method_kwargs = method.update_notify_kwargs(**method_kwargs)
             try:
                 if MailTemplate.get_template(slug=extra_slug):
                     use_slug = extra_slug
             except MailTemplate.DoesNotExist:
                 pass
             db_sender(use_slug, method.address, context_dict,
-                      context_instance, **kwargs)
+                      context_instance, **method_kwargs)
 
     def update_notify_kwargs(self, **kwargs):
         return kwargs
@@ -836,6 +869,7 @@ class MailSubscription(MailSubscriptionAbstract):
         if self.user:
             return self.user.username
         return self.address
+
 
 '''
 class MailSubscriptionGroup(models.Model):
