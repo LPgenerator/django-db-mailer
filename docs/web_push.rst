@@ -167,7 +167,7 @@ After registration you must be have ``API KEY`` and ``APP ID``.
 
     def _web_push(**kwargs):
         # you must have your own function to store device token into db
-        kwargs.pop('instace', None)
+        kwargs.pop('instance', None)
         kwargs.pop('sender', None)
         kwargs.pop('signal', None)
         print(kwargs)
@@ -269,7 +269,7 @@ Safari examples
 
     def _safari_web_push(**kwargs):
         # you must have your own function to store device token into db
-        kwargs.pop('instace', None)
+        kwargs.pop('instance', None)
         kwargs.pop('sender', None)
         kwargs.pop('signal', None)
         print(kwargs)

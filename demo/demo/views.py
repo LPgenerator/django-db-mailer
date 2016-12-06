@@ -8,7 +8,7 @@ from dbmail import signals
 
 
 def browser_notification(request):
-    return render(request, "browser_noitification.html")
+    return render(request, "browser_notification.html")
 
 
 def web_push_notification(request):
@@ -16,7 +16,7 @@ def web_push_notification(request):
 
 
 def _dump_push_signals(**kwargs):
-    kwargs.pop('instace', None)
+    kwargs.pop('instance', None)
     kwargs.pop('sender', None)
     kwargs.pop('signal', None)
     pprint(kwargs)
