@@ -261,6 +261,7 @@ class Sender(object):
                 )
 
     def _try_to_send(self):
+        self._kwargs.pop('queue', None)
         for self._num in range(1, self._template.num_of_retries + 1):
             try:
                 self._send()
@@ -279,7 +280,8 @@ class Sender(object):
 
         if self._template.is_active:
             try:
-                pre_send.send(self.__class__, instance=self, **self._signals_kw)
+                pre_send.send(
+                    self.__class__, instance=self, **self._signals_kw)
                 if is_celery is True:
                     self._send()
                 else:
