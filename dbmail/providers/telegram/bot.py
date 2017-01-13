@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from telepot
+import telepot
 from django.conf import settings
 
 
