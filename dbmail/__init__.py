@@ -102,6 +102,14 @@ def send_db_push(*args, **kwargs):
     return db_sender(*args, **kwargs)
 
 
+def send_db_bot(*args, **kwargs):
+    from dbmail.defaults import BACKEND, BOT_QUEUE
+
+    kwargs['backend'] = kwargs.pop('backend', BACKEND['bot'])
+    kwargs['queue'] = kwargs.pop('queue', BOT_QUEUE)
+    return db_sender(*args, **kwargs)
+
+
 def send_db_subscription(*args, **kwargs):
     from dbmail.defaults import (
         SUBSCRIPTION_QUEUE, SEND_MAX_TIME,

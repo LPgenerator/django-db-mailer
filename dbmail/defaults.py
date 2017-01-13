@@ -20,6 +20,7 @@ CELERY_QUEUE = get_settings('DB_MAILER_CELERY_QUEUE', 'default')
 PUSH_QUEUE = get_settings('DB_MAILER_PUSH_QUEUE', CELERY_QUEUE)
 SMS_QUEUE = get_settings('DB_MAILER_SMS_QUEUE', CELERY_QUEUE)
 TTS_QUEUE = get_settings('DB_MAILER_TTS_QUEUE', CELERY_QUEUE)
+BOT_QUEUE = get_settings('DB_MAILER_BOT_QUEUE', CELERY_QUEUE)
 SIGNALS_QUEUE = get_settings('DB_MAILER_SIGNALS_QUEUE', CELERY_QUEUE)
 SIGNALS_MAIL_QUEUE = get_settings('DB_MAILER_SIGNALS_MAIL_QUEUE', CELERY_QUEUE)
 SUBSCRIPTION_QUEUE = get_settings('DB_MAILER_SUBSCRIPTION_QUEUE', CELERY_QUEUE)
@@ -32,6 +33,7 @@ DEFAULT_CATEGORY = get_settings('DB_MAILER_DEFAULT_CATEGORY', None)
 DEFAULT_FROM_EMAIL = get_settings('DB_MAILER_DEFAULT_FROM_EMAIL', None)
 DEFAULT_SMS_FROM = get_settings('DB_MAILER_DEFAULT_SMS_FROM', None)
 DEFAULT_PUSH_FROM = get_settings('DB_MAILER_DEFAULT_PUSH_FROM', None)
+DEFAULT_BOT_FROM = get_settings('DB_MAILER_DEFAULT_BOT_FROM', None)
 DEFAULT_PRIORITY = get_settings('DB_MAILER_DEFAULT_PRIORITY', 6)
 TEMPLATES_PER_PAGE = get_settings('DB_MAILER_TEMPLATES_PER_PAGE', 20)
 SEND_RETRY = get_settings('DB_MAILER_SEND_RETRY', 3)
@@ -92,6 +94,7 @@ BACKEND = get_settings('DB_MAILER_BACKEND', {
     'tts': 'dbmail.backends.tts',
     'sms': 'dbmail.backends.sms',
     'push': 'dbmail.backends.push',
+    'bot': 'dbmail.backends.bot',
 })
 _BACKEND = {v: k for k, v in BACKEND.items()}
 BACKENDS_MODEL_CHOICES = get_settings('DB_MAILER_BACKENDS_MODEL_CHOICES', (
@@ -99,6 +102,7 @@ BACKENDS_MODEL_CHOICES = get_settings('DB_MAILER_BACKENDS_MODEL_CHOICES', (
     (BACKEND.get('push'), _('Push')),
     (BACKEND.get('sms'), _('SMS')),
     (BACKEND.get('tts'), _('TTS')),
+    (BACKEND.get('bot'), _('BOT')),
 ))
 
 SMS_PROVIDER = get_settings(
@@ -107,6 +111,8 @@ TTS_PROVIDER = get_settings(
     'DB_MAILER_TTS_PROVIDER', 'dbmail.providers.nexmo.tts')
 PUSH_PROVIDER = get_settings(
     'DB_MAILER_PUSH_PROVIDER', 'dbmail.providers.prowl.push')
+BOT_PROVIDER = get_settings(
+    'DB_MAILER_BOT_PROVIDER', 'dbmail.providers.telegram.bot')
 MAIL_PROVIDER = get_settings('DB_MAILER_MAIL_PROVIDER', None)
 
 SAFARI_PUSH_PATH = get_settings(
