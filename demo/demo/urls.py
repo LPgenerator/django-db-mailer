@@ -16,7 +16,7 @@ urlpatterns = patterns(
 
     url('^browser_notification/$', "demo.views.browser_notification"),
     url('^web-push/$', "demo.views.web_push_notification"),
-    url(r'^ckeditor/', include('ckeditor.urls')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ) + staticfiles_urlpatterns()
 
 '''

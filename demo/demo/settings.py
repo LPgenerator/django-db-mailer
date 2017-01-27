@@ -114,15 +114,13 @@ if 'test' not in sys.argv:
         'reversion',
         'reversion_compare',
         'djcelery',
-        # 'tinymce',
         'ckeditor',
         # 'rosetta',
         'south',
     ]
 
 if django.VERSION >= (1, 7):
-    DJ17_NOT_SUPPORTED_APPS = [
-        'south', 'reversion', 'reversion_compare', 'tinymce']
+    DJ17_NOT_SUPPORTED_APPS = ['south', 'tinymce']
     for app in DJ17_NOT_SUPPORTED_APPS:
         if app in INSTALLED_APPS:
             INSTALLED_APPS.remove(app)
@@ -226,7 +224,7 @@ DEFAULT_FROM_EMAIL = 'Django <no_reply@local.host>'
 if 'test' not in sys.argv:
     CACHES = {
         "default": {
-            "BACKEND": "redis_cache.cache.RedisCache",
+            "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": "127.0.0.1:6379",
         }
     }
