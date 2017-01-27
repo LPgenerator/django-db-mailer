@@ -1,14 +1,13 @@
 import os
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^rosetta/', include('rosetta.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
@@ -17,7 +16,7 @@ urlpatterns = patterns(
     url('^browser_notification/$', "demo.views.browser_notification"),
     url('^web-push/$', "demo.views.web_push_notification"),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
-) + staticfiles_urlpatterns()
+] + staticfiles_urlpatterns()
 
 '''
 from django import VERSION

@@ -15,13 +15,9 @@ script:
   - make test
   - make coverage
 env:
-  - DJANGO=1.5.12
-  - DJANGO=1.6.11
-  - DJANGO=1.7.11
   - DJANGO=1.8.17
   - DJANGO=1.9.12
   - DJANGO=1.10.5
-  - DJANGO=1.11a1
 branches:
   only:
     - master
