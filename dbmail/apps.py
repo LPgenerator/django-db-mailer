@@ -10,5 +10,7 @@ class DBMailConfig(AppConfig):
 
     def ready(self):
         from dbmail import initial_signals
+        from dbmail.defaults import ALLOWED_MODELS_ON_ADMIN
 
-        initial_signals()
+        if 'Signal' in ALLOWED_MODELS_ON_ADMIN:
+            initial_signals()
