@@ -1,5 +1,4 @@
 import re
-import optparse
 
 from django.core.management.base import BaseCommand
 
@@ -19,16 +18,15 @@ def send_test_msg(pk, email, user=None, **kwargs):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        optparse.make_option('--email', dest='email', help='Recipients'),
-        optparse.make_option('--pk', dest='pk', help='DBMail template id'),
-        optparse.make_option('--without-celery', action='store_true',
-                             default=False, dest='celery',
-                             help='Send direct message'),
-        optparse.make_option('--provider', dest='provider', help='Provider'),
-        optparse.make_option(
+    def add_arguments(self, parser):
+        parser.add_argument('--email', dest='email', help='Recipients'),
+        parser.add_argument('--pk', dest='pk', help='DBMail template id'),
+        parser.add_argument('--without-celery', action='store_true',
+                            default=False, dest='celery',
+                            help='Send direct message'),
+        parser.add_argument('--provider', dest='provider', help='Provider'),
+        parser.add_argument(
             '--backend', dest='backend', help='Backend', default='mail'),
-    )
 
     @staticmethod
     def get_kwargs(options):
