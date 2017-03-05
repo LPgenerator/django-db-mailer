@@ -64,7 +64,7 @@ def mail_read_tracker(request, encrypted):
         req = {k: v for k, v in request.META.items()
                if k.startswith('HTTP_') or k.startswith('REMOTE')}
         if defaults.ENABLE_CELERY is True:
-            mail_track.apply_async(
+            mail_track.delay(
                 args=[req, encrypted], queue=defaults.TRACKING_QUEUE,
                 retry=1, retry_policy={'max_retries': 3})
         else:

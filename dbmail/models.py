@@ -592,7 +592,7 @@ class SignalDeferredDispatch(models.Model):
         if self.done is False:
             import tasks
 
-            tasks.deferred_signal.apply_async(
+            tasks.deferred_signal.delay(
                 args=pickle.loads(self.args),
                 kwargs=pickle.loads(self.kwargs),
                 **pickle.loads(self.params)

@@ -48,19 +48,14 @@ def db_sender(slug, recipient, *args, **kwargs):
         if max_retries is None and template.num_of_retries:
             kwargs['max_retries'] = template.num_of_retries
 
-        options = {
-            'args': args, 'kwargs': kwargs,
-            'queue': kwargs.pop('queue', CELERY_QUEUE),
-            'time_limit': kwargs.get('time_limit', SEND_MAX_TIME),
-            'priority': template.priority,
-        }
+        kwargs['time_limit'] = kwargs.get('time_limit', SEND_MAX_TIME),
 
         if send_at_date is not None and isinstance(send_at_date, datetime):
-            options.update({'eta': send_at_date})
+            kwargs.update({'eta': send_at_date})
         if send_after is not None:
-            options.update({'countdown': send_after})
+            kwargs.update({'countdown': send_after})
         if template.is_active:
-            return dbmail.tasks.db_sender.apply_async(**options)
+            return dbmail.tasks.db_sender.delay(*args, **kwargs)
     else:
         module = import_module(backend)
         if DEBUG is True:
@@ -115,16 +110,12 @@ def send_db_subscription(*args, **kwargs):
     MailSubscription = import_by_string(MAIL_SUBSCRIPTION_MODEL)
 
     use_celery = ENABLE_CELERY and kwargs.pop('use_celery', ENABLE_CELERY)
-    options = {
-        'time_limit': kwargs.pop('time_limit', SEND_MAX_TIME),
-        'queue': kwargs.pop('queue', SUBSCRIPTION_QUEUE),
-        'args': args, 'kwargs': kwargs,
-    }
+    kwargs['time_limit'] = kwargs.pop('time_limit', SEND_MAX_TIME),
 
     if celery_supported() and use_celery is True:
         from dbmail.tasks import db_subscription
 
-        return db_subscription.apply_async(**options)
+        return db_subscription.apply_async(*args, **kwargs)
     else:
         kwargs['use_celery'] = use_celery
         return MailSubscription.notify(*args, **kwargs)

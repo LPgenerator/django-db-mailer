@@ -46,8 +46,7 @@ def signal_receiver(*args, **kwargs):
     from dbmail.signals import SignalReceiver
 
     SignalReceiver(*args, **kwargs).run()
-    if len(args):
-        return args[0]._meta.module_name
+    return 'OK'
 
 
 @task(name='dbmail.deferred_signal')

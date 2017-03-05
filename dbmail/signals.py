@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from __future__ import absolute_import
 
 import datetime
 
@@ -103,8 +104,8 @@ class SignalReceiver(object):
         if SIGNAL_DEFERRED_DISPATCHER == 'celery':
             from dbmail import tasks
 
-            tasks.deferred_signal.apply_async(
-                args=[self.sender], kwargs=self._kwargs,
+            tasks.deferred_signal.delay(
+                self.sender, kwargs=self._kwargs,
                 default_retry_delay=SEND_RETRY_DELAY,
                 max_retries=SEND_RETRY,
                 queue=SIGNALS_QUEUE,
@@ -146,10 +147,10 @@ def signal_receiver(sender, **kwargs):
         kwargs.pop('signal')
 
     if celery_supported():
-        import tasks
+        from dbmail import tasks
 
-        tasks.signal_receiver.apply_async(
-            args=[sender], kwargs=kwargs,
+        tasks.signal_receiver.delay(
+            sender, kwargs=kwargs,
             default_retry_delay=SEND_RETRY_DELAY,
             max_retries=SEND_RETRY,
             queue=SIGNALS_QUEUE,
