@@ -1,1 +1,2 @@
 Django>1.9
+twilio==5.7.0
