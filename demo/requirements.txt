@@ -30,6 +30,8 @@ diff-match-patch==20121119
 premailer==2.7.0
 pytz>=2014.10
 django-sslserver==0.19
+twilio==5.7.0
+django-push-notifications==1.4.1
 
 -e git+https://github.com/hint/django-admin-jqueryui.git#egg=django-admin-jqueryui
 

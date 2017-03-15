@@ -105,6 +105,7 @@ INSTALLED_APPS += [
     'django.contrib.admin',
 
     'dbmail',
+    'push_notifications',
 ]
 
 if 'test' not in sys.argv:
