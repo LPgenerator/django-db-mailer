@@ -111,7 +111,7 @@ TTS_PROVIDER = get_settings(
     'DB_MAILER_TTS_PROVIDER', 'dbmail.providers.nexmo.tts')
 PUSH_PROVIDER = get_settings(
     'DB_MAILER_PUSH_PROVIDER',
-    'dbmail.providers.django_push_notifications.push')
+    'dbmail.providers.google.android')
 BOT_PROVIDER = get_settings(
     'DB_MAILER_BOT_PROVIDER', 'dbmail.providers.telegram.bot')
 MAIL_PROVIDER = get_settings('DB_MAILER_MAIL_PROVIDER', None)

@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 
-from httplib import HTTPSConnection
+from http.client import HTTPSConnection
 from json import dumps, loads
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from django.conf import settings
 
@@ -27,10 +27,11 @@ def send(user, message, **kwargs):
 
     data = {
         "registration_ids": [user],
-        "data": {
+        "notification": {
             "title": kwargs.pop("event"),
-            'message': message,
-        }
+            'body': message,
+        },
+        "data": {}
     }
     data['data'].update(kwargs)
 
@@ -46,6 +47,6 @@ def send(user, message, **kwargs):
         raise GCMError(response.reason)
 
     body = response.read()
-    if loads(body).get("failure") > 0:
+    if loads(body.decode('utf-8')).get("failure") > 0:
         raise GCMError(repr(body))
     return True
