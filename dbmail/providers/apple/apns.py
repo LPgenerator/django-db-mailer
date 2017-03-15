@@ -57,10 +57,11 @@ def _check_certificate(ss):
 
 
 def _apns_create_socket(address_tuple, certfile=None):
-    certfile = certfile or settings.APNS_CERTIFICATE
+    from dbmail.defaults import APNS_CERTIFICATE
+    certfile = certfile or APNS_CERTIFICATE
     if not certfile:
         raise ImproperlyConfigured(
-                'You need to set PUSH_NOTIFICATIONS_SETTINGS["APNS_CERTIFICATE"] to send APNS messages.'
+                'You need to set DB_APNS_CERTIFICATE to send APNS messages.'
                 )
 
     try:
@@ -133,7 +134,8 @@ def send(token, message, **kwargs):
 
     frame = _apns_pack_frame(token, payload, identifier, expiry, priority)
 
-    with closing(_apns_create_socket((settings.APNS_GW_HOST, settings.APNS_GW_PORT))) as socket:
+    from dbmail.defaults import APNS_GW_PORT, APNS_GW_HOST
+    with closing(_apns_create_socket((APNS_GW_HOST, APNS_GW_PORT))) as socket:
         socket.write(frame)
         _apns_check_errors(socket)
 

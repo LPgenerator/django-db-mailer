@@ -134,5 +134,9 @@ MODEL_SUBSCRIPTION_DATA_FIELD = get_settings(
     'DB_MAILER_MODEL_SUBSCRIPTION_DATA_FIELD', 'dbmail.fields.DataTextField')
 APNS_PROVIDER_DEFAULT_ACTION = get_settings(
     'DB_MAILER_APNS_PROVIDER_DEFAULT_ACTION', 'Show')
+GCM_KEY = get_settings('DB_GCM_API_KEY', '')
+APNS_CERTIFICATE = get_settings('DB_APNS_CERTIFICATE', '')
+APNS_GW_PORT = get_settings('DB_APNS_GW_PORT', 2195)
+APNS_GW_HOST = get_settings('DB_APNS_GW_HOST', 'gateway.push.apple.com')
 
 DEBUG = settings.DEBUG and get_settings('DB_MAILER_DEBUG', False)
