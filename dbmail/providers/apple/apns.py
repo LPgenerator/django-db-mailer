@@ -7,7 +7,6 @@ from binascii import unhexlify
 import ssl
 from contextlib import closing
 
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 from dbmail import defaults

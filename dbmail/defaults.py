@@ -138,5 +138,6 @@ GCM_KEY = get_settings('DB_GCM_API_KEY', '')
 APNS_CERTIFICATE = get_settings('DB_APNS_CERTIFICATE', '')
 APNS_GW_PORT = get_settings('DB_APNS_GW_PORT', 2195)
 APNS_GW_HOST = get_settings('DB_APNS_GW_HOST', 'gateway.push.apple.com')
+UPDATE_ON_DUPLICATE_REG_ID = get_settings('DB_UPDATE_ON_DUPLICATE_REG_ID', True)
 
 DEBUG = settings.DEBUG and get_settings('DB_MAILER_DEBUG', False)
