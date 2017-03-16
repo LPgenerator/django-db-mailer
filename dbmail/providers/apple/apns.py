@@ -3,6 +3,7 @@
 from json import dumps
 from socket import socket
 import struct
+import codecs
 from binascii import unhexlify
 import ssl
 from contextlib import closing
@@ -139,3 +140,57 @@ def send(token, message, **kwargs):
         _apns_check_errors(socket)
 
     return True
+
+
+def _apns_read_and_unpack(socket, data_format):
+    length = struct.calcsize(data_format)
+    data = socket.recv(length)
+    if data:
+        return struct.unpack_from(data_format, data, 0)
+    else:
+        return None
+
+
+def _apns_receive_feedback(socket):
+    expired_token_list = []
+
+    # read a timestamp (4 bytes) and device token length (2 bytes)
+    header_format = "!LH"
+    has_data = True
+    while has_data:
+        try:
+            # read the header tuple
+            header_data = _apns_read_and_unpack(socket, header_format)
+            if header_data is not None:
+                timestamp, token_length = header_data
+                # Unpack format for a single value of length bytes
+                token_format = "%ss" % token_length
+                device_token = _apns_read_and_unpack(socket, token_format)
+                if device_token is not None:
+                    # _apns_read_and_unpack returns a tuple, but
+                    # it's just one item, so get the first.
+                    expired_token_list.append((timestamp, device_token[0]))
+            else:
+                has_data = False
+        except socket.timeout:  # py3, see http://bugs.python.org/issue10272
+            pass
+        except ssl.SSLError as e:  # py2
+            if "timed out" not in e.message:
+                raise
+
+    return expired_token_list
+
+
+def apns_fetch_inactive_ids(certfile=None):
+    """
+    Queries the APNS server for id's that are no longer active since
+    the last fetch
+    """
+    from dbmail.defaults import APNS_GW_PORT, APNS_GW_HOST
+    with closing(_apns_create_socket((APNS_GW_HOST, APNS_GW_PORT))) as socket:
+        inactive_ids = []
+        # Maybe we should have a flag to return the timestamp?
+        # It doesn't seem that useful right now, though.
+        for ts, registration_id in _apns_receive_feedback(socket):
+            inactive_ids.append(codecs.encode(registration_id, "hex_codec"))
+        return inactive_ids
