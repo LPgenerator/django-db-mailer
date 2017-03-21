@@ -4,7 +4,7 @@ from datetime import datetime
 import sys
 
 
-VERSION = (2, 3, 14)
+VERSION = (2, 3, 16)
 
 default_app_config = 'dbmail.apps.DBMailConfig'
 
