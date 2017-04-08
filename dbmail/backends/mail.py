@@ -217,6 +217,7 @@ class Sender(object):
 
     def _render_template(self, template, context):
         translation.activate(self._language or settings.LANGUAGE_CODE)
+        template = template.replace('%7B', '{').replace('%7D', '}')
         return Template(template).render(Context(context))
 
     @staticmethod
