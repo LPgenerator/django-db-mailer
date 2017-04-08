@@ -4,7 +4,7 @@ from http.client import HTTPSConnection
 from json import dumps, loads
 from urllib.parse import urlparse
 
-from django.conf import settings
+from dbmail.defaults import GCM_KEY
 
 
 class GCMError(Exception):
@@ -20,7 +20,7 @@ def send(user, message, **kwargs):
 
     headers = {
         "Content-type": "application/json",
-        "Authorization": "key=" + kwargs.pop("gcm_key", settings.GCM_KEY)
+        "Authorization": "key=" + kwargs.pop("gcm_key", GCM_KEY)
     }
 
     hook_url = 'https://android.googleapis.com/gcm/send'
