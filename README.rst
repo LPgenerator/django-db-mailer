@@ -29,7 +29,7 @@ Documentation available at `Read the Docs <http://django-db-mailer.readthedocs.o
 
 What's that
 -----------
-| Django module to easily send emails/push/sms/tts using django templates stored on database.
+| Django module to easily send emails/push/sms/tts using django templates stored in a database.
 | From box you can use it with django-celery for send background messages.
 | Also you have opportunity to create reports from logs by mail categories and slug.
 | Groups with Recipients and send by model signal also available by default.
