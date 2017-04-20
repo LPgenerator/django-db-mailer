@@ -5,16 +5,17 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 
-admin.autodiscover()
+import demo.views
+
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     # url(r'^rosetta/', include('rosetta.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^dbmail/', include('dbmail.urls')),
 
-    url('^browser_notification/$', "demo.views.browser_notification"),
-    url('^web-push/$', "demo.views.web_push_notification"),
+    url('^browser_notification/$', demo.views.browser_notification),
+    url('^web-push/$', demo.views.web_push_notification),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ] + staticfiles_urlpatterns()
 
