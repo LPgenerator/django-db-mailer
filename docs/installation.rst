@@ -3,8 +3,8 @@ Installation
 
 Compatibility
 -------------
-* Python: 2.7, pypy, 3.4, 3.5, pypy3
-* Django: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10
+* Python: 2.7, pypy, 3.4, 3.5, 3.6, pypy3
+* Django: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11
 
 
 Installation
