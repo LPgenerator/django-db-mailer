@@ -836,21 +836,27 @@ class MailSubscriptionAbstract(models.Model):
                 else:
                     continue
             method_kwargs['backend'] = method.backend
-
-            extra_slug = '%s-%s' % (slug, method.get_short_type())
-            use_slug = slug
-
             method_kwargs = method.update_notify_kwargs(**method_kwargs)
-            try:
-                if MailTemplate.get_template(slug=extra_slug):
-                    use_slug = extra_slug
-            except MailTemplate.DoesNotExist:
-                pass
+
+            use_slug = method.get_final_slug(slug, method.get_short_type())
+
             db_sender(use_slug, method.address, context_dict,
                       context_instance, **method_kwargs)
 
     def update_notify_kwargs(self, **kwargs):
         return kwargs
+
+    def get_final_slug(self, slug, short_type):
+        extra_slug = '%s-%s' % (slug, short_type)
+        use_slug = slug
+
+        try:
+            if MailTemplate.get_template(slug=extra_slug):
+                use_slug = extra_slug
+        except MailTemplate.DoesNotExist:
+            pass
+
+        return use_slug
 
     def get_short_type(self):
         return self.backend.split('.')[-1]
