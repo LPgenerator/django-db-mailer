@@ -23,8 +23,8 @@ def celery_supported():
     try:
         from dbmail import tasks
 
-        if not app_installed('djcelery'):
-            raise ImportError
+        # if not app_installed('djcelery'):
+        #     raise ImportError
         return True
     except ImportError:
         return False
