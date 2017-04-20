@@ -113,7 +113,6 @@ INSTALLED_APPS += [
 if 'test' not in sys.argv:
     INSTALLED_APPS += [
         'django_extensions',
-        'admin_jqueryui',
         'reversion',
         'reversion_compare',
         'djcelery',
@@ -121,6 +120,9 @@ if 'test' not in sys.argv:
         # 'rosetta',
         'south',
     ]
+
+    if 'grappelli' not in INSTALLED_APPS:
+        INSTALLED_APPS += ['admin_jqueryui']
 
 if django.VERSION >= (1, 7):
     DJ17_NOT_SUPPORTED_APPS = ['south', 'tinymce']
