@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='mailsubscription',
             name='address',
-            field=models.CharField(help_text='Must be phone number/email/token', max_length=350, verbose_name='Address', db_index=True),
+            field=models.CharField(help_text='Must be phone number/email/token', max_length=255, verbose_name='Address', db_index=True),
         ),
         migrations.AlterField(
             model_name='mailsubscription',
             name='title',
-            field=models.CharField(max_length=350, null=True, blank=True),
+            field=models.CharField(max_length=255, null=True, blank=True),
         ),
     ]
