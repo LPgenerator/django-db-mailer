@@ -34,6 +34,7 @@ def db_sender(slug, recipient, *args, **kwargs):
 
     args = (slug, recipient) + args
     send_after = kwargs.pop('send_after', None)
+    expiry = kwargs.pop('expiry', None)
     send_at_date = kwargs.pop('send_at_date', None)
     _use_celery = kwargs.pop('use_celery', ENABLE_CELERY)
     use_celery = ENABLE_CELERY and _use_celery
@@ -45,6 +46,7 @@ def db_sender(slug, recipient, *args, **kwargs):
         template = MailTemplate.get_template(slug=slug)
         max_retries = kwargs.get('max_retries', None)
         send_after = send_after if send_after else template.interval
+        expiry = expiry if expiry else template.expiry
         if max_retries is None and template.num_of_retries:
             kwargs['max_retries'] = template.num_of_retries
 
@@ -54,6 +56,8 @@ def db_sender(slug, recipient, *args, **kwargs):
             kwargs.update({'eta': send_at_date})
         if send_after is not None:
             kwargs.update({'countdown': send_after})
+        if expiry is not None:
+            kwargs.update({'expires': expiry})
         if template.is_active:
             return dbmail.tasks.db_sender.delay(*args, **kwargs)
     else:

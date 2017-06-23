@@ -192,6 +192,8 @@ class MailTemplate(models.Model):
         help_text=_('Unique slug to use in code.'))
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
+    expiry = models.PositiveIntegerField(
+        _('Time in (s) before task expires'), default=120)
     priority = models.SmallIntegerField(
         _('Priority'), default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
     is_html = models.BooleanField(

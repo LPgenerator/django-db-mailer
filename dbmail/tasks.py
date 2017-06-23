@@ -3,16 +3,19 @@
 from django.core import signing
 from celery import task
 
-from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG
+from dbmail.defaults import (SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME,
+                             DEBUG, SEND_EXPIRY)
 from dbmail.utils import get_ip
 
 
-@task(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY)
+@task(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY,
+      expires=SEND_EXPIRY)
 def db_sender(*args, **kwargs):
     from dbmail import import_module
 
     retry_delay = kwargs.pop('retry_delay', SEND_RETRY_DELAY)
     time_limit = kwargs.pop('time_limit', SEND_MAX_TIME)
+    expires = kwargs.pop('expires', SEND_EXPIRY)
     max_retries = kwargs.pop('max_retries', SEND_RETRY)
     backend = import_module(kwargs.get('backend'))
     retry = kwargs.pop('retry', True)
@@ -27,6 +30,7 @@ def db_sender(*args, **kwargs):
                 retry=retry, max_retries=max_retries,
                 countdown=retry_delay, exc=exc,
                 time_limit=time_limit,
+                expires=expires
             )
         raise
 
