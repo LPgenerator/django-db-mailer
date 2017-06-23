@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mailtemplate',
             name='expiry',
-            field=models.PositiveIntegerField(default=120, verbose_name='Time in (s) before task expires'),
+            field=models.PositiveIntegerField(default=300, verbose_name='Time in (s) before task expires'),
         ),
     ]
