@@ -846,17 +846,21 @@ class MailSubscriptionAbstract(models.Model):
     def update_notify_kwargs(self, **kwargs):
         return kwargs
 
-    def get_final_slug(self, slug, short_type):
-        extra_slug = '%s-%s' % (slug, short_type)
-        use_slug = slug
+    def get_final_slug(self, slug, _):
+        for extra_slug in self.get_extra_slugs(slug):
+            try:
+                if MailTemplate.get_template(slug=extra_slug):
+                    slug = extra_slug
+                    break
+            except MailTemplate.DoesNotExist:
+                pass
 
-        try:
-            if MailTemplate.get_template(slug=extra_slug):
-                use_slug = extra_slug
-        except MailTemplate.DoesNotExist:
-            pass
+        return slug
 
-        return use_slug
+    def get_extra_slugs(self, slug):
+        return [
+            u'{}-{}'.format(slug, self.get_short_type()),
+        ]
 
     def get_short_type(self):
         return self.backend.split('.')[-1]
