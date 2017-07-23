@@ -2,16 +2,12 @@
 
 try:
     from httplib import HTTPSConnection
-except ImportError:
-    from http.client import HTTPSConnection
-
-from json import dumps, loads
-
-try:
     from urlparse import urlparse
 except ImportError:
+    from http.client import HTTPSConnection
     from urllib.parse import urlparse
 
+from json import dumps, loads
 from django.conf import settings
 
 

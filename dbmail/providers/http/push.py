@@ -1,7 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-from httplib import HTTPConnection, HTTPSConnection
-from urlparse import urlparse
+try:
+    from httplib import HTTPConnection, HTTPSConnection
+    from urlparse import urlparse
+except ImportError:
+    from http.client import HTTPSConnection, HTTPConnection
+    from urllib.parse import urlparse
+
 from json import dumps
 
 from django.conf import settings
