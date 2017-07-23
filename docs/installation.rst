@@ -3,12 +3,14 @@ Installation
 
 Compatibility
 -------------
+
 * Python: 2.7, pypy, 3.4, 3.5, 3.6, pypy3
 * Django: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11
 
 
 Installation
 ------------
+
 Recommended way to install is via pip:
 
 .. code-block:: bash
@@ -24,15 +26,17 @@ Recommended way to install is via pip:
 Settings configuration
 ----------------------
 
-Add ``dbmail`` to ``INSTALLED_APPS`` in the settings.py:
+Add ``dbmail`` and ``django.contrib.sites`` to ``INSTALLED_APPS`` in the settings.py:
 
 .. code-block:: python
 
     INSTALLED_APPS = (
         ...
+        'django.contrib.sites',
         'dbmail',
         ...
     )
+    SITE_ID = 1
 
 
 DB initialization
