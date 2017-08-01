@@ -19,16 +19,15 @@ def send_test_msg(pk, email, user=None, **kwargs):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        optparse.make_option('--email', dest='email', help='Recipients'),
-        optparse.make_option('--pk', dest='pk', help='DBMail template id'),
-        optparse.make_option('--without-celery', action='store_true',
-                             default=False, dest='celery',
-                             help='Send direct message'),
-        optparse.make_option('--provider', dest='provider', help='Provider'),
-        optparse.make_option(
-            '--backend', dest='backend', help='Backend', default='mail'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('--email', default='localhost', help='Recipients')
+        parser.add_argument('--pk', default=1, help='DBMail template id')
+        parser.add_argument('--without-celery',
+                            action='store_true',
+                            default=False, dest='celery',
+                            help='Send direct message')
+        parser.add_argument('--provider', help='Provider')
+        parser.add_argument('--backend', help='Backend')
 
     @staticmethod
     def get_kwargs(options):

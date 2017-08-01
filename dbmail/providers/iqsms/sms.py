@@ -1,7 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-from httplib import HTTPConnection
-from urllib import urlencode
+try:
+    from httplib import HTTPConnection
+    from urllib import urlencode
+except ImportError:
+    from http.client import HTTPConnection
+    from urllib.parse import urlencode
+
 from base64 import b64encode
 
 from django.conf import settings
