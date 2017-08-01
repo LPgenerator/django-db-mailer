@@ -20,7 +20,7 @@ Sphinx>=1.5.2
 redis>=2.10.5
 wheel>=0.24.0
 
-django-grappelli==2.7.3
+django-grappelli==2.8.3
 django-suit==0.2.23
 django-ckeditor==5.2.1
 django-reversion==2.0.8

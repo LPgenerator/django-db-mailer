@@ -19,7 +19,7 @@ from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL,
     BACKEND, _BACKEND, BACKENDS_MODEL_CHOICES, MODEL_HTMLFIELD,
-    MODEL_SUBSCRIPTION_DATA_FIELD
+    MODEL_SUBSCRIPTION_DATA_FIELD, SORTED_BACKEND_CHOICES
 )
 
 from dbmail import initial_signals, import_by_string
@@ -368,7 +368,7 @@ class MailLog(models.Model):
         _('Log ID'), max_length=60, editable=False, db_index=True)
     backend = models.CharField(
         _('Backend'), max_length=25, editable=False, db_index=True,
-        choices=sorted(list(BACKEND.items())), default='mail')
+        choices=SORTED_BACKEND_CHOICES, default='mail')
     provider = models.CharField(
         _('Provider'), max_length=250, editable=False, db_index=True,
         default=None, null=True, blank=True)

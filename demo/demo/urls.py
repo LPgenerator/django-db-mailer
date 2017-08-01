@@ -7,6 +7,7 @@ from django.conf import settings
 
 admin.autodiscover()
 
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^rosetta/', include('rosetta.urls')),
