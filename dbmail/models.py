@@ -718,8 +718,11 @@ class MailLogTrack(models.Model):
 
     def detect_geo(self):
         if self.ip and self.counter == 0:
-            from django.contrib.gis.geoip import GeoIP, GeoIPException
-
+            if not defaults.TRACK_USE_GEOIP2:
+                from django.contrib.gis.geoip import GeoIP, GeoIPException
+            else:
+                from django.contrib.gis.geoip2 import GeoIP2 as GeoIP
+                from django.contrib.gis.geoip2 import GeoIPException2 as GeoIPException
             try:
                 g = GeoIP()
                 info = g.city(self.ip) or dict()
