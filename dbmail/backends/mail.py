@@ -232,7 +232,7 @@ class Sender(object):
                         instance).values_list('pk', flat=True))
             elif isinstance(f, ForeignKey):
                 if getattr(instance, f.name):
-                    data[f.name] = getattr(instance, f.name).__unicode__()
+                    data[f.name] = getattr(instance, f.name).__str__()
             else:
                 data[f.name] = f.value_from_object(instance)
         return data
