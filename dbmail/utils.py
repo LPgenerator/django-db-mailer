@@ -15,6 +15,7 @@ def premailer_transform(text):
         return transform(text)
     except ImportError:
         logger.error("You don't have module 'premailer' installed")
+        return text
     except Exception as err:
         logger.error(err)
         return text
