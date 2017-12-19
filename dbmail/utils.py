@@ -7,6 +7,7 @@ from django.utils.html import strip_tags
 
 logger = logging.getLogger(__name__)
 
+
 def premailer_transform(text):
     try:
         from premailer import transform
