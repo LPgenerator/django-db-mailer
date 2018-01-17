@@ -118,6 +118,15 @@ App settings
     # Remove database long tasks after execution
     DB_MAILER_SIGNAL_DB_DEFERRED_PURGE = True
 
+    # Define the signals to be used in the Signal Model Admin
+    DB_MAILER_SIGNAL_CHOICES = [
+        ('django.db.models.signals.pre_save', 'pre_save'),
+        ('django.db.models.signals.post_save', 'post_save'),
+        ('django.db.models.signals.pre_delete', 'pre_delete'),
+        ('django.db.models.signals.post_delete', 'post_delete'),
+        ('django.db.models.signals.m2m_changed', 'm2m_changed'),
+    ]
+
     # Enable/Disable tracking functionality.
     # If tracking is enabled, Logging must be enabled to.
     # DbMail urls must be configured.

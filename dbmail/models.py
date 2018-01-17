@@ -19,7 +19,8 @@ from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL,
     BACKEND, _BACKEND, BACKENDS_MODEL_CHOICES, MODEL_HTMLFIELD,
-    MODEL_SUBSCRIPTION_DATA_FIELD, SORTED_BACKEND_CHOICES, TRACK_USE_GEOIP2
+    MODEL_SUBSCRIPTION_DATA_FIELD, SORTED_BACKEND_CHOICES, TRACK_USE_GEOIP2,
+    SIGNAL_CHOICES
 )
 
 from dbmail import initial_signals, import_by_string
@@ -497,19 +498,13 @@ class MailGroupEmail(models.Model):
 
 @python_2_unicode_compatible
 class Signal(models.Model):
-    SIGNALS = (
-        'pre_save',
-        'post_save',
-        'pre_delete',
-        'post_delete',
-        'm2m_changed',
-    )
+    SIGNALS = SIGNAL_CHOICES
     name = models.CharField(_('Name'), max_length=100)
     model = models.ForeignKey(
         'contenttypes.ContentType', verbose_name=_('Model'))
     signal = models.CharField(
-        _('Signal'), choices=zip(SIGNALS, SIGNALS),
-        max_length=15, default='post_save')
+        _('Signal'), choices=SIGNALS,
+        max_length=255, default='post_save')
     template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
     group = models.ForeignKey(
         MailGroup, verbose_name=_('Email group'), blank=True, null=True,
