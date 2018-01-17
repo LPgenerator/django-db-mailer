@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.db.models import signals
 from django import dispatch
 
+from dbmail import import_by_string
 from dbmail.defaults import (
     SIGNALS_QUEUE, SIGNALS_MAIL_QUEUE, SIGNAL_DEFERRED_DISPATCHER,
     ENABLE_USERS, SEND_RETRY, SEND_RETRY_DELAY
@@ -160,7 +161,7 @@ def signal_receiver(sender, **kwargs):
 
 def initial_signals():
     for signal in Signal.objects.filter(is_active=True):
-        def_signal = getattr(signals, signal.signal)
+        def_signal = import_by_string(signal.signal)
         def_signal.connect(
             signal_receiver, sender=signal.model.model_class(),
             dispatch_uid=signal.model.name

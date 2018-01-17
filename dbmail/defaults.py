@@ -135,5 +135,14 @@ MODEL_SUBSCRIPTION_DATA_FIELD = get_settings(
     'DB_MAILER_MODEL_SUBSCRIPTION_DATA_FIELD', 'dbmail.fields.DataTextField')
 APNS_PROVIDER_DEFAULT_ACTION = get_settings(
     'DB_MAILER_APNS_PROVIDER_DEFAULT_ACTION', 'Show')
+_SIGNALS = [
+    ('django.db.models.signals.pre_save', 'pre_save'),
+    ('django.db.models.signals.post_save', 'post_save'),
+    ('django.db.models.signals.pre_delete', 'pre_delete'),
+    ('django.db.models.signals.post_delete', 'post_delete'),
+    ('django.db.models.signals.m2m_changed', 'm2m_changed'),
+]
+SIGNAL_CHOICES = get_settings(
+    'DB_MAILER_SIGNAL_CHOICES', _SIGNALS)
 
 DEBUG = settings.DEBUG and get_settings('DB_MAILER_DEBUG', False)
