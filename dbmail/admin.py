@@ -188,7 +188,8 @@ class MailTemplateAdmin(TranslationModelAdmin):
             .select_related('from_email', 'category')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        formfield = super(MailTemplateAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        formfield = super(MailTemplateAdmin, self).formfield_for_foreignkey(
+            db_field, request, **kwargs)
         if db_field.name == 'category':
             key = '_category_choices_cache'
             if not hasattr(request, key):
