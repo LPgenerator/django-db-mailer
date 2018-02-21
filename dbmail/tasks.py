@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from django.core import signing
-from celery import task
+try:
+    from celery import task
+except ImportError:
+    def task(*_args, **_kwargs):
+        def identity(fn):
+            return fn
+        return identity
 
 from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG
 from dbmail.utils import get_ip
