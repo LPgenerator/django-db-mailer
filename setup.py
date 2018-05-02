@@ -8,7 +8,7 @@ setup(
     description='Django module to easily send emails using '
                 'django templates stored on database.',
     keywords="django db mail email html text tts sms push templates mailer",
-    long_description=open('README.rst').read(),
+    long_description=open('README.rst', mode='r', encoding='utf-8').read(),
     author="GoTLiuM InSPiRiT",
     author_email='gotlium@gmail.com',
     url='http://github.com/LPgenerator/django-db-mailer/',
