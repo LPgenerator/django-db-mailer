@@ -1,4 +1,4 @@
-Django>=1.11,<1.12
+Django>=1.11,<=2.0.4
 django-bootstrap-static==2.3.2
 django-debug-toolbar==1.7
 django-extensions==1.7.8

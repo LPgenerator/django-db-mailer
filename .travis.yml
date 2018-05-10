@@ -15,9 +15,15 @@ script:
   - make test
   - make coverage
 env:
+  - DJANGO=2.0
   - DJANGO=1.8.17
   - DJANGO=1.9.12
   - DJANGO=1.10.5
+matrix:
+  # https://docs.djangoproject.com/en/dev/faq/install/#what-python-version-can-i-use-with-django
+  exclude:
+    - python: "2.7"
+      env: "DJANGO=2.0"
 branches:
   only:
     - master
