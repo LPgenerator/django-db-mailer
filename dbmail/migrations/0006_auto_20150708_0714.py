@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('is_checked', models.BooleanField(default=False, db_index=True)),
                 ('defer_at_allowed_hours', models.BooleanField(default=False)),
                 ('address', models.CharField(max_length=60)),
-                ('user', models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('user', models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Mail Subscription',

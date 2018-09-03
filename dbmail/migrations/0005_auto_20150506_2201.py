@@ -37,6 +37,6 @@ class Migration(migrations.Migration):
             name='base',
             field=models.ForeignKey(
                 verbose_name='Basic template', blank=True,
-                to='dbmail.MailBaseTemplate', null=True),
+                to='dbmail.MailBaseTemplate', null=True, on_delete=models.CASCADE),
         ),
     ]
