@@ -8,7 +8,6 @@ import dbmail
 PROJECT_ROOT = os.path.normpath(os.path.dirname(__file__))
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ('root', 'root@local.host'),
@@ -38,10 +37,14 @@ USE_TZ = True
 SITE_ID = 1
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_ROOT, 'static'),
+]
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -51,35 +54,39 @@ STATICFILES_FINDERS = (
 
 SECRET_KEY = 'f969z_xc+^g*^gmt9oe7@og%kxd)54b!c!do)d7f2w2**f6%c0'
 
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    'django.template.loaders.eggs.Loader',
-)
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [],
+    'APP_DIRS': False,
+    'OPTIONS': {
+        'context_processors': [
+            'django.template.context_processors.debug',
+            'django.template.context_processors.request',
+            'django.contrib.auth.context_processors.auth',
+            'django.contrib.messages.context_processors.messages',
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.request',
-    'django.core.context_processors.static',
-    "django.contrib.messages.context_processors.messages",
-    "django.core.context_processors.i18n",
-)
+        ],
+        'loaders': [
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+            'django.template.loaders.eggs.Loader',
+        ],
+    },
+}]
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'demo.urls'
 
 WSGI_APPLICATION = 'demo.wsgi.application'
-
-TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT, 'templates'),
-)
 
 INSTALLED_APPS = []
 
@@ -88,16 +95,17 @@ if 'test' not in sys.argv:
         # 'suit',
         'grappelli.dashboard',
         'grappelli',
+        'sslserver',
     ]
 
 INSTALLED_APPS += [
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
 
     'dbmail',
 ]
@@ -105,19 +113,19 @@ INSTALLED_APPS += [
 if 'test' not in sys.argv:
     INSTALLED_APPS += [
         'django_extensions',
-        'admin_jqueryui',
         'reversion',
         'reversion_compare',
         'djcelery',
-        # 'tinymce',
         'ckeditor',
-        'rosetta',
+        # 'rosetta',
         'south',
     ]
 
+    if 'grappelli' not in INSTALLED_APPS:
+        INSTALLED_APPS += ['admin_jqueryui']
+
 if django.VERSION >= (1, 7):
-    DJ17_NOT_SUPPORTED_APPS = [
-        'south', 'reversion', 'reversion_compare', 'tinymce']
+    DJ17_NOT_SUPPORTED_APPS = ['south', 'tinymce']
     for app in DJ17_NOT_SUPPORTED_APPS:
         if app in INSTALLED_APPS:
             INSTALLED_APPS.remove(app)
@@ -144,7 +152,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            #'formatter': 'verbose'
+            # 'formatter': 'verbose'
         }
     },
     'loggers': {
@@ -221,7 +229,7 @@ DEFAULT_FROM_EMAIL = 'Django <no_reply@local.host>'
 if 'test' not in sys.argv:
     CACHES = {
         "default": {
-            "BACKEND": "redis_cache.cache.RedisCache",
+            "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": "127.0.0.1:6379",
         }
     }

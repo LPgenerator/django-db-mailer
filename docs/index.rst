@@ -12,11 +12,14 @@ Contents
   installation
   settings
   usage
-  commands
   signals
   conf
   api
-  custom_backend
+  commands
+  web_push
+  custom_backends_and_providers
+  providers
+  demo
   dev_install
   contributing
   authors

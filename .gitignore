@@ -50,3 +50,5 @@ TODO
 local_settings.py
 mail_files
 .vagrant
+certs/*
+demo/*.zip

@@ -6,7 +6,7 @@ setup(
     name='django-db-mailer',
     version=get_version(),
     description='Django module to easily send emails using '
-                'django templates stored on database.',
+                'django templates stored in a database.',
     keywords="django db mail email html text tts sms push templates mailer",
     long_description=open('README.rst').read(),
     author="GoTLiuM InSPiRiT",

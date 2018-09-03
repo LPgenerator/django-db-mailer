@@ -1,7 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-from httplib import HTTPSConnection
-from urllib import urlencode
+
+try:
+    from httplib import HTTPSConnection
+    from urllib import urlencode
+except ImportError:
+    from http.client import HTTPSConnection
+    from urllib.parse import urlencode
 
 from dbmail.providers.prowl.push import from_unicode
 from dbmail import get_version

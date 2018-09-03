@@ -4,7 +4,7 @@ from datetime import datetime
 import sys
 
 
-VERSION = (2, 3, 1)
+VERSION = (2, 3, 19)
 
 default_app_config = 'dbmail.apps.DBMailConfig'
 
@@ -21,10 +21,10 @@ def app_installed(app):
 
 def celery_supported():
     try:
-        import tasks
+        from dbmail import tasks
 
-        if not app_installed('djcelery'):
-            raise ImportError
+        # if not app_installed('djcelery'):
+        #     raise ImportError
         return True
     except ImportError:
         return False
@@ -43,7 +43,7 @@ def db_sender(slug, recipient, *args, **kwargs):
     backend = kwargs.get('backend', BACKEND['mail'])
 
     if celery_supported() and use_celery is True:
-        import tasks
+        import dbmail.tasks
 
         template = MailTemplate.get_template(slug=slug)
         max_retries = kwargs.get('max_retries', None)
@@ -63,7 +63,7 @@ def db_sender(slug, recipient, *args, **kwargs):
         if send_after is not None:
             options.update({'countdown': send_after})
         if template.is_active:
-            return tasks.db_sender.apply_async(**options)
+            return dbmail.tasks.db_sender.apply_async(**options)
     else:
         module = import_module(backend)
         if DEBUG is True:
@@ -79,36 +79,48 @@ def send_db_mail(*args, **kwargs):
 
 
 def send_db_sms(*args, **kwargs):
-    from dbmail.defaults import BACKEND
+    from dbmail.defaults import BACKEND, SMS_QUEUE
 
     kwargs['backend'] = kwargs.pop('backend', BACKEND['sms'])
+    kwargs['queue'] = kwargs.pop('queue', SMS_QUEUE)
     return db_sender(*args, **kwargs)
 
 
 def send_db_tts(*args, **kwargs):
-    from dbmail.defaults import BACKEND
+    from dbmail.defaults import BACKEND, TTS_QUEUE
 
     kwargs['backend'] = kwargs.pop('backend', BACKEND['tts'])
+    kwargs['queue'] = kwargs.pop('queue', TTS_QUEUE)
     return db_sender(*args, **kwargs)
 
 
 def send_db_push(*args, **kwargs):
-    from dbmail.defaults import BACKEND
+    from dbmail.defaults import BACKEND, PUSH_QUEUE
 
     kwargs['backend'] = kwargs.pop('backend', BACKEND['push'])
+    kwargs['queue'] = kwargs.pop('queue', PUSH_QUEUE)
+    return db_sender(*args, **kwargs)
+
+
+def send_db_bot(*args, **kwargs):
+    from dbmail.defaults import BACKEND, BOT_QUEUE
+
+    kwargs['backend'] = kwargs.pop('backend', BACKEND['bot'])
+    kwargs['queue'] = kwargs.pop('queue', BOT_QUEUE)
     return db_sender(*args, **kwargs)
 
 
 def send_db_subscription(*args, **kwargs):
     from dbmail.defaults import (
-        CELERY_QUEUE, SEND_MAX_TIME, ENABLE_CELERY, MAIL_SUBSCRIPTION_MODEL)
+        SUBSCRIPTION_QUEUE, SEND_MAX_TIME,
+        ENABLE_CELERY, MAIL_SUBSCRIPTION_MODEL)
 
     MailSubscription = import_by_string(MAIL_SUBSCRIPTION_MODEL)
 
     use_celery = ENABLE_CELERY and kwargs.pop('use_celery', ENABLE_CELERY)
     options = {
         'time_limit': kwargs.pop('time_limit', SEND_MAX_TIME),
-        'queue': kwargs.pop('queue', CELERY_QUEUE),
+        'queue': kwargs.pop('queue', SUBSCRIPTION_QUEUE),
         'args': args, 'kwargs': kwargs,
     }
 

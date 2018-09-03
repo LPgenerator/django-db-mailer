@@ -5,15 +5,20 @@ import os
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, render
-from django.core.urlresolvers import reverse
-from django.conf.urls import patterns, url
+
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
+
+from django.conf.urls import url
 from django.contrib import messages
 from django.contrib import admin
 
 from dbmail.models import (
     MailCategory, MailTemplate, MailLog, MailLogEmail, Signal, ApiKey, MailBcc,
     MailGroup, MailGroupEmail, MailFile, MailFromEmail, MailBaseTemplate,
-    MailFromEmailCredential, MailLogTrack, MailSubscription
+    MailFromEmailCredential, MailLogTrack, MailSubscription, MailLogException
 )
 from dbmail import app_installed
 from dbmail import get_model
@@ -149,8 +154,7 @@ class MailTemplateAdmin(TranslationModelAdmin):
 
     def get_urls(self):
         urls = super(MailTemplateAdmin, self).get_urls()
-        admin_urls = patterns(
-            '',
+        admin_urls = [
             url(
                 r'^(\d+)/sendmail/$',
                 self.admin_site.admin_view(self.send_mail_view),
@@ -170,7 +174,7 @@ class MailTemplateAdmin(TranslationModelAdmin):
                 self.admin_site.admin_view(self.clean_cache_view),
                 name='clean_cache_view'
             ),
-        )
+        ]
         return admin_urls + urls
 
     def get_readonly_fields(self, request, obj=None):
@@ -351,6 +355,22 @@ class MailSubscriptionAdmin(admin.ModelAdmin):
         'user__name', 'user__email', 'address')
 
 
+class MailLogExceptionAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'ignore', 'id',)
+    list_filter = ('ignore',)
+    search_fields = ('name',)
+    readonly_fields = ('name',)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        if not request.user.is_superuser:
+            return False
+        return True
+
+
 def admin_register(model):
     model_name = model.__name__
     if model_name in defaults.ALLOWED_MODELS_ON_ADMIN:
@@ -364,6 +384,7 @@ def admin_register(model):
 admin_register(MailFromEmailCredential)
 admin_register(MailSubscription)
 admin_register(MailBaseTemplate)
+admin_register(MailLogException)
 admin_register(MailFromEmail)
 admin_register(MailLogTrack)
 admin_register(MailCategory)

@@ -1,7 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-from httplib import HTTPSConnection
-from urllib import urlencode
+try:
+    from httplib import HTTPSConnection
+    from urllib import urlencode
+except ImportError:
+    from http.client import HTTPSConnection
+    from urllib.parse import urlencode
 
 from django.conf import settings
 from dbmail import get_version

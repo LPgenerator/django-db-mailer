@@ -1,6 +1,9 @@
 language: python
 python:
   - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 before_install:
   - export PIP_USE_MIRRORS=true
 install:
@@ -12,12 +15,15 @@ script:
   - make test
   - make coverage
 env:
-  - DJANGO=1.4.22
-  - DJANGO=1.5.12
-  - DJANGO=1.6.11
-  - DJANGO=1.7.11
-  - DJANGO=1.8.7
-  - DJANGO=1.9
+  - DJANGO=2.0
+  - DJANGO=1.8.17
+  - DJANGO=1.9.12
+  - DJANGO=1.10.5
+matrix:
+  # https://docs.djangoproject.com/en/dev/faq/install/#what-python-version-can-i-use-with-django
+  exclude:
+    - python: "2.7"
+      env: "DJANGO=2.0"
 branches:
   only:
     - master

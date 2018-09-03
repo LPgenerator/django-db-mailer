@@ -48,7 +48,7 @@ Configure project default SMTP settings::
     DEFAULT_FROM_EMAIL = 'User <noreply@gmail.com>'
 
 
-Also you can configure smtp options for dbmail on the admin. But maybe other apps,
+Also you can configure smtp options for dbmail on the admin interface. But maybe other apps,
 like ``django-registration`` is used default project settings.
 
 
@@ -60,6 +60,7 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 .. code-block:: bash
 
     $ pip install redis django-celery
+
 
 .. code-block:: python
 
@@ -86,6 +87,7 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 
     djcelery.setup_loader()
 
+
 .. code-block:: bash
 
     $ python manage.py celeryd --loglevel=debug -Q default
@@ -93,6 +95,7 @@ Install ``redis-server``, and configure ``django-celery`` for use priorities and
 
 
 *Note: Do not forget define on command line queue name.*
+
 
 ``django-db-mailer`` can work without any third-party apps, but if you want to use all
 available app features and send emails on the background with priorities and scheduler,
@@ -213,4 +216,26 @@ Update dbmail fields:
 
     $ pip install httpagentparser django-ipware
 
+
+Add url patterns into urls.py:
+
+.. code-block:: python
+
+    urlpatterns += patterns(
+        '', url(r'^dbmail/', include('dbmail.urls')),
+    )
+
+
+Enable tracking and logging on settings:
+
+.. code-block:: python
+
+    DB_MAILER_TRACK_ENABLE = True
+    DB_MAILER_ENABLE_LOGGING = True
+
+
 For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
+Tracking templates must be HTML, not TXT. Celery workers must be launched, if celery is enabled.
+Django ``sites`` framework must be configured properly and have a real domain name record.
+``LibGeoIP`` and ``MaxMind`` database must be installed and properly configured.
+To debug, open raw message and you can see html which specified on ``DB_MAILER_TRACK_HTML``.

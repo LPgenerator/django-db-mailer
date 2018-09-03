@@ -1,5 +1,5 @@
-Custom backends
-===============
+Custom backends and providers
+=============================
 
 
 Double backend example
@@ -56,7 +56,7 @@ Let's try:
 Slack backend example
 ---------------------
 
-You're own backend, which send message to slack channel.
+You're own backend, which send message to Slack channel.
 
 
 .. code-block:: python
@@ -124,3 +124,53 @@ Let's try:
     from demo.custom_backends.slack import send_db_slack
 
     send_db_slack('welcome', {'username': 'GoTLiuM'})
+
+
+
+Own provider
+------------
+
+Create new file which will be implemented simple function below
+
+
+.. code-block:: python
+
+    def send(recipient, message, **kwargs):
+        # some named args from send_db function
+        custom_field = kwargs.pop('my_field', 'default value')
+        ...
+        # Some part of code, which will be send message over some protocol
+        ...
+        return True
+
+
+Add necessary settings into settings.py
+
+
+.. code-block:: python
+
+    SOME_URL = '...'
+
+
+Configure one of built-in backend to use your own provider
+
+
+.. code-block:: python
+
+    DB_MAILER_SMS_PROVIDER = 'apps.sms'
+    DB_MAILER_TTS_PROVIDER = 'apps.tts'
+    DB_MAILER_PUSH_PROVIDER = 'apps.push'
+
+
+or write own function to use your provider
+
+
+.. code-block:: python
+
+    def send_over_own_provider(slug, *args, **kwargs):
+        from dbmail import db_sender
+
+        # can be one of built-in, or custom backend
+        # kwargs['backend'] = 'dbmail.backends.sms'
+        kwargs['provider'] = 'apps.sms'
+        db_sender(slug, *args, **kwargs)

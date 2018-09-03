@@ -11,5 +11,6 @@ class MailTemplateTranslationOptions(TranslationOptions):
 class MailBaseTemplateTranslationOptions(TranslationOptions):
     fields = ('message',)
 
+
 translator.register(MailTemplate, MailTemplateTranslationOptions)
 translator.register(MailBaseTemplate, MailBaseTemplateTranslationOptions)
