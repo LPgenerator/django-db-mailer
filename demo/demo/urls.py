@@ -1,5 +1,5 @@
 import os
-
+import sys
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls import include, url
 from django.contrib import admin
@@ -11,13 +11,16 @@ import demo.views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # url(r'^rosetta/', include('rosetta.urls')),
-    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^dbmail/', include('dbmail.urls')),
-
-    url('^browser_notification/$', demo.views.browser_notification),
-    url('^web-push/$', demo.views.web_push_notification),
-    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ] + staticfiles_urlpatterns()
+
+if 'test' not in sys.argv:
+    urlpatterns += [
+        url(r'^grappelli/', include('grappelli.urls')),
+        url('^browser_notification/$', demo.views.browser_notification),
+        url('^web-push/$', demo.views.web_push_notification),
+        url(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    ]
 
 '''
 from django import VERSION

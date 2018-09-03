@@ -110,7 +110,7 @@ class MailFromEmail(models.Model):
         help_text=_('For sms/tts/push you must specify name or number'))
     credential = models.ForeignKey(
         MailFromEmailCredential, verbose_name=_('Auth credentials'),
-        blank=True, null=True, default=None)
+        blank=True, null=True, default=None, on_delete=models.CASCADE)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
 
@@ -202,10 +202,11 @@ class MailTemplate(models.Model):
     enable_log = models.BooleanField(_('Logging enabled'), default=True)
     category = models.ForeignKey(
         MailCategory, null=True, blank=True,
-        verbose_name=_('Category'), default=DEFAULT_CATEGORY)
+        verbose_name=_('Category'), default=DEFAULT_CATEGORY,
+        on_delete=models.CASCADE)
     base = models.ForeignKey(
         MailBaseTemplate, null=True, blank=True,
-        verbose_name=_('Basic template'))
+        verbose_name=_('Basic template'), on_delete=models.CASCADE)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
     context_note = models.TextField(
@@ -286,7 +287,8 @@ class MailTemplate(models.Model):
 @python_2_unicode_compatible
 class MailFile(models.Model):
     template = models.ForeignKey(
-        MailTemplate, verbose_name=_('Template'), related_name='files')
+        MailTemplate, verbose_name=_('Template'), related_name='files',
+        on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=100)
     filename = models.FileField(_('File'), upload_to=_upload_mail_file)
 
@@ -354,14 +356,16 @@ class MailLogException(models.Model):
 @python_2_unicode_compatible
 class MailLog(models.Model):
     is_sent = models.BooleanField(_('Is sent'), default=True, db_index=True)
-    template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
+    template = models.ForeignKey(MailTemplate, verbose_name=_('Template'),
+                                 on_delete=models.CASCADE)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     user = models.ForeignKey(
         AUTH_USER_MODEL, verbose_name=_('User'),
-        null=True, blank=True)
+        null=True, blank=True, on_delete=models.CASCADE)
     error_message = models.TextField(_('Error message'), null=True, blank=True)
     error_exception = models.ForeignKey(
-        MailLogException, null=True, blank=True, verbose_name=_('Exception'))
+        MailLogException, null=True, blank=True, verbose_name=_('Exception'),
+        on_delete=models.CASCADE)
     num_of_retries = models.PositiveIntegerField(
         _('Number of retries'), default=1)
     log_id = models.CharField(
@@ -413,7 +417,7 @@ class MailLog(models.Model):
 
 @python_2_unicode_compatible
 class MailLogEmail(models.Model):
-    log = models.ForeignKey(MailLog)
+    log = models.ForeignKey(MailLog, on_delete=models.CASCADE)
     email = models.CharField(_('Recipient'), max_length=350)
     mail_type = models.CharField(_('Mail type'), choices=(
         ('cc', 'CC'),
@@ -476,7 +480,8 @@ class MailGroupEmail(models.Model):
         _('Email'), max_length=75,
         help_text='For sms/tts you must specify number')
     group = models.ForeignKey(
-        MailGroup, verbose_name=_('Group'), related_name='emails')
+        MailGroup, verbose_name=_('Group'), related_name='emails',
+        on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         super(MailGroupEmail, self).save(*args, **kwargs)
@@ -506,14 +511,17 @@ class Signal(models.Model):
     )
     name = models.CharField(_('Name'), max_length=100)
     model = models.ForeignKey(
-        'contenttypes.ContentType', verbose_name=_('Model'))
+        'contenttypes.ContentType', verbose_name=_('Model'),
+        on_delete=models.CASCADE)
     signal = models.CharField(
         _('Signal'), choices=zip(SIGNALS, SIGNALS),
         max_length=15, default='post_save')
-    template = models.ForeignKey(MailTemplate, verbose_name=_('Template'))
+    template = models.ForeignKey(MailTemplate, verbose_name=_('Template'),
+                                 on_delete=models.CASCADE)
     group = models.ForeignKey(
         MailGroup, verbose_name=_('Email group'), blank=True, null=True,
-        help_text=_('You can use group email or rules for recipients.'))
+        help_text=_('You can use group email or rules for recipients.'),
+        on_delete=models.CASCADE)
     rules = models.TextField(
         help_text=_(
             'Template should return email to send message. Example:'
@@ -567,9 +575,10 @@ class Signal(models.Model):
 
 @python_2_unicode_compatible
 class SignalLog(models.Model):
-    model = models.ForeignKey('contenttypes.ContentType')
+    model = models.ForeignKey('contenttypes.ContentType',
+                              on_delete=models.CASCADE)
     model_pk = models.BigIntegerField()
-    signal = models.ForeignKey(Signal)
+    signal = models.ForeignKey(Signal, on_delete=models.CASCADE)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
 
     def __str__(self):
@@ -646,7 +655,8 @@ class ApiKey(models.Model):
 
 @python_2_unicode_compatible
 class MailLogTrack(models.Model):
-    mail_log = models.ForeignKey(MailLog, verbose_name=_('Log'))
+    mail_log = models.ForeignKey(MailLog, verbose_name=_('Log'),
+                                 on_delete=models.CASCADE)
     counter = models.PositiveIntegerField(_('Counter'), default=0)
     ip = models.GenericIPAddressField(_('IP'))
     ua = models.CharField(
@@ -748,9 +758,9 @@ class MailLogTrack(models.Model):
 
 class MailSubscriptionAbstract(models.Model):
     title = models.CharField(null=True, max_length=350, blank=True)
-
     user = models.ForeignKey(
-        AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True)
+        AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True,
+        on_delete=models.CASCADE)
     backend = models.CharField(
         _('Backend'), choices=BACKENDS_MODEL_CHOICES, max_length=50,
         default=BACKEND.get('mail'))
@@ -892,7 +902,8 @@ class MailSubscriptionGroup(models.Model):
 
 
 class MailNotification(models.Model):
-    group = models.ForeignKey(AbstractMailSubscriptionGroup)
+    group = models.ForeignKey(AbstractMailSubscriptionGroup,
+                              on_delete=models.CASCADE)
     notify = models.ManyToManyField(MailSubscription)
 
     @classmethod

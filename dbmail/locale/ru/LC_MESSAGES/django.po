@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-12 13:09+0400\n"
+"POT-Creation-Date: 2017-09-21 15:14+0300\n"
 "PO-Revision-Date: 2015-07-08 07:43+0230\n"
 "Last-Translator:   <gotlium@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,279 +16,563 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "X-Translated-Using: django-rosetta 0.7.6\n"
 
-msgid "Mail category"
-msgstr "Категория"
-
-msgid "Created"
-msgstr "Создано"
-
-msgid "Updated"
-msgstr "Обновлено"
-
-msgid "Mail categories"
-msgstr "Категории"
-
-msgid "Template name"
-msgstr "Шаблон"
-
-msgid "Subject"
-msgstr "Тема"
-
-msgid "Body"
-msgstr "Сообщение"
-
-msgid "Slug"
-msgstr "Идентификатор"
-
-msgid "Number of retries"
-msgstr "Кол-во попыток"
-
-msgid "Is html"
-msgstr "Это html"
-
-msgid "For admin"
-msgstr "Для админа"
-
-msgid "Mail template"
-msgstr "Шаблон сообщения"
-
-msgid "Mail templates"
-msgstr "Шаблоны сообщений"
-
-msgid "Is sent"
-msgstr "Отправлено"
-
-msgid "Template"
-msgstr "Шаблон"
-
-msgid "User"
-msgstr "Пользователь"
-
-msgid "Error message"
-msgstr "Текст ошибки"
-
-msgid "Mail log"
-msgstr "Лог"
-
-msgid "Mail logs"
-msgstr "Логи"
-
-msgid "Mail log email"
-msgstr "Адрес"
-
-msgid "Mail log emails"
-msgstr "Адреса"
-
-msgid "Mail type"
-msgstr "Тип сообщения"
-
-msgid "Priority"
-msgstr "Приоритет"
-
-msgid "Group name"
-msgstr "Название группы"
-
-msgid "Mail group"
-msgstr "Группа"
-
-msgid "Mail groups"
-msgstr "Группы"
-
-msgid "Mail group email"
-msgstr "Адреса"
-
-msgid "Mail group emails"
-msgstr "Email адреса"
-
-msgid "Context note"
-msgstr "Описание переменных"
-
-msgid "This is simple note field for context variables with description."
-msgstr "Необязатаельное поле с переменными и их описанием"
-
-msgid "Mail file"
-msgstr "Файл"
-
-msgid "Mail files"
-msgstr "Файлы"
-
-msgid "Name"
-msgstr "Название"
-
-msgid "File"
-msgstr "Файл"
-
-msgid "Mail signals"
-msgstr "Сигналы"
-
-msgid "Mail signal"
-msgstr "Сигнал"
-
-msgid "Model"
-msgstr "Модель"
-
-msgid "Signal"
-msgstr "Сигнал"
-
-msgid "Template"
-msgstr "Шаблон"
-
-msgid "Rules"
-msgstr "Правила"
-
-msgid "Is active"
-msgstr "Активный"
-
-msgid "Receive once"
-msgstr "Отправить один раз"
-
-msgid "Signal will be receive and send once for new db row."
-msgstr "Сигнал будет получен единожды, для каждой новой записи в БД."
-
-msgid "Send interval"
-msgstr "Интервал отправки"
-
-msgid "Mail from"
-msgstr "Отправители"
-
-msgid "Email group"
-msgstr "Группа"
-
-msgid "From email"
-msgstr "Отправитель"
-
-msgid "You can use group email or rules for recipients."
-msgstr "Вы можете использовать группу или правила для получателей."
-
-msgid "Unique slug to use in code."
-msgstr "Уникальный Slug для использования в коде."
-
-msgid "If not specified, then used default."
-msgstr "Если не указан, то используется адрес по умолчанию."
-
-msgid "Host"
-msgstr "Хост"
-
-msgid "Port"
-msgstr "Порт"
-
-msgid "Username"
-msgstr "Пользователь"
-
-msgid "Password"
-msgstr "Пароль"
-
-msgid "Use TLS"
-msgstr "Использовать TLS"
-
-msgid "Fail silently"
-msgstr "Молчание при ошибках"
-
-msgid "Mail auth settings"
-msgstr "Настройки SMTP"
-
-msgid "Auth credentials"
-msgstr "Авторизация"
-
-msgid "Category"
-msgstr "Категория"
-
-msgid "Mail API"
-msgstr "Доступ к апи"
-
-msgid "Mail Bcc"
-msgstr "Скрытые копии"
-
-msgid "Bcc"
-msgstr "Скрытая копия"
-
-msgid "Logging enabled"
-msgstr "Логирование включено"
-
-msgid "DB Mailer"
-msgstr "Мейлер"
-
-msgid "Set your email address in user settings."
-msgstr "Установите свой адрес электронной почты в настройках профиля."
-
+#: admin.py:105
+msgid "Cache was successful removed"
+msgstr "Кеш успешно удален"
+
+#: admin.py:116
 msgid "Email was sent."
 msgstr "Письмо отправлено."
 
-msgid "Update model state"
-msgstr "Обновить состояние модели"
+#: admin.py:119
+msgid "Set your email address in user settings."
+msgstr "Установите свой адрес электронной почты в настройках профиля."
 
-msgid "Backend"
-msgstr "Бекенд"
+#: apps.py:9
+msgid "DB Mailer"
+msgstr "Мейлер"
 
-msgid "Provider"
-msgstr "Провайдер"
+#: defaults.py:14
+msgid "High"
+msgstr ""
 
-msgid "Log ID"
-msgstr "Идентификатор"
+#: defaults.py:15
+msgid "Medium"
+msgstr ""
 
-msgid "Recipient"
-msgstr "Получатель"
+#: defaults.py:16
+msgid "Low"
+msgstr ""
 
-msgid "Mail Tracking"
-msgstr "Трекинг лог"
+#: defaults.py:17
+msgid "Deferred"
+msgstr ""
 
-msgid "Message from"
-msgstr "Отправитель"
+#: defaults.py:102
+#, fuzzy
+#| msgid "Mail log"
+msgid "MailBox"
+msgstr "Лог"
 
-msgid "For sms/tts/push must be text not html"
-msgstr "Для уведомлений отличных от почтовых, тип должен не должен быть html"
+#: defaults.py:103
+msgid "Push"
+msgstr ""
 
+#: defaults.py:104
+msgid "SMS"
+msgstr ""
+
+#: defaults.py:105
+msgid "TTS"
+msgstr ""
+
+#: defaults.py:106
+msgid "BOT"
+msgstr ""
+
+#: models.py:43 models.py:205
+msgid "Category"
+msgstr "Категория"
+
+#: models.py:44 models.py:61 models.py:82 models.py:114 models.py:155
+#: models.py:209 models.py:358 models.py:436 models.py:525 models.py:573
+#: models.py:620 models.py:689
+msgid "Created"
+msgstr "Создано"
+
+#: models.py:45 models.py:62 models.py:83 models.py:115 models.py:156
+#: models.py:210 models.py:437 models.py:526 models.py:621 models.py:690
+msgid "Updated"
+msgstr "Обновлено"
+
+#: models.py:51
+msgid "Mail category"
+msgstr "Категория"
+
+#: models.py:52
+msgid "Mail categories"
+msgstr "Категории"
+
+#: models.py:57 models.py:107 models.py:290 models.py:507 models.py:617
+msgid "Name"
+msgstr "Название"
+
+#: models.py:59 models.py:189
+msgid "Body"
+msgstr "Сообщение"
+
+#: models.py:60
+msgid "Basic template for mail messages. {{content}} tag for msg."
+msgstr "Основной шаблон для почтовых сообщений. {{content}} для сообщений."
+
+#: models.py:68
+msgid "Mail base template"
+msgstr "Базовый шаблон"
+
+#: models.py:69
+msgid "Mail base templates"
+msgstr "Базовые шаблоны"
+
+#: models.py:74
+msgid "Host"
+msgstr "Хост"
+
+#: models.py:75
+msgid "Port"
+msgstr "Порт"
+
+#: models.py:77 models.py:474
+msgid "Username"
+msgstr "Пользователь"
+
+#: models.py:79
+msgid "Password"
+msgstr "Пароль"
+
+#: models.py:80
+msgid "Use TLS"
+msgstr "Использовать TLS"
+
+#: models.py:81
+msgid "Fail silently"
+msgstr "Молчание при ошибках"
+
+#: models.py:101 models.py:102
+msgid "Mail auth settings"
+msgstr "Настройки SMTP"
+
+#: models.py:109 models.py:153 models.py:476
+#, fuzzy
+#| msgid "Email group"
+msgid "Email"
+msgstr "Группа"
+
+#: models.py:110
 msgid "For sms/tts/push you must specify name or number"
 msgstr ""
 "Для Отправителей отличных от почтовых, необходимо указывать Имя или Номер"
 
+#: models.py:112
+msgid "Auth credentials"
+msgstr "Авторизация"
+
+#: models.py:147 models.py:148
+msgid "Mail from"
+msgstr "Отправители"
+
+#: models.py:154 models.py:201 models.py:527 models.py:619
+msgid "Is active"
+msgstr "Активный"
+
+#: models.py:173 models.py:174
+msgid "Mail Bcc"
+msgstr "Скрытые копии"
+
+#: models.py:179
+msgid "Template name"
+msgstr "Шаблон"
+
+#: models.py:180
+msgid "Subject"
+msgstr "Тема"
+
+#: models.py:183
+msgid "Message from"
+msgstr "Отправитель"
+
+#: models.py:184
+msgid "If not specified, then used default."
+msgstr "Если не указан, то используется адрес по умолчанию."
+
+#: models.py:187
+msgid "Bcc"
+msgstr "Скрытая копия"
+
+#: models.py:191 models.py:435
+msgid "Slug"
+msgstr "Идентификатор"
+
+#: models.py:192
+msgid "Unique slug to use in code."
+msgstr "Уникальный Slug для использования в коде."
+
+#: models.py:194 models.py:366
+msgid "Number of retries"
+msgstr "Кол-во попыток"
+
+#: models.py:196
+msgid "Priority"
+msgstr "Приоритет"
+
+#: models.py:198
+msgid "Is html"
+msgstr "Это html"
+
+#: models.py:199
+msgid "For sms/tts/push must be text not html"
+msgstr "Для уведомлений отличных от почтовых, тип должен не должен быть html"
+
+#: models.py:200
+msgid "For admin"
+msgstr "Для админа"
+
+#: models.py:202
+msgid "Logging enabled"
+msgstr "Логирование включено"
+
+#: models.py:208
 msgid "Basic template"
 msgstr "Базовый шаблон"
 
-msgid "Mail base templates"
-msgstr "Базовые шаблоны"
+#: models.py:212
+msgid "Context note"
+msgstr "Описание переменных"
 
-msgid "Mail base template"
-msgstr "Базовый шаблон"
+#: models.py:214
+msgid "This is simple note field for context variables with description."
+msgstr "Необязатаельное поле с переменными и их описанием"
 
-msgid "Basic template for mail messages. {{content}} tag for msg."
-msgstr "Основной шаблон для почтовых сообщений. {{content}} для сообщений."
+#: models.py:218 models.py:532
+msgid "Send interval"
+msgstr "Интервал отправки"
 
+#: models.py:220
+msgid ""
+"\n"
+"            Specify interval to send messages after sometime.\n"
+"            Interval must be set in the seconds.\n"
+"            "
+msgstr ""
+
+#: models.py:282
+msgid "Mail template"
+msgstr "Шаблон сообщения"
+
+#: models.py:283
+msgid "Mail templates"
+msgstr "Шаблоны сообщений"
+
+#: models.py:289 models.py:357 models.py:513
+msgid "Template"
+msgstr "Шаблон"
+
+#: models.py:291
+msgid "File"
+msgstr "Файл"
+
+#: models.py:308
+msgid "Mail file"
+msgstr "Файл"
+
+#: models.py:309
+msgid "Mail files"
+msgstr "Файлы"
+
+#: models.py:317 models.py:364
+msgid "Exception"
+msgstr ""
+
+#: models.py:318
+msgid "Ignore"
+msgstr ""
+
+#: models.py:350 models.py:351
+#, fuzzy
+#| msgid "Mail Subscription"
+msgid "Mail Exception"
+msgstr "Подписки"
+
+#: models.py:356
+msgid "Is sent"
+msgstr "Отправлено"
+
+#: models.py:360 models.py:753
+msgid "User"
+msgstr "Пользователь"
+
+#: models.py:362
+msgid "Error message"
+msgstr "Текст ошибки"
+
+#: models.py:368
+msgid "Log ID"
+msgstr "Идентификатор"
+
+#: models.py:370 models.py:755
 msgid "Backend"
-msgstr "Тип уведомления"
+msgstr "Бекенд"
 
+#: models.py:373
+msgid "Provider"
+msgstr "Провайдер"
+
+#: models.py:410
+msgid "Mail log"
+msgstr "Лог"
+
+#: models.py:411
+msgid "Mail logs"
+msgstr "Логи"
+
+#: models.py:417
+msgid "Recipient"
+msgstr "Получатель"
+
+#: models.py:418
+msgid "Mail type"
+msgstr "Тип сообщения"
+
+#: models.py:428
+msgid "Mail log email"
+msgstr "Адрес"
+
+#: models.py:429
+msgid "Mail log emails"
+msgstr "Адреса"
+
+#: models.py:434
+msgid "Group name"
+msgstr "Название группы"
+
+#: models.py:468
+msgid "Mail group"
+msgstr "Группа"
+
+#: models.py:469
+msgid "Mail groups"
+msgstr "Группы"
+
+#: models.py:479
+#, fuzzy
+#| msgid "Group name"
+msgid "Group"
+msgstr "Название группы"
+
+#: models.py:493
+msgid "Mail group email"
+msgstr "Адреса"
+
+#: models.py:494
+msgid "Mail group emails"
+msgstr "Email адреса"
+
+#: models.py:509
+msgid "Model"
+msgstr "Модель"
+
+#: models.py:511
+msgid "Signal"
+msgstr "Сигнал"
+
+#: models.py:515
+msgid "Email group"
+msgstr "Группа"
+
+#: models.py:516
+msgid "You can use group email or rules for recipients."
+msgstr "Вы можете использовать группу или правила для получателей."
+
+#: models.py:519
+msgid ""
+"Template should return email to send message. Example:{% if instance."
+"is_active %}{{ instance.email }}{% endif %}.You can return a multiple emails "
+"separated by commas."
+msgstr ""
+
+#: models.py:522
+msgid "Rules"
+msgstr "Правила"
+
+#: models.py:529
+msgid "Receive once"
+msgstr "Отправить один раз"
+
+#: models.py:530
+msgid "Signal will be receive and send once for new db row."
+msgstr "Сигнал будет получен единожды, для каждой новой записи в БД."
+
+#: models.py:534
+msgid ""
+"Specify interval to send messages after sometime. That very helpful for "
+"mailing on enterprise products.Interval must be set in the seconds."
+msgstr ""
+
+#: models.py:539
+msgid "Update model state"
+msgstr "Обновить состояние модели"
+
+#: models.py:541
+msgid ""
+"\n"
+"            If you are using interval and want to update object state,\n"
+"            you can use this flag and refer to the variable\n"
+"            {{current_instance}}\n"
+"            "
+msgstr ""
+
+#: models.py:564
+msgid "Mail signal"
+msgstr "Сигнал"
+
+#: models.py:565
+msgid "Mail signals"
+msgstr "Сигналы"
+
+#: models.py:579
+#, fuzzy
+#| msgid "Signal"
+msgid "Signal log"
+msgstr "Сигнал"
+
+#: models.py:580
+#, fuzzy
+#| msgid "Signal"
+msgid "Signal logs"
+msgstr "Сигнал"
+
+#: models.py:618
+msgid "Api key"
+msgstr ""
+
+#: models.py:643 models.py:644
+msgid "Mail API"
+msgstr "Доступ к апи"
+
+#: models.py:649
+#, fuzzy
+#| msgid "Log ID"
+msgid "Log"
+msgstr "Идентификатор"
+
+#: models.py:650
+msgid "Counter"
+msgstr ""
+
+#: models.py:651
+msgid "IP"
+msgstr ""
+
+#: models.py:653
+msgid "User Agent"
+msgstr ""
+
+#: models.py:655
+msgid "OS"
+msgstr ""
+
+#: models.py:657
+msgid "OS version"
+msgstr ""
+
+#: models.py:660
+msgid "Dist name"
+msgstr ""
+
+#: models.py:662
+msgid "Dist version"
+msgstr ""
+
+#: models.py:664
+msgid "Browser"
+msgstr ""
+
+#: models.py:666
+msgid "Browser version"
+msgstr ""
+
+#: models.py:668
+msgid "Area code"
+msgstr ""
+
+#: models.py:670
+msgid "City"
+msgstr ""
+
+#: models.py:672
+msgid "Country code"
+msgstr ""
+
+#: models.py:674
+msgid "Country code3"
+msgstr ""
+
+#: models.py:676
+#, fuzzy
+#| msgid "Group name"
+msgid "Country name"
+msgstr "Название группы"
+
+#: models.py:678
+msgid "Dma code"
+msgstr ""
+
+#: models.py:680
+msgid "Latitude"
+msgstr ""
+
+#: models.py:682
+msgid "Longitude"
+msgstr ""
+
+#: models.py:684
+msgid "Postal code"
+msgstr ""
+
+#: models.py:686
+msgid "Region"
+msgstr ""
+
+#: models.py:688
+msgid "Is read"
+msgstr ""
+
+#: models.py:696 models.py:697
+msgid "Mail Tracking"
+msgstr "Трекинг лог"
+
+#: models.py:758
 msgid "Start hour"
 msgstr "Время начала"
 
+#: models.py:759
 msgid "End hour"
 msgstr "Время конца"
 
+#: models.py:761
 msgid "Is enabled"
 msgstr "Подключено"
 
+#: models.py:763
 msgid "Is checked"
 msgstr "Проверено"
 
+#: models.py:765
 msgid "Defer at allowed hours"
 msgstr "Отправить в разрешенное время"
 
+#: models.py:767
 msgid "Address"
 msgstr "Адрес"
 
+#: models.py:768
 msgid "Must be phone number/email/token"
 msgstr "Должно быть телефоном/почтовым адресом/токеном"
 
+#: models.py:880
 msgid "Mail Subscription"
 msgstr "Подписки"
 
+#: models.py:881
 msgid "Mail Subscriptions"
 msgstr "Подписки"
 
+#: templates/dbmail/admin/change_list_link.html:6
 msgid "Clean cache"
 msgstr "Сбросить кеш"
 
-msgid "Cache was successful removed"
-msgstr "Кеш успешно удален"
+#~ msgid "From email"
+#~ msgstr "Отправитель"
