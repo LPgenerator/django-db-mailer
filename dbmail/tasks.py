@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
+
 from django.core import signing
-from celery import task
 
-from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG
+from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG, CELERY_TASK_DECORATOR_PATH
 from dbmail.utils import get_ip
+from dbmail import import_by_string
 
 
-@task(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY)
+task_decorator = import_by_string(CELERY_TASK_DECORATOR_PATH)
+
+
+@task_decorator(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY)
 def db_sender(*args, **kwargs):
     from dbmail import import_module
 
@@ -31,9 +35,8 @@ def db_sender(*args, **kwargs):
         raise
 
 
-@task(name='dbmail.subscription')
+@task_decorator(name='dbmail.subscription')
 def db_subscription(*args, **kwargs):
-    from dbmail import import_by_string
     from dbmail.defaults import MAIL_SUBSCRIPTION_MODEL
 
     MailSubscription = import_by_string(MAIL_SUBSCRIPTION_MODEL)
@@ -41,7 +44,7 @@ def db_subscription(*args, **kwargs):
     MailSubscription.notify(*args, **kwargs)
 
 
-@task(name='dbmail.signal_receiver')
+@task_decorator(name='dbmail.signal_receiver')
 def signal_receiver(*args, **kwargs):
     from dbmail.signals import SignalReceiver
 
@@ -50,7 +53,7 @@ def signal_receiver(*args, **kwargs):
         return args[0]._meta.module_name
 
 
-@task(name='dbmail.deferred_signal')
+@task_decorator(name='dbmail.deferred_signal')
 def deferred_signal(*args, **kwargs):
     from dbmail.signals import SignalReceiver
 
@@ -58,7 +61,7 @@ def deferred_signal(*args, **kwargs):
     return 'OK'
 
 
-@task(name='dbmail.mail_track')
+@task_decorator(name='dbmail.mail_track')
 def mail_track(http_meta, encrypted):
     from dbmail.models import MailLogTrack, MailLog
 
