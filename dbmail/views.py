@@ -12,7 +12,7 @@ from django.views.generic import View
 from django.core.cache import cache
 
 from dbmail.models import ApiKey
-from dbmail import db_sender
+from dbmail import db_sender, celery_supported
 from dbmail import defaults
 
 from dbmail import signals
@@ -63,7 +63,7 @@ def mail_read_tracker(request, encrypted):
 
         req = {k: v for k, v in request.META.items()
                if k.startswith('HTTP_') or k.startswith('REMOTE')}
-        if defaults.ENABLE_CELERY is True:
+        if celery_supported() and defaults.ENABLE_CELERY is True:
             mail_track.apply_async(
                 args=[req, encrypted], queue=defaults.TRACKING_QUEUE,
                 retry=1, retry_policy={'max_retries': 3})
