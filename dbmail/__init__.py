@@ -21,10 +21,8 @@ def app_installed(app):
 
 def celery_supported():
     try:
-        from dbmail import tasks
+        import celery
 
-        # if not app_installed('djcelery'):
-        #     raise ImportError
         return True
     except ImportError:
         return False
