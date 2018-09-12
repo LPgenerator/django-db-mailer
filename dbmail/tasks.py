@@ -1,18 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django.core import signing
+from celery import shared_task as task
 
 from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG
-from dbmail.utils import get_ip
-
-
-try:
-    from celery import shared_task as task
-except ImportError:
-    def task(*_args, **_kwargs):
-        def identity(fn):
-            return fn
-        return identity
 
 
 @task(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY)
@@ -68,29 +58,10 @@ def deferred_signal(*args, **kwargs):
 
 @task(name='dbmail.mail_track')
 def mail_track(http_meta, encrypted):
-    from dbmail.models import MailLogTrack, MailLog
-
-    class Request(object):
-        META = http_meta
+    from dbmail.models import MailLogTrack
 
     try:
-        request = Request()
-
-        mail_log_id = signing.loads(encrypted)
-        mail_log = MailLog.objects.get(log_id=mail_log_id)
-
-        track_log = MailLogTrack.objects.filter(mail_log=mail_log)
-        if not track_log.exists():
-            MailLogTrack.objects.create(
-                mail_log=mail_log,
-                ip=get_ip(request),
-                ua=request.META.get('HTTP_USER_AGENT'),
-                is_read=True,
-            )
-        else:
-            track_log[0].save()
-    except (signing.BadSignature, MailLog.DoesNotExist):
-        pass
+        MailLogTrack.track(http_meta, encrypted)
     except Exception as exc:
         raise mail_track.retry(
             retry=True, max_retries=SEND_RETRY,
