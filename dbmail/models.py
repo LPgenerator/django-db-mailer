@@ -6,6 +6,7 @@ import uuid
 import os
 import re
 
+from django.core import signing
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
 from django.utils.timezone import now
@@ -24,7 +25,7 @@ from dbmail.defaults import (
 
 from dbmail import initial_signals, import_by_string
 from dbmail import python_2_unicode_compatible
-from dbmail.utils import premailer_transform
+from dbmail.utils import premailer_transform, get_ip
 
 
 HTMLField = import_by_string(MODEL_HTMLFIELD)
@@ -754,6 +755,30 @@ class MailLogTrack(models.Model):
         self.detect_geo()
         self.detect_open()
         super(MailLogTrack, self).save(*args, **kwargs)
+
+    @classmethod
+    def track(cls, http_meta, encrypted):
+        class Request(object):
+            META = http_meta
+
+        try:
+            request = Request()
+
+            mail_log_id = signing.loads(encrypted)
+            mail_log = MailLog.objects.get(log_id=mail_log_id)
+
+            track_log = MailLogTrack.objects.filter(mail_log=mail_log)
+            if not track_log.exists():
+                MailLogTrack.objects.create(
+                    mail_log=mail_log,
+                    ip=get_ip(request),
+                    ua=request.META.get('HTTP_USER_AGENT'),
+                    is_read=True,
+                )
+            else:
+                track_log[0].save()
+        except (signing.BadSignature, MailLog.DoesNotExist):
+            pass
 
 
 class MailSubscriptionAbstract(models.Model):
