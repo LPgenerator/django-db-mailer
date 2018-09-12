@@ -2,23 +2,17 @@
 
 from django.core import signing
 
-from dbmail.defaults import (
-    SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG,
-    CELERY_TASK_DECORATOR_PATH)
+from dbmail.defaults import SEND_RETRY_DELAY, SEND_RETRY, SEND_MAX_TIME, DEBUG
 from dbmail.utils import get_ip
-from dbmail import import_by_string
 
 
-if CELERY_TASK_DECORATOR_PATH:
-    task = import_by_string(CELERY_TASK_DECORATOR_PATH)
-else:
-    try:
-        from celery import task
-    except ImportError:
-        def task(*_args, **_kwargs):
-            def identity(fn):
-                return fn
-            return identity
+try:
+    from celery import shared_task as task
+except ImportError:
+    def task(*_args, **_kwargs):
+        def identity(fn):
+            return fn
+        return identity
 
 
 @task(name='dbmail.db_sender', default_retry_delay=SEND_RETRY_DELAY)
