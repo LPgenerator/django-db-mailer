@@ -161,7 +161,7 @@ App settings
 
     # Apps which will be ignored on model browser
     DB_MAILER_IGNORE_BROWSE_APP = [
-        'south', 'dbmail', 'sessions', 'admin', 'djcelery',
+        'dbmail', 'sessions', 'admin', 'djcelery',
         'auth', 'reversion', 'contenttypes'
     ]
 

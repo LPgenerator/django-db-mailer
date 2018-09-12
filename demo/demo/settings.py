@@ -118,17 +118,10 @@ if 'test' not in sys.argv:
         'djcelery',
         'ckeditor',
         # 'rosetta',
-        'south',
     ]
 
     if 'grappelli' not in INSTALLED_APPS:
         INSTALLED_APPS += ['admin_jqueryui']
-
-if django.VERSION >= (1, 7):
-    DJ17_NOT_SUPPORTED_APPS = ['south', 'tinymce']
-    for app in DJ17_NOT_SUPPORTED_APPS:
-        if app in INSTALLED_APPS:
-            INSTALLED_APPS.remove(app)
 
 
 LOGGING = {

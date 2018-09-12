@@ -14,7 +14,6 @@ from django.core.cache import cache
 from django.utils import timezone
 from django.conf import settings
 from django.db import models
-from django import VERSION
 
 from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
@@ -23,7 +22,7 @@ from dbmail.defaults import (
     MODEL_SUBSCRIPTION_DATA_FIELD, SORTED_BACKEND_CHOICES, TRACK_USE_GEOIP2
 )
 
-from dbmail import initial_signals, import_by_string
+from dbmail import import_by_string
 from dbmail import python_2_unicode_compatible
 from dbmail.utils import premailer_transform, get_ip
 
@@ -618,8 +617,7 @@ class SignalDeferredDispatch(models.Model):
         )
 
     class Meta:
-        if VERSION >= (1, 5):
-            index_together = (('eta', 'done'),)
+        index_together = (('eta', 'done'),)
 
 
 @python_2_unicode_compatible
@@ -939,6 +937,3 @@ class MailNotification(models.Model):
             send_db_subscription(
                 mail_slug, user.pk, {'pk': notify.pk}, **kwargs)
 '''
-
-if VERSION < (1, 7):
-    initial_signals()
