@@ -134,7 +134,7 @@ def send_db_subscription(*args, **kwargs):
 def initial_signals():
     from django.db.utils import DatabaseError, IntegrityError
 
-    for cmd in ['schemamigration', 'migrate', 'syncdb',
+    for cmd in ['schemamigration', 'migrate',
                 'test', 'createsuperuser', 'makemigrations',
                 'collectstatic', 'compilemessages']:
         if cmd in sys.argv:

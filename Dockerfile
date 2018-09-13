@@ -9,7 +9,6 @@ ADD ./demo/ /mailer
 
 RUN pip install -r /mailer/requirements.txt
 
-RUN python /mailer/manage.py syncdb --noinput
 RUN python /mailer/manage.py migrate --noinput
 RUN python /mailer/manage.py loaddata /mailer/auth.json
 

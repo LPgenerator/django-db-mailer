@@ -17,7 +17,6 @@ Install all required packages and configure your project and environment:
     $ python setup.py develop
     $ cd demo
     $ pip install -r requirements.txt
-    $ python manage.py syncdb --noinput
     $ python manage.py migrate --noinput
     $ python manage.py createsuperuser --username admin --email admin@local.host
     $ redis-server >& /dev/null &

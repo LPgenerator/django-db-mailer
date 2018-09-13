@@ -8,7 +8,6 @@ pip install -r /mailer/requirements.txt
 
 if [ -f "demo/db.sqlite" ]; then rm ./demo/db.sqlite; fi
 
-python /mailer/manage.py syncdb --noinput
 python /mailer/manage.py migrate --noinput
 python /mailer/manage.py loaddata /mailer/auth.json
 
