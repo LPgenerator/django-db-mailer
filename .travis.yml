@@ -33,7 +33,7 @@ matrix:
       env: "DJANGO=2.0"
 
     - python: "2.7"
-      env: "DJANGO=2.0"
+      env: "DJANGO=2.1"
 
     - python: "3.4"
       env: "DJANGO=2.1"
@@ -42,4 +42,3 @@ branches:
   only:
     - master
     - development
-    - drop_old_django_support
