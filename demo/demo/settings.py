@@ -37,14 +37,10 @@ USE_TZ = True
 SITE_ID = 1
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
-# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, 'static'),
-]
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -57,7 +53,7 @@ SECRET_KEY = 'f969z_xc+^g*^gmt9oe7@og%kxd)54b!c!do)d7f2w2**f6%c0'
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'DIRS': [],
-    'APP_DIRS': False,
+    'APP_DIRS': True,
     'OPTIONS': {
         'context_processors': [
             'django.template.context_processors.debug',
@@ -66,15 +62,10 @@ TEMPLATES = [{
             'django.contrib.messages.context_processors.messages',
 
         ],
-        'loaders': [
-            'django.template.loaders.filesystem.Loader',
-            'django.template.loaders.app_directories.Loader',
-            'django.template.loaders.eggs.Loader',
-        ],
     },
 }]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
