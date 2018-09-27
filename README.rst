@@ -492,9 +492,11 @@ Install ``django-ses`` app via pip. Configure your settings:
 
 .. code-block:: bash
 
-    $ pip install httpagentparser django-ipware
+    $ pip install httpagentparser django-ipware geoip2
 
 For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
+
+If you use Django 1.8, you should install `geoip` package instead of `geoip2`.
 
 **MJML**
 

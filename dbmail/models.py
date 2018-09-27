@@ -19,7 +19,7 @@ from dbmail.defaults import (
     PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
     DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL,
     BACKEND, _BACKEND, BACKENDS_MODEL_CHOICES, MODEL_HTMLFIELD,
-    MODEL_SUBSCRIPTION_DATA_FIELD, SORTED_BACKEND_CHOICES, TRACK_USE_GEOIP2
+    MODEL_SUBSCRIPTION_DATA_FIELD, SORTED_BACKEND_CHOICES
 )
 
 from dbmail import import_by_string
@@ -727,13 +727,16 @@ class MailLogTrack(models.Model):
 
     def detect_geo(self):
         if self.ip and self.counter == 0:
-            if not TRACK_USE_GEOIP2:
+            try:
+                # Django 1.9+
+                from django.contrib.gis.geoip2 import GeoIP2 as GeoIP
+                from django.contrib.gis.geoip2 import GeoIP2Exception \
+                    as GeoIPException
+            except ImportError:
+                # Django 1.8
                 from django.contrib.gis.geoip import GeoIP
                 from django.contrib.gis.geoip import GeoIPException
-            else:
-                from django.contrib.gis.geoip2 import GeoIP2 as GeoIP
-                from django.contrib.gis.geoip2 import GeoIP2Exception\
-                    as GeoIPException
+
             try:
                 g = GeoIP()
                 info = g.city(self.ip) or dict()
