@@ -232,8 +232,8 @@ class Sender(object):
                 if instance.pk is None:
                     data[f.name] = []
                 else:
-                    data[f.name] = list(f.value_from_object(
-                        instance).values_list('pk', flat=True))
+                    data[f.name] = [
+                        item.pk for item in f.value_from_object(instance)]
             elif isinstance(f, ForeignKey):
                 if getattr(instance, f.name):
                     data[f.name] = getattr(instance, f.name).__str__()
