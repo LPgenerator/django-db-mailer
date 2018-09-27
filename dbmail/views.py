@@ -61,7 +61,7 @@ def mail_read_tracker(request, encrypted):
     if defaults.TRACK_ENABLE and defaults.ENABLE_LOGGING:
         req = {k: v for k, v in request.META.items()
                if k.startswith('HTTP_') or k.startswith('REMOTE')}
-        if celery_supported() and defaults.ENABLE_CELERY is True:
+        if celery_supported() and defaults.ENABLE_CELERY:
             from dbmail.tasks import mail_track
 
             mail_track.apply_async(
