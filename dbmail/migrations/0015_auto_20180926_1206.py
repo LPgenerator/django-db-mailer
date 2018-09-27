@@ -81,12 +81,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='signal',
             name='interval',
-            field=models.PositiveIntegerField(help_text='Specify interval to send messages after sometime. That very helpful for mailing on enterprise products.Interval must be set in the seconds.', null=True, verbose_name='Send interval', blank=True, default=0),
+            field=models.PositiveIntegerField(help_text='Specify interval to send messages after sometime. That very helpful for mailing on enterprise products.Interval must be set in the seconds.', verbose_name='Send interval', default=0),
         ),
         migrations.AlterField(
             model_name='mailtemplate',
             name='interval',
-            field=models.PositiveIntegerField(help_text='\n            Specify interval to send messages after sometime.\n            Interval must be set in the seconds.\n            ', null=True, verbose_name='Send interval', blank=True, default=0),
+            field=models.PositiveIntegerField(help_text='\n            Specify interval to send messages after sometime.\n            Interval must be set in the seconds.\n            ', verbose_name='Send interval', default=0),
         ),
     ]
 

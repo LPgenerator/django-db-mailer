@@ -216,7 +216,7 @@ class MailTemplate(models.Model):
         )
     )
     interval = models.PositiveIntegerField(
-        _('Send interval'), null=True, blank=True, default=0,
+        _('Send interval'), default=0,
         help_text=_(
             """
             Specify interval to send messages after sometime.
@@ -537,8 +537,7 @@ class Signal(models.Model):
         _('Receive once'), default=True,
         help_text=_('Signal will be receive and send once for new db row.'))
     interval = models.PositiveIntegerField(
-        _('Send interval'), null=True, blank=True,
-        default=0,
+        _('Send interval'), default=0,
         help_text=_(
             'Specify interval to send messages after sometime. '
             'That very helpful for mailing on enterprise products.'
