@@ -599,7 +599,7 @@ class SignalDeferredDispatch(models.Model):
 
     def run_task(self):
         if self.done is False:
-            import tasks
+            from dbmail import tasks
 
             tasks.deferred_signal.apply_async(
                 args=pickle.loads(self.args),

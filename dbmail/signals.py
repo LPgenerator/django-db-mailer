@@ -146,7 +146,7 @@ def signal_receiver(sender, **kwargs):
         kwargs.pop('signal')
 
     if celery_supported():
-        import tasks
+        from dbmail import tasks
 
         tasks.signal_receiver.apply_async(
             args=[sender], kwargs=kwargs,
