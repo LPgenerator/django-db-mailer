@@ -194,7 +194,7 @@ class MailLogEmailInline(admin.TabularInline):
     model = MailLogEmail
     extra = 0
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
@@ -222,7 +222,7 @@ class MailLogAdmin(admin.ModelAdmin):
         self.readonly_fields = [field.name for field in model._meta.fields]
         self.readonly_model = model
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
@@ -325,7 +325,7 @@ class MailLogTrackAdmin(admin.ModelAdmin):
         self.readonly_fields = [field.name for field in model._meta.fields]
         self.readonly_model = model
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
@@ -362,7 +362,7 @@ class MailLogExceptionAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     readonly_fields = ('name',)
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
