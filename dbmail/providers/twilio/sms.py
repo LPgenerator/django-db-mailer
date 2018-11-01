@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from twilio.rest import TwilioRestClient
+from twilio.rest import Client
 
 from django.conf import settings
 
@@ -20,7 +20,7 @@ def send(sms_to, sms_body, **kwargs):
         'body': sms_body
     }
 
-    client = TwilioRestClient(settings.TWILIO_ACCOUNT_SID,
+    client = Client(settings.TWILIO_ACCOUNT_SID,
                               settings.TWILIO_AUTH_TOKEN)
 
     response = client.messages.create(**params)
