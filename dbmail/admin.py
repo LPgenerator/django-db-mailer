@@ -188,6 +188,20 @@ class MailTemplateAdmin(TranslationModelAdmin):
         return super(MailTemplateAdmin, self).get_prepopulated_fields(
             request, obj)
 
+    def get_queryset(self, request):
+        return super(MailTemplateAdmin, self).get_queryset(request) \
+            .select_related('from_email', 'category')
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        formfield = super(MailTemplateAdmin, self).formfield_for_foreignkey(
+            db_field, request, **kwargs)
+        if db_field.name == 'category':
+            key = '_category_choices_cache'
+            if not hasattr(request, key):
+                setattr(request, key, list(formfield.choices))
+            formfield.choices = getattr(request, key)
+        return formfield
+
 
 class MailLogEmailInline(admin.TabularInline):
     readonly_fields = [field.name for field in MailLogEmail._meta.fields]
