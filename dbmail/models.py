@@ -38,11 +38,21 @@ def _upload_mail_file(instance, filename):
         return os.path.join(UPLOAD_TO, filename)
 
 
+class MailCategoryManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 @python_2_unicode_compatible
 class MailCategory(models.Model):
+    objects = MailCategoryManager()
+
     name = models.CharField(_('Category'), max_length=25, unique=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
@@ -52,14 +62,24 @@ class MailCategory(models.Model):
         verbose_name_plural = _('Mail categories')
 
 
+class MailBaseTemplateManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 @python_2_unicode_compatible
 class MailBaseTemplate(models.Model):
+    objects = MailBaseTemplateManager()
+
     name = models.CharField(_('Name'), max_length=100, unique=True)
     message = HTMLField(
         _('Body'), help_text=_(
             'Basic template for mail messages. {{content}} tag for msg.'))
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
@@ -102,8 +122,15 @@ class MailFromEmailCredential(models.Model):
         verbose_name_plural = _('Mail auth settings')
 
 
+class MailFromEmailManager(models.Manager):
+    def get_by_natural_key(self, email):
+        return self.get(email=email)
+
+
 @python_2_unicode_compatible
 class MailFromEmail(models.Model):
+    objects = MailFromEmailManager()
+
     name = models.CharField(_('Name'), max_length=100)
     email = models.CharField(
         _('Email'), max_length=75, unique=True,
@@ -140,6 +167,9 @@ class MailFromEmail(models.Model):
         super(MailFromEmail, self).save(*args, **kwargs)
         self._clean_template_cache()
 
+    def natural_key(self):
+        return (self.email,)
+
     def __str__(self):
         return self.name
 
@@ -148,8 +178,15 @@ class MailFromEmail(models.Model):
         verbose_name_plural = _('Mail from')
 
 
+class MailBccManager(models.Manager):
+    def get_by_natural_key(self, email):
+        return self.get(email=email)
+
+
 @python_2_unicode_compatible
 class MailBcc(models.Model):
+    objects = MailBccManager()
+
     email = models.EmailField(_('Email'), unique=True)
     is_active = models.BooleanField(_('Is active'), default=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
@@ -166,6 +203,9 @@ class MailBcc(models.Model):
         self.__clean_cache()
         super(MailBcc, self).delete(using)
 
+    def natural_key(self):
+        return (self.email,)
+
     def __str__(self):
         return self.email
 
@@ -174,8 +214,15 @@ class MailBcc(models.Model):
         verbose_name_plural = _('Mail Bcc')
 
 
+class MailTemplateManager(models.Manager):
+    def get_by_natural_key(self, slug):
+        return self.get(slug=slug)
+
+
 @python_2_unicode_compatible
 class MailTemplate(models.Model):
+    objects = MailTemplateManager()
+
     name = models.CharField(_('Template name'), max_length=100, db_index=True)
     subject = models.CharField(_('Subject'), max_length=100)
     from_email = models.ForeignKey(
@@ -276,6 +323,9 @@ class MailTemplate(models.Model):
         self._clean_cache()
         super(MailTemplate, self).delete(using)
 
+    def natural_key(self):
+        return (self.slug,)
+
     def __str__(self):
         return self.name
 
@@ -311,13 +361,23 @@ class MailFile(models.Model):
         verbose_name_plural = _('Mail files')
 
 
+class MailLogExceptionManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 @python_2_unicode_compatible
 class MailLogException(models.Model):
+    objects = MailLogExceptionManager()
+
     cache_key = 'ignored_exceptions'
     cache_version = 1
 
     name = models.CharField(_('Exception'), max_length=150, unique=True)
     ignore = models.BooleanField(_('Ignore'), default=False)
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
@@ -433,8 +493,15 @@ class MailLogEmail(models.Model):
         verbose_name_plural = _('Mail log emails')
 
 
+class MailGroupManager(models.Manager):
+    def get_by_natural_key(self, slug):
+        return self.get(slug=slug)
+
+
 @python_2_unicode_compatible
 class MailGroup(models.Model):
+    objects = MailGroupManager()
+
     name = models.CharField(_('Group name'), max_length=100)
     slug = models.SlugField(_('Slug'), unique=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
@@ -465,6 +532,9 @@ class MailGroup(models.Model):
         self.clean_cache()
         super(MailGroup, self).delete(using)
 
+    def natural_key(self):
+        return (self.slug,)
+
     def __str__(self):
         return self.name
 
@@ -473,8 +543,15 @@ class MailGroup(models.Model):
         verbose_name_plural = _('Mail groups')
 
 
+class MailGroupEmailManager(models.Manager):
+    def get_by_natural_key(self, email, group):
+        return self.get(email=email, group=group)
+
+
 @python_2_unicode_compatible
 class MailGroupEmail(models.Model):
+    objects = MailGroupEmailManager()
+
     name = models.CharField(_('Username'), max_length=100)
     email = models.CharField(
         _('Email'), max_length=75,
@@ -491,6 +568,9 @@ class MailGroupEmail(models.Model):
         self.group.clean_cache()
         super(MailGroupEmail, self).delete(using)
 
+    def natural_key(self):
+        return (self.email, self.group)
+
     def __str__(self):
         return self.email
 
@@ -500,8 +580,15 @@ class MailGroupEmail(models.Model):
         unique_together = (('email', 'group',),)
 
 
+class SignalManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 @python_2_unicode_compatible
 class Signal(models.Model):
+    objects = SignalManager()
+
     SIGNALS = (
         'pre_save',
         'post_save',
@@ -509,7 +596,7 @@ class Signal(models.Model):
         'post_delete',
         'm2m_changed',
     )
-    name = models.CharField(_('Name'), max_length=100)
+    name = models.CharField(_('Name'), max_length=100, unique=True)
     model = models.ForeignKey(
         'contenttypes.ContentType', verbose_name=_('Model'),
         on_delete=models.CASCADE)
@@ -564,6 +651,9 @@ class Signal(models.Model):
             SignalLog.objects.create(
                 model=self.model, model_pk=pk, signal=self
             )
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
@@ -620,8 +710,15 @@ class SignalDeferredDispatch(models.Model):
         index_together = (('eta', 'done'),)
 
 
+class ApiKeyManager(models.Manager):
+    def get_by_natural_key(self, api_key):
+        return self.get(api_key=api_key)
+
+
 @python_2_unicode_compatible
 class ApiKey(models.Model):
+    objects = ApiKeyManager()
+
     name = models.CharField(_('Name'), max_length=25)
     api_key = models.CharField(_('Api key'), max_length=32, unique=True)
     is_active = models.BooleanField(_('Is active'), default=True)
@@ -643,6 +740,9 @@ class ApiKey(models.Model):
     def delete(self, using=None):
         self._clean_cache()
         super(ApiKey, self).delete(using)
+
+    def natural_key(self):
+        return (self.api_key,)
 
     def __str__(self):
         return self.name
