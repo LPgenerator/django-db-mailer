@@ -33,9 +33,9 @@ class Sender(SenderBase):
         for phone in self._recipient_list:
             if self._from_email:
                 module.send(
-                    phone, message, sms_from=self._from_email, **self._kwargs)
+                    phone, message, sms_from=self._from_email, user=self._user, **self._kwargs)
             else:
-                module.send(phone, message, **self._kwargs)
+                module.send(phone, message, user=self._user, **self._kwargs)
 
 
 class SenderDebug(Sender):
