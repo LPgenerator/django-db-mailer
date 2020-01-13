@@ -29,9 +29,9 @@ def send(sms_to, sms_body, **kwargs):
         "Content-type": "application/x-www-form-urlencoded",
         "User-Agent": "DBMail/%s" % get_version(),
         'Authorization': 'Basic %s' % b64encode(
-            "%s:%s" % (
+            "{}:{}".format(
                 settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN
-            )).decode("ascii")
+            ).encode("utf-8")).decode("ascii")
 
     }
 
