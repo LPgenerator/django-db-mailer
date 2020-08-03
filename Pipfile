@@ -8,11 +8,11 @@ verify_ssl = true
 [packages]
 twilio = "==6.19.1"
 django-push-notifications = "==1.4.1"
-Django = ">1.9,<=2.1"
+Django = "<=2.1,>1.9"
 flake8 = ">=2.4.1"
 coverage = "==3.7.1"
 coveralls = "==0.3"
 django-tinymce = ">=1.5.3"
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"
