@@ -11,8 +11,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import View
 from django.core.cache import cache
 
-from dbmail.models import ApiKey
-from dbmail import db_sender
+from dbmail.models import ApiKey, MailLogTrack
+from dbmail import db_sender, celery_supported
 from dbmail import defaults
 
 from dbmail import signals
@@ -59,16 +59,16 @@ def send_by_dbmail(request):
 
 def mail_read_tracker(request, encrypted):
     if defaults.TRACK_ENABLE and defaults.ENABLE_LOGGING:
-        from dbmail.tasks import mail_track
-
         req = {k: v for k, v in request.META.items()
                if k.startswith('HTTP_') or k.startswith('REMOTE')}
-        if defaults.ENABLE_CELERY is True:
-            mail_track.delay(
+        if celery_supported() and defaults.ENABLE_CELERY:
+            from dbmail.tasks import mail_track
+
+            mail_track.apply_async(
                 args=[req, encrypted], queue=defaults.TRACKING_QUEUE,
                 retry=1, retry_policy={'max_retries': 3})
         else:
-            mail_track(req, encrypted)
+            MailLogTrack.track(req, encrypted)
 
     return HttpResponse(
         content=defaults.TRACK_PIXEL[1],

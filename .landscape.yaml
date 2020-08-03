@@ -7,7 +7,6 @@ uses:
 autodetect: yes
 ignore-paths:
     - dbmail/migrations
-    - dbmail/south_migrations
     - dbmail/management
     - demo
 

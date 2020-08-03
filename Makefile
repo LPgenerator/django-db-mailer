@@ -23,7 +23,7 @@ clean-celery:
 .PHONY: pep8
 # target: pep8 - Check code for pep8 rules
 pep8:
-	@flake8 dbmail --ignore=E402,E731,F401,F401 --exclude=migrations,south_migrations
+	@flake8 dbmail --ignore=E402,E731,F401,F401 --exclude=migrations
 
 .PHONY: release
 # target: release - Release app into PyPi
@@ -95,7 +95,7 @@ tox:
 coverage:
 	@cd demo && \
 	coverage run --branch --source=dbmail ./manage.py test dbmail && \
-	coverage report --omit="*/dbmail/test*,*/dbmail/migrations/*,*/dbmail/south_migrations/*,*/dbmail/admin*"
+	coverage report --omit="*/dbmail/test*,*/dbmail/migrations/*,*/dbmail/admin*"
 
 .PHONY: help
 # target: help - Display callable targets

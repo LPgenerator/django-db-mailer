@@ -1,8 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-from django.utils.html import strip_tags
+import logging
 
 from dbmail import import_module
+from django.utils.html import strip_tags
+
+logger = logging.getLogger(__name__)
 
 
 def premailer_transform(text):
@@ -10,8 +13,11 @@ def premailer_transform(text):
         from premailer import transform
 
         return transform(text)
+    except ImportError:
+        logger.error("You don't have module 'premailer' installed")
+        return text
     except Exception as err:
-        print(err)
+        logger.error(err)
         return text
 
 

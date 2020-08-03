@@ -1,10 +1,16 @@
 # -*- encoding: utf-8 -*-
 
+try:
+    from urllib2 import urlopen, Request
+    from urllib import urlencode
+except ImportError:
+    from urllib.request import urlopen, Request
+    from urllib.parse import urlencode
+
 import hmac
 from hashlib import sha256
 from json import dumps
-from urllib import urlencode
-from urllib2 import urlopen, Request
+
 
 from django.conf import settings
 
