@@ -27,8 +27,7 @@ class MPNSBase(object):
         buf = BytesIO()
         tree.write(buf, encoding='utf-8')
         contents = (
-            '<?xml version="1.0" encoding="utf-8"?>' +
-            buf.getvalue())
+            '<?xml version="1.0" encoding="utf-8"?>' + buf.getvalue())
         buf.close()
         return contents
 

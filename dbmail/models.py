@@ -871,8 +871,7 @@ class MailSubscriptionAbstract(models.Model):
             end_hour = cls.convert_to_date(method.end_hour)
 
             if not (start_hour <= now_hour <= end_hour):
-                if (method.defer_at_allowed_hours and
-                        method_kwargs['use_celery']):
+                if (method.defer_at_allowed_hours and method_kwargs['use_celery']):
 
                     method_kwargs['send_at_date'] = cls.mix_hour_with_date(
                         method.start_hour)

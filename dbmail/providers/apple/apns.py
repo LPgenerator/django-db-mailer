@@ -61,9 +61,7 @@ def _apns_create_socket(address_tuple, certfile=None):
     certfile = certfile or APNS_CERTIFICATE
     if not certfile:
         raise ImproperlyConfigured(
-                'You need to set DB_APNS_CERTIFICATE to send APNS messages.'
-                )
-
+            'You need to set DB_APNS_CERTIFICATE to send APNS messages.')
     try:
         with open(certfile, "r") as f:
             content = f.read()
@@ -75,8 +73,7 @@ def _apns_create_socket(address_tuple, certfile=None):
 
     sock = socket()
     sock = ssl.wrap_socket(
-            sock, ssl_version=ssl.PROTOCOL_TLSv1, certfile=certfile, ca_certs=None
-            )
+        sock, ssl_version=ssl.PROTOCOL_TLSv1, certfile=certfile, ca_certs=None)
     sock.connect(address_tuple)
 
     return sock

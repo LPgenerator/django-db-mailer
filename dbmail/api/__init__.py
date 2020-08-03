@@ -95,8 +95,7 @@ class DeviceViewSet(AuthorizedMixin, ModelViewSet):
         from dbmail.defaults import UPDATE_ON_DUPLICATE_REG_ID
         if UPDATE_ON_DUPLICATE_REG_ID and 'address' in request.data:
             instance = self.queryset.model.objects.filter(
-                    address=request.data['address']
-                    ).first()
+                address=request.data['address']).first()
             if instance:
                 serializer = self.get_serializer(instance, data=request.data)
                 is_update = True

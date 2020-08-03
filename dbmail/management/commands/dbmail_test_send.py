@@ -10,7 +10,7 @@ from dbmail import db_sender
 def send_test_msg(pk, email, user=None, **kwargs):
     template = MailTemplate.objects.get(pk=pk)
     slug = template.slug
-    var_list = re.findall('\{\{\s?(\w+)\s?\}\}', template.message)
+    var_list = re.findall(r'\{\{\s?(\w+)\s?\}\}', template.message)
     context = {}
     for var in var_list:
         context[var] = '%s' % var.upper().replace('_', '-')
