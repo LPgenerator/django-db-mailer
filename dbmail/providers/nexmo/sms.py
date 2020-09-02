@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from urllib import urlopen, urlencode
+try:
+    from urllib import urlopen, urlencode
+except ImportError:
+    from urllib.request import urlopen
+    from urllib.parse import urlencode
 from json import loads
 
 from django.conf import settings

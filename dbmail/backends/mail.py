@@ -8,7 +8,12 @@ import sys
 
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.core.mail import EmailMessage, EmailMultiAlternatives
-from django.core.urlresolvers import reverse, NoReverseMatch
+
+try:
+    from django.core.urlresolvers import reverse, NoReverseMatch
+except ImportError:
+    from django.urls import reverse, NoReverseMatch
+
 from django.contrib.sites.models import Site
 from django.template import Template, Context
 from django.core.mail import get_connection
@@ -228,8 +233,8 @@ class Sender(object):
                 if instance.pk is None:
                     data[f.name] = []
                 else:
-                    data[f.name] = list(f.value_from_object(
-                        instance).values_list('pk', flat=True))
+                    data[f.name] = [
+                        item.pk for item in f.value_from_object(instance)]
             elif isinstance(f, ForeignKey):
                 if getattr(instance, f.name):
                     data[f.name] = getattr(instance, f.name).__str__()

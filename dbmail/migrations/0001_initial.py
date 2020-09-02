@@ -127,7 +127,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=100, verbose_name='Username')),
                 ('email', models.EmailField(max_length=75, verbose_name='Email')),
-                ('group', models.ForeignKey(related_name='emails', verbose_name='Group', to='dbmail.MailGroup')),
+                ('group', models.ForeignKey(related_name='emails', verbose_name='Group', to='dbmail.MailGroup', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Mail group email',
@@ -157,7 +157,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('email', models.EmailField(max_length=75)),
                 ('mail_type', models.CharField(max_length=3, verbose_name='Mail type', choices=[(b'cc', b'CC'), (b'bcc', b'BCC'), (b'to', b'TO')])),
-                ('log', models.ForeignKey(to='dbmail.MailLog')),
+                ('log', models.ForeignKey(to='dbmail.MailLog', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Mail log email',
@@ -203,7 +203,7 @@ class Migration(migrations.Migration):
                 ('is_read', models.BooleanField(default=False, verbose_name='Is read')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
                 ('updated', models.DateTimeField(auto_now=True, verbose_name='Updated')),
-                ('mail_log', models.ForeignKey(verbose_name='Log', to='dbmail.MailLog')),
+                ('mail_log', models.ForeignKey(verbose_name='Log', to='dbmail.MailLog', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Mail Tracking',
@@ -230,8 +230,8 @@ class Migration(migrations.Migration):
                 ('context_note', models.TextField(help_text='This is simple note field for context variables with description', null=True, verbose_name='Context note', blank=True)),
                 ('interval', models.PositiveIntegerField(help_text='\n            Specify interval to send messages after sometime.\n            Interval must be set in the seconds.\n            ', null=True, verbose_name='Send interval', blank=True)),
                 ('bcc_email', models.ManyToManyField(help_text=b'Blind carbon copy', to='dbmail.MailBcc', null=True, verbose_name='Bcc', blank=True)),
-                ('category', models.ForeignKey(default=None, blank=True, to='dbmail.MailCategory', null=True, verbose_name='Category')),
-                ('from_email', models.ForeignKey(default=None, to='dbmail.MailFromEmail', blank=True, help_text='If not specified, then used default.', null=True, verbose_name='From email')),
+                ('category', models.ForeignKey(default=None, blank=True, to='dbmail.MailCategory', null=True, verbose_name='Category', on_delete=models.CASCADE)),
+                ('from_email', models.ForeignKey(default=None, to='dbmail.MailFromEmail', blank=True, help_text='If not specified, then used default.', null=True, verbose_name='From email', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Mail template',
@@ -252,9 +252,9 @@ class Migration(migrations.Migration):
                 ('receive_once', models.BooleanField(default=True, help_text='Signal will be receive and send once for new db row.', verbose_name='Receive once')),
                 ('interval', models.PositiveIntegerField(help_text='Specify interval to send messages after sometime. That very helpful for mailing on enterprise products.Interval must be set in the seconds.', null=True, verbose_name='Send interval', blank=True)),
                 ('update_model', models.BooleanField(default=False, help_text='\n            If you are using interval and want to update object state,\n            you can use this flag and refer to the variable\n            {{current_instance}}\n            ', verbose_name='Update model state')),
-                ('group', models.ForeignKey(blank=True, to='dbmail.MailGroup', help_text='You can use group email or rules for recipients.', null=True, verbose_name='Email group')),
-                ('model', models.ForeignKey(verbose_name='Model', to='contenttypes.ContentType')),
-                ('template', models.ForeignKey(verbose_name='Template', to='dbmail.MailTemplate')),
+                ('group', models.ForeignKey(blank=True, to='dbmail.MailGroup', help_text='You can use group email or rules for recipients.', null=True, verbose_name='Email group', on_delete=models.CASCADE)),
+                ('model', models.ForeignKey(verbose_name='Model', to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('template', models.ForeignKey(verbose_name='Template', to='dbmail.MailTemplate', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Mail signal',
@@ -283,8 +283,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('model_pk', models.BigIntegerField()),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
-                ('model', models.ForeignKey(to='contenttypes.ContentType')),
-                ('signal', models.ForeignKey(to='dbmail.Signal')),
+                ('model', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('signal', models.ForeignKey(to='dbmail.Signal', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Signal log',
@@ -299,19 +299,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='maillog',
             name='error_exception',
-            field=models.ForeignKey(verbose_name='Exception', blank=True, to='dbmail.MailLogException', null=True),
+            field=models.ForeignKey(verbose_name='Exception', blank=True, to='dbmail.MailLogException', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='maillog',
             name='template',
-            field=models.ForeignKey(verbose_name='Template', to='dbmail.MailTemplate'),
+            field=models.ForeignKey(verbose_name='Template', to='dbmail.MailTemplate', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='maillog',
             name='user',
-            field=models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -321,13 +321,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mailfromemail',
             name='credential',
-            field=models.ForeignKey(default=None, blank=True, to='dbmail.MailFromEmailCredential', null=True, verbose_name='Auth credentials'),
+            field=models.ForeignKey(default=None, blank=True, to='dbmail.MailFromEmailCredential', null=True, verbose_name='Auth credentials', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='mailfile',
             name='template',
-            field=models.ForeignKey(related_name='files', verbose_name='Template', to='dbmail.MailTemplate'),
+            field=models.ForeignKey(related_name='files', verbose_name='Template', to='dbmail.MailTemplate', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

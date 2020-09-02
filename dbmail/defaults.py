@@ -105,6 +105,7 @@ BACKENDS_MODEL_CHOICES = get_settings('DB_MAILER_BACKENDS_MODEL_CHOICES', (
     (BACKEND.get('tts'), _('TTS')),
     (BACKEND.get('bot'), _('BOT')),
 ))
+SORTED_BACKEND_CHOICES = sorted(list(BACKEND.items()))
 
 SMS_PROVIDER = get_settings(
     'DB_MAILER_SMS_PROVIDER', 'dbmail.providers.nexmo.sms')
@@ -125,7 +126,7 @@ MESSAGE_HTML2TEXT = get_settings(
 
 IGNORE_BROWSE_APP = get_settings(
     'DB_MAILER_IGNORE_BROWSE_APP', [
-        'south', 'dbmail', 'sessions', 'admin', 'djcelery',
+        'dbmail', 'sessions', 'admin', 'djcelery',
         'auth', 'reversion', 'contenttypes'
     ])
 

@@ -12,7 +12,7 @@ APP_CPUS = "2"
 #
 Vagrant.configure("2") do |config|
 
-    config.vm.box = "ubuntu/trusty64"
+    config.vm.box = "ubuntu/xenial64"
     config.vm.post_up_message = "Box URL is http://127.0.0.1:8000/admin/"
 
     config.vm.synced_folder "./demo/", "/mailer", id: "vagrant-root"
@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
 
     # LXC configuration
     config.vm.provider :lxc do |lxc, override|
-        override.vm.box = "fgrehm/trusty64-lxc"
+        override.vm.box = "fgrehm/xenial64-lxc"
     end
 
     if Vagrant.has_plugin?("vagrant-cachier")
