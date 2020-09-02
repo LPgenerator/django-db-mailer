@@ -1,5 +1,4 @@
 flake8>=2.4.1
-django-discover-runner==1.0
 coverage==3.7.1
 coveralls==0.3
 django-tinymce>=1.5.3

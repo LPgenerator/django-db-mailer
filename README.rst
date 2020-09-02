@@ -29,7 +29,7 @@ Documentation available at `Read the Docs <http://django-db-mailer.readthedocs.o
 
 What's that
 -----------
-| Django module to easily send emails/push/sms/tts using django templates stored on database.
+| Django module to easily send emails/push/sms/tts using django templates stored in a database.
 | From box you can use it with django-celery for send background messages.
 | Also you have opportunity to create reports from logs by mail categories and slug.
 | Groups with Recipients and send by model signal also available by default.
@@ -47,9 +47,7 @@ Installation
     $ pip install django-db-mailer
 
 2. Add the ``dbmail`` application to ``INSTALLED_APPS`` in your settings file (usually ``settings.py``)
-3. Sync database (``./manage.py syncdb`` or ``./manage.py migrate``).
-
-**Important:** South 1.0 or greater is required to run migrations.
+3. Sync database (``./manage.py migrate``).
 
 
 Mail API
@@ -349,7 +347,6 @@ Demo installation
     $ python setup.py develop
     $ cd demo
     $ pip install -r requirements.txt
-    $ python manage.py syncdb --noinput
     $ python manage.py migrate --noinput
     $ python manage.py createsuperuser --username admin --email admin@local.host
     $ redis-server >& /dev/null &
@@ -495,9 +492,11 @@ Install ``django-ses`` app via pip. Configure your settings:
 
 .. code-block:: bash
 
-    $ pip install httpagentparser django-ipware
+    $ pip install httpagentparser django-ipware geoip2
 
 For track information about user, or about mail is read, you must be enable logging, and enable tracking on settings.
+
+If you use Django 1.8, you should install `geoip` package instead of `geoip2`.
 
 **MJML**
 
@@ -591,5 +590,5 @@ Screenshots
 
 Compatibility
 -------------
-* Python: 2.7, pypy, 3.4, 3.5, pypy3
-* Django: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10
+* Python: 2.7, pypy2.7, 3.4, 3.5, 3.6, 3.7, pypy3.5
+* Django: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 2.0, 2.1

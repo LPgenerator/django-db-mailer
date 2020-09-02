@@ -20,8 +20,9 @@ def send(sms_to, sms_body, **kwargs):
         'body': sms_body
     }
 
-    client = Client(settings.TWILIO_ACCOUNT_SID,
-                              settings.TWILIO_AUTH_TOKEN)
+    client = Client(
+        settings.TWILIO_ACCOUNT_SID,
+        settings.TWILIO_AUTH_TOKEN)
 
     response = client.messages.create(**params)
 

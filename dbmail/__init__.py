@@ -4,7 +4,7 @@ from datetime import datetime
 import sys
 
 
-VERSION = (2, 3, 15)
+VERSION = (2, 4, 0)
 
 default_app_config = 'dbmail.apps.DBMailConfig'
 
@@ -21,7 +21,8 @@ def app_installed(app):
 
 def celery_supported():
     try:
-        from dbmail import tasks
+        import celery
+
         return True
     except ImportError:
         return False
@@ -128,7 +129,7 @@ def send_db_subscription(*args, **kwargs):
 def initial_signals():
     from django.db.utils import DatabaseError, IntegrityError
 
-    for cmd in ['schemamigration', 'migrate', 'syncdb',
+    for cmd in ['schemamigration', 'migrate',
                 'test', 'createsuperuser', 'makemigrations',
                 'collectstatic', 'compilemessages']:
         if cmd in sys.argv:
@@ -170,40 +171,13 @@ def python_2_unicode_compatible(klass):
 def import_by_string(dotted_path):
     """Import class by his full module path.
 
-    Function for compability of different Django versions.
-
     Args:
         dotted_path - string, full import path for class.
 
     """
+    from django.utils.module_loading import import_string
 
-    import_string = None
-
-    # Django >= 1.5, < 1.7
-    try:
-        from django.utils.module_loading import import_by_path as import_string
-    except ImportError:
-        import_string = import_string
-
-    # Django >= 1.7
-    try:
-        from django.utils.module_loading import import_string
-    except ImportError:
-        import_string = import_string
-
-    if import_string is not None:
-        return import_string(dotted_path)
-
-    # Django == 1.4
-    from django.utils.importlib import import_module
-
-    class_data = dotted_path.split('.')
-    module_path = '.'.join(class_data[:-1])
-    class_str = class_data[-1]
-
-    module = import_module(module_path)
-    # Finally, we retrieve the Class
-    return getattr(module, class_str)
+    return import_string(dotted_path)
 
 
 def import_module(*args, **kwargs):
@@ -215,12 +189,6 @@ def import_module(*args, **kwargs):
 
 
 def get_model(*args, **kwargs):
-    try:
-        from django.db.models import get_model as _get_model
-    except ImportError:
-        # Django > 1.8
-        from django.apps import apps
+    from django.apps import apps
 
-        def _get_model(*args, **kwargs):
-            return apps.get_model(*args, **kwargs)
-    return _get_model(*args, **kwargs)
+    return apps.get_model(*args, **kwargs)

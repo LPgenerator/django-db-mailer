@@ -5,7 +5,12 @@ import os
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import redirect, render
-from django.core.urlresolvers import reverse
+
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
+
 from django.conf.urls import url
 from django.contrib import messages
 from django.contrib import admin
@@ -189,7 +194,7 @@ class MailLogEmailInline(admin.TabularInline):
     model = MailLogEmail
     extra = 0
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
@@ -217,7 +222,7 @@ class MailLogAdmin(admin.ModelAdmin):
         self.readonly_fields = [field.name for field in model._meta.fields]
         self.readonly_model = model
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
@@ -320,7 +325,7 @@ class MailLogTrackAdmin(admin.ModelAdmin):
         self.readonly_fields = [field.name for field in model._meta.fields]
         self.readonly_model = model
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
@@ -357,7 +362,7 @@ class MailLogExceptionAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     readonly_fields = ('name',)
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):

@@ -214,7 +214,9 @@ Update dbmail fields:
 
 .. code-block:: bash
 
-    $ pip install httpagentparser django-ipware
+    $ pip install httpagentparser django-ipware geoip2
+
+If you use Django 1.8, you should install `geoip` package instead of `geoip2`.
 
 
 Add url patterns into urls.py:
