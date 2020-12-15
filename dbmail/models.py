@@ -254,7 +254,7 @@ class MailTemplate(models.Model):
     @classmethod
     def get_template(cls, slug, lang=None):
         obj = cache.get(slug, version=1)
-        if obj is not None and lang is None:
+        if obj is not None and obj.__dict__.get('lang', None) == lang:
             return obj
         elif obj is None:
             obj = cls.objects.select_related('from_email', 'base').get(slug=slug)
@@ -322,6 +322,7 @@ class MailTemplateLocalizedContent(models.Model):
             logger.error('Localized template not found for lang=%s, slug=%s'.format(lang, mail_template.slug))
         mail_template.__dict__['subject'] = localized_content.subject
         mail_template.__dict__['message'] = localized_content.message
+        mail_template.__dict__['lang'] = localized_content.lang
 
     def __str__(self):
         return self.lang

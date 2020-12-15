@@ -290,3 +290,9 @@ class LocalizedTemplateTestCase(TemplateTestCase):
             template = MailTemplate.get_template("welcome", lang="es")
             self.assertEquals(template.subject, "Bienvenido")
             self.assertEquals(template.message, "Bienvenido a nuestro sitio. Nos alegra verte.")
+
+        # ensures 0 queries are made after caching the localized template
+        with self.assertNumQueries(0):
+            template = MailTemplate.get_template("welcome", lang="es")
+            self.assertEquals(template.subject, "Bienvenido")
+            self.assertEquals(template.message, "Bienvenido a nuestro sitio. Nos alegra verte.")
