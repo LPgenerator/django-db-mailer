@@ -1,3 +1,4 @@
 Django>1.9,<=2.1
 twilio==6.19.1
 django-push-notifications==1.4.1
+djangorestframework==3.12.2

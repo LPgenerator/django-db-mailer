@@ -7,7 +7,7 @@ from rest_framework.serializers import (ModelSerializer, Serializer,
                                         ValidationError)
 from rest_framework.viewsets import ModelViewSet
 
-from ..models import MailSubscription
+from dbmail.models import MailSubscription
 
 
 # Fields

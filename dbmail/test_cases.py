@@ -3,7 +3,9 @@
 from django.test import TestCase
 
 from dbmail.models import (
-    MailTemplate, MailBcc, MailFromEmail, MailFile, MailFromEmailCredential)
+    MailTemplate, MailTemplateLocalizedContent, MailBcc, MailFromEmail,
+    MailFile, MailFromEmailCredential,
+)
 
 
 class TemplateTestCase(TestCase):
@@ -259,3 +261,32 @@ class TemplateTestCase(TestCase):
             template = MailTemplate.get_template("welcome")
             self.assertEquals(template.auth_credentials, None)
             self.assertEquals(template.from_email, None)
+
+
+class LocalizedTemplateTestCase(TemplateTestCase):
+    def __create_localized_template(self):
+        template = self._TemplateTestCase__create_template()
+        return MailTemplateLocalizedContent.objects.create(
+            template=template,
+            lang="es",
+            subject="Bienvenido",
+            message="Bienvenido a nuestro sitio. Nos alegra verte.",
+        )
+
+    def test_retrieve_localized_template(self):
+        """ create template + localized template, and checks queries """
+        self.__create_localized_template()
+
+        with self.assertNumQueries(4):
+            template = MailTemplate.get_template("welcome", lang="es")
+            self.assertEquals(template.subject, "Bienvenido")
+            self.assertEquals(template.message, "Bienvenido a nuestro sitio. Nos alegra verte.")
+
+    def test_retrieve_localized_template_from_cache(self):
+        """ create template + localized template, and checks queries """
+        self.__create_localized_template()
+
+        with self.assertNumQueries(4):
+            template = MailTemplate.get_template("welcome", lang="es")
+            self.assertEquals(template.subject, "Bienvenido")
+            self.assertEquals(template.message, "Bienvenido a nuestro sitio. Nos alegra verte.")
