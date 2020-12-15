@@ -10,17 +10,19 @@ RUN apt-get update && apt-get install -y redis-server git \
 ENV LANG C.UTF-8
 
 RUN mkdir /mailer
-ADD ./demo/requirements.txt /mailer/requirements.txt
-RUN pip3 install --upgrade pip
-RUN pip3 install -r /mailer/requirements.txt
-
-ADD ./demo/ /mailer
-
-RUN python3 /mailer/manage.py migrate --noinput
-RUN python3 /mailer/manage.py loaddata /mailer/auth.json
-
+ADD . /mailer/
 WORKDIR /mailer
 
-CMD /bin/bash -c 'C_FORCE_ROOT=1 python3 /mailer/manage.py celeryd -Q default >& /dev/null & redis-server >& /dev/null & python3 /mailer/manage.py runserver 0.0.0.0:8000'
+RUN pip3 install --upgrade pip
+RUN pip3 install -r /mailer/demo/requirements.txt
+RUN pwd
+# install dbmail from the local source
+RUN python3 setup.py install
+
+RUN python3 /mailer/demo/manage.py migrate --noinput
+RUN python3 /mailer/demo/manage.py loaddata /mailer/demo/auth.json
+
+
+CMD /bin/bash -c 'C_FORCE_ROOT=1 python3 /mailer/demo/manage.py celeryd -Q default >& /dev/null & redis-server >& /dev/null & python3 /mailer/demo/manage.py runserver 0.0.0.0:8000'
 
 EXPOSE 8000

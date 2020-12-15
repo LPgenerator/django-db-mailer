@@ -29,8 +29,7 @@ diff-match-patch==20121119
 pytz>=2017.2
 django-sslserver==0.19
 twilio==6.19.1
-django-push-notifications==1.4.1
+django-push-notifications==2.0.0
 geoip2==2.9.0
 
 -e git+https://github.com/hint/django-admin-jqueryui.git#egg=django-admin-jqueryui
--e git+https://github.com/LPgenerator/django-db-mailer.git#egg=django-db-mailer
