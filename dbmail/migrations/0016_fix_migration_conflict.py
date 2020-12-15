@@ -11,7 +11,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dbmail', '0013_auto_20160923_2201'),
+        ('dbmail', '0015_mailtemplate_expiry'),
     ]
 
     operations = [
