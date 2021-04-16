@@ -1,6 +1,6 @@
 Django>=2.0,<2.1
 django-bootstrap-static==2.3.2
-django-debug-toolbar==1.7
+django-debug-toolbar==1.11.1
 django-extensions==1.7.8
 django-rosetta==0.7.13
 django-redis==4.7.0
