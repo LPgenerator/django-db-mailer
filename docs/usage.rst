@@ -248,7 +248,7 @@ Add urls route:
 
     # urls.py
     urlpatterns += patterns(
-        '', url(r'^dbmail/', include('dbmail.urls')),
+        '', re_path(r'^dbmail/', include('dbmail.urls')),
     )
 
 

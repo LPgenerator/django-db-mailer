@@ -153,7 +153,7 @@ and app will be work with Django 1.4+.
     }
     # urls.py
     urlpatterns += patterns(
-        '', url(r'^tinymce/', include('tinymce.urls')),
+        '', re_path(r'^tinymce/', include('tinymce.urls')),
     )
 
 
@@ -224,7 +224,7 @@ Add url patterns into urls.py:
 .. code-block:: python
 
     urlpatterns += patterns(
-        '', url(r'^dbmail/', include('dbmail.urls')),
+        '', re_path(r'^dbmail/', include('dbmail.urls')),
     )
 
 

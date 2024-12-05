@@ -155,7 +155,7 @@ After registration you must be have ``API KEY`` and ``APP ID``.
 .. code-block:: python
 
     urlpatterns += patterns(
-        '', url(r'^dbmail/', include('dbmail.urls')),
+        '', re_path(r'^dbmail/', include('dbmail.urls')),
     )
 
 
@@ -257,7 +257,7 @@ Safari examples
 .. code-block:: python
 
     urlpatterns += patterns(
-        '', url(r'^dbmail/', include('dbmail.urls')),
+        '', re_path(r'^dbmail/', include('dbmail.urls')),
     )
 
 

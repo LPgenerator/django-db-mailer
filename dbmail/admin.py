@@ -3,7 +3,7 @@
 import os
 
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect, render
 
 try:
@@ -11,7 +11,7 @@ try:
 except ImportError:
     from django.urls import reverse
 
-from django.conf.urls import url
+from django.urls import re_path
 from django.contrib import messages
 from django.contrib import admin
 
@@ -155,21 +155,21 @@ class MailTemplateAdmin(TranslationModelAdmin):
     def get_urls(self):
         urls = super(MailTemplateAdmin, self).get_urls()
         admin_urls = [
-            url(
+            re_path(
                 r'^(\d+)/sendmail/$',
                 self.admin_site.admin_view(self.send_mail_view),
                 name='send_mail_view'
             ),
-            url(
+            re_path(
                 r'^(\d+)/sendmail/apps/(.*?)/(.*?)/',
                 self.admin_site.admin_view(self.browse_model_fields_view),
                 name='browse_model_fields_view'),
-            url(
+            re_path(
                 r'^(\d+)/sendmail/apps/',
                 self.admin_site.admin_view(self.get_apps_view),
                 name='send_mail_apps_view'
             ),
-            url(
+            re_path(
                 r'^reset/cache/',
                 self.admin_site.admin_view(self.clean_cache_view),
                 name='clean_cache_view'
