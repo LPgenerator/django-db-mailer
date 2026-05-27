@@ -109,7 +109,7 @@ docs = [
 
 # Demo project — historical set of admin extensions.
 demo = [
-    "celery[redis]>=5.4",
+    "celery[redis]>=5.6.3",
     "redis>=5",
     "psycopg[binary]>=3.2",
     "django-grappelli>=4.0",
@@ -129,7 +129,7 @@ demo = [
 ]
 
 # Celery integration (optional at runtime).
-celery = ["celery[redis]>=5.4"]
+celery = ["celery[redis]>=5.6.3"]
 
 # Jinja2 sandbox renderer (DB_MAILER_USE_JINJA2_SANDBOX=True). Mitigates
 # SSTI via the default Django template engine — see dbmail/safe_template.py.
