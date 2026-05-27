@@ -2,4 +2,4 @@
 # Source of truth: pyproject.toml [project.dependencies].
 # Kept for backwards compatibility with anyone who used to do
 # `pip install -r requirements/package.txt`.
-Django>=4.2,<7.0
+Django>=5.2.14,<7.0

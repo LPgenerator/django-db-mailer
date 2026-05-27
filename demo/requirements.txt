@@ -5,29 +5,29 @@
 # touching pyproject extras.
 
 # Core
-Django>=4.2,<7.0
+Django>=5.2.14,<7.0
 celery[redis]>=5.4
 redis>=5
 
 # Admin extensions (historical set, all adapted to Django 4.2+ in 3.0).
-django-grappelli>=4.0
-django-ckeditor>=6.7
-django-reversion>=5.1
+django-grappelli>=5.0.0
+django-ckeditor>=6.7.3
+django-reversion>=6.2.0
 django-reversion-compare>=0.18
 diff-match-patch>=20241021
-django-tinymce>=4.1
+django-tinymce>=5.0.0
 
 # Dev tooling that ships with the demo.
-django-debug-toolbar>=4.4
-django-extensions>=3.2
+django-debug-toolbar>=6.3.0
+django-extensions>=4.1
 Werkzeug>=3
 ipython>=8
 
 # i18n management.
-django-rosetta>=0.10
+django-rosetta>=0.10.3
 
 # Cache and DB drivers.
-django-redis>=5.4
+django-redis>=6.0.0
 dj-database-url>=2.2
 psycopg[binary]>=3.2
 
