@@ -1,0 +1,18 @@
+apiVersion: v2
+name: django-db-mailer
+description: Reference deployment for the django-db-mailer demo project.
+type: application
+version: 3.0.0
+appVersion: "3.0.0"
+home: https://github.com/LPgenerator/django-db-mailer
+sources:
+  - https://github.com/LPgenerator/django-db-mailer
+maintainers:
+  - name: gotlium
+    email: gotlium@gmail.com
+keywords:
+  - django
+  - mail
+  - sms
+  - push
+  - celery

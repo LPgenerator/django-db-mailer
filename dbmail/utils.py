@@ -1,8 +1,8 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
 import logging
+from importlib import import_module
 
-from dbmail import import_module
 from django.utils.html import strip_tags
 
 logger = logging.getLogger(__name__)
@@ -22,16 +22,17 @@ def premailer_transform(text):
 
 
 def get_ip(request):
-    try:
-        from ipware.ip import get_real_ip
+    """Resolve client IP via ``django-ipware``.
 
-        ip = get_real_ip(request)
-        if ip is not None:
-            return ip.strip()
-    except ImportError:
-        pass
+    Falls back to the last token of ``REMOTE_ADDR`` if the header is
+    malformed (defensive — ipware should already cover this).
+    """
+    from ipware import get_client_ip
 
-    return request.META['REMOTE_ADDR'].split(',')[-1].strip()
+    ip, _routable = get_client_ip(request)
+    if ip:
+        return ip
+    return request.META.get("REMOTE_ADDR", "").split(",")[-1].strip() or None
 
 
 def html2text(message):

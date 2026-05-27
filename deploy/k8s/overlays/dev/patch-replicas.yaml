@@ -1,0 +1,14 @@
+# Single replica per role in dev — saves resources on a kind cluster.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbmail-web
+spec:
+  replicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbmail-worker
+spec:
+  replicas: 1

@@ -1,0 +1,39 @@
+name: E2E — docker compose
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+concurrency:
+  group: e2e-compose-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compose-up:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        django: ["4.2", "5.2", "6.0"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images
+        run: docker compose build --build-arg "PYTHON_VERSION=3.12"
+      - name: Up
+        env:
+          POSTGRES_USER: dbmail
+          POSTGRES_PASSWORD: dbmail
+          POSTGRES_DB: dbmail
+        run: docker compose up -d --wait --wait-timeout 180
+      - name: Smoke probes
+        run: |
+          curl --fail --retry 5 --retry-delay 3 http://127.0.0.1:8000/admin/login/
+          docker compose exec -T web python demo/manage.py check --deploy || true
+          docker compose exec -T web python demo/manage.py migrate --check
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs --tail 200
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

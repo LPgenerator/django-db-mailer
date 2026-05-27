@@ -1,31 +1,44 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
 import datetime
-import pickle
-import uuid
+import hashlib
+import json
+import logging
 import os
+import pickle
 import re
+import uuid
 
+from django.conf import settings
 from django.core import signing
-from django.utils.translation import ugettext_lazy as _
+from django.core.cache import cache
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError, models, transaction
+from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.timezone import now
-from django.core.cache import cache
-from django.utils import timezone
-from django.conf import settings
-from django.db import models
-
-from dbmail.defaults import (
-    PRIORITY_STEPS, UPLOAD_TO, DEFAULT_CATEGORY, AUTH_USER_MODEL,
-    DEFAULT_FROM_EMAIL, DEFAULT_PRIORITY, CACHE_TTL,
-    BACKEND, _BACKEND, BACKENDS_MODEL_CHOICES, MODEL_HTMLFIELD,
-    MODEL_SUBSCRIPTION_DATA_FIELD, SORTED_BACKEND_CHOICES
-)
+from django.utils.translation import gettext_lazy as _
 
 from dbmail import import_by_string
-from dbmail import python_2_unicode_compatible
-from dbmail.utils import premailer_transform, get_ip
+from dbmail.defaults import (
+    _BACKEND,
+    AUTH_USER_MODEL,
+    BACKEND,
+    BACKENDS_MODEL_CHOICES,
+    CACHE_TTL,
+    DEFAULT_CATEGORY,
+    DEFAULT_FROM_EMAIL,
+    DEFAULT_PRIORITY,
+    MODEL_HTMLFIELD,
+    MODEL_SUBSCRIPTION_DATA_FIELD,
+    PRIORITY_STEPS,
+    SIGNAL_CHOICES,
+    SORTED_BACKEND_CHOICES,
+    UPLOAD_TO,
+)
+from dbmail.utils import get_ip, premailer_transform
 
+logger = logging.getLogger(__name__)
 
 HTMLField = import_by_string(MODEL_HTMLFIELD)
 SubscriptionDataField = import_by_string(MODEL_SUBSCRIPTION_DATA_FIELD)
@@ -33,90 +46,138 @@ SubscriptionDataField = import_by_string(MODEL_SUBSCRIPTION_DATA_FIELD)
 
 def _upload_mail_file(instance, filename):
     if instance is not None:
-        ext = filename.split('.')[-1]
+        ext = filename.split(".")[-1]
         filename = "%s.%s" % (str(uuid.uuid4()), ext)
         return os.path.join(UPLOAD_TO, filename)
 
 
-@python_2_unicode_compatible
+class NaturalKeyManager(models.Manager):
+    """Manager driven by a single unique field for natural-key fixtures.
+
+    Pair it with a ``natural_key()`` method on the model that returns
+    ``(self.<lookup_field>,)``. Fixtures dumped/loaded with
+    ``--natural-foreign --natural-primary`` then survive renumbering of
+    the auto pk.
+
+    The lookup field is fixed on a per-model subclass via
+    :func:`natural_key_manager` so Django's reverse-relation machinery
+    (which calls ``__init__()`` with no arguments) keeps working.
+    """
+
+    use_in_migrations = True
+    lookup_field: str = "pk"
+
+    def get_by_natural_key(self, value):
+        return self.get(**{self.lookup_field: value})
+
+
+def natural_key_manager(field: str) -> NaturalKeyManager:
+    """Build a ``NaturalKeyManager`` instance bound to ``field``.
+
+    A fresh subclass is created so that Django can later re-instantiate
+    the manager class (e.g. for reverse FK descriptors) without losing
+    the lookup field.
+    """
+
+    cls = type(
+        "NaturalKeyManager_%s" % field,
+        (NaturalKeyManager,),
+        {"lookup_field": field},
+    )
+    return cls()
+
+
 class MailCategory(models.Model):
-    name = models.CharField(_('Category'), max_length=25, unique=True)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    name = models.CharField(_("Category"), max_length=25, unique=True)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+
+    objects = natural_key_manager("name")
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail category')
-        verbose_name_plural = _('Mail categories')
+        verbose_name = _("Mail category")
+        verbose_name_plural = _("Mail categories")
 
 
-@python_2_unicode_compatible
 class MailBaseTemplate(models.Model):
-    name = models.CharField(_('Name'), max_length=100, unique=True)
-    message = HTMLField(
-        _('Body'), help_text=_(
-            'Basic template for mail messages. {{content}} tag for msg.'))
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    name = models.CharField(_("Name"), max_length=100, unique=True)
+    message = HTMLField(_("Body"), help_text=_("Basic template for mail messages. {{content}} tag for msg."))
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+
+    objects = natural_key_manager("name")
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail base template')
-        verbose_name_plural = _('Mail base templates')
+        verbose_name = _("Mail base template")
+        verbose_name_plural = _("Mail base templates")
 
 
-@python_2_unicode_compatible
 class MailFromEmailCredential(models.Model):
-    host = models.CharField(_('Host'), max_length=50)
-    port = models.PositiveIntegerField(_('Port'))
-    username = models.CharField(
-        _('Username'), max_length=50, null=True, blank=True)
-    password = models.CharField(
-        _('Password'), max_length=50, null=True, blank=True)
-    use_tls = models.BooleanField(_('Use TLS'), default=False)
-    fail_silently = models.BooleanField(_('Fail silently'), default=False)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    host = models.CharField(_("Host"), max_length=50)
+    port = models.PositiveIntegerField(_("Port"))
+    username = models.CharField(_("Username"), max_length=50, null=True, blank=True)
+    password = models.CharField(_("Password"), max_length=128, null=True, blank=True)
+    use_tls = models.BooleanField(_("Use TLS"), default=False)
+    fail_silently = models.BooleanField(_("Fail silently"), default=False)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
 
     def _clean_cache(self):
         for obj in MailFromEmail.objects.filter(credential=self):
             obj._clean_template_cache()
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self._clean_cache()
-        super(MailFromEmailCredential, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        super(MailFromEmailCredential, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self._clean_cache()
 
     def __str__(self):
-        return '%s/%s' % (self.username, self.host)
+        return "%s/%s" % (self.username, self.host)
 
     class Meta:
-        verbose_name = _('Mail auth settings')
-        verbose_name_plural = _('Mail auth settings')
+        verbose_name = _("Mail auth settings")
+        verbose_name_plural = _("Mail auth settings")
 
 
-@python_2_unicode_compatible
 class MailFromEmail(models.Model):
-    name = models.CharField(_('Name'), max_length=100)
+    name = models.CharField(_("Name"), max_length=100)
     email = models.CharField(
-        _('Email'), max_length=75, unique=True,
-        help_text=_('For sms/tts/push you must specify name or number'))
+        _("Email"), max_length=75, unique=True, help_text=_("For sms/tts/push you must specify name or number")
+    )
     credential = models.ForeignKey(
-        MailFromEmailCredential, verbose_name=_('Auth credentials'),
-        blank=True, null=True, default=None, on_delete=models.CASCADE)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+        MailFromEmailCredential,
+        verbose_name=_("Auth credentials"),
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.CASCADE,
+    )
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+
+    objects = natural_key_manager("email")
+
+    def natural_key(self):
+        return (self.email,)
 
     @property
     def get_mail_from(self):
-        return u'%s <%s>' % (self.name, self.email)
+        return "%s <%s>" % (self.name, self.email)
 
     def _clean_template_cache(self):
         MailTemplate.clean_cache(from_email=self)
@@ -129,100 +190,110 @@ class MailFromEmail(models.Model):
                 username=str(self.credential.username),
                 password=str(self.credential.password),
                 use_tls=self.credential.use_tls,
-                fail_silently=self.credential.fail_silently
+                fail_silently=self.credential.fail_silently,
             )
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self._clean_template_cache()
-        super(MailFromEmail, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        super(MailFromEmail, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self._clean_template_cache()
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail from')
-        verbose_name_plural = _('Mail from')
+        verbose_name = _("Mail from")
+        verbose_name_plural = _("Mail from")
 
 
-@python_2_unicode_compatible
 class MailBcc(models.Model):
-    email = models.EmailField(_('Email'), unique=True)
-    is_active = models.BooleanField(_('Is active'), default=True)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    email = models.EmailField(_("Email"), unique=True)
+    is_active = models.BooleanField(_("Is active"), default=True)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+
+    objects = natural_key_manager("email")
+
+    def natural_key(self):
+        return (self.email,)
 
     def __clean_cache(self):
         MailTemplate.clean_cache(bcc_email=self)
 
     def save(self, *args, **kwargs):
-        super(MailBcc, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.__clean_cache()
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self.__clean_cache()
-        super(MailBcc, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.email
 
     class Meta:
-        verbose_name = _('Mail Bcc')
-        verbose_name_plural = _('Mail Bcc')
+        verbose_name = _("Mail Bcc")
+        verbose_name_plural = _("Mail Bcc")
 
 
-@python_2_unicode_compatible
 class MailTemplate(models.Model):
-    name = models.CharField(_('Template name'), max_length=100, db_index=True)
-    subject = models.CharField(_('Subject'), max_length=100)
+    name = models.CharField(_("Template name"), max_length=100, db_index=True)
+    subject = models.CharField(_("Subject"), max_length=100)
     from_email = models.ForeignKey(
-        MailFromEmail, null=True, blank=True,
-        verbose_name=_('Message from'), default=DEFAULT_FROM_EMAIL,
-        help_text=_('If not specified, then used default.'),
-        on_delete=models.SET_NULL)
-    bcc_email = models.ManyToManyField(
-        MailBcc, verbose_name=_('Bcc'), blank=True,
-        help_text='Blind carbon copy')
-    message = HTMLField(_('Body'))
-    slug = models.SlugField(
-        _('Slug'), unique=True,
-        help_text=_('Unique slug to use in code.'))
-    num_of_retries = models.PositiveIntegerField(
-        _('Number of retries'), default=1)
-    priority = models.SmallIntegerField(
-        _('Priority'), default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
-    is_html = models.BooleanField(
-        _('Is html'), default=True,
-        help_text=_('For sms/tts/push must be text not html'))
-    is_admin = models.BooleanField(_('For admin'), default=False)
-    is_active = models.BooleanField(_('Is active'), default=True)
-    enable_log = models.BooleanField(_('Logging enabled'), default=True)
+        MailFromEmail,
+        null=True,
+        blank=True,
+        verbose_name=_("Message from"),
+        default=DEFAULT_FROM_EMAIL,
+        help_text=_("If not specified, then used default."),
+        on_delete=models.SET_NULL,
+    )
+    bcc_email = models.ManyToManyField(MailBcc, verbose_name=_("Bcc"), blank=True, help_text="Blind carbon copy")
+    message = HTMLField(_("Body"))
+    slug = models.SlugField(_("Slug"), unique=True, help_text=_("Unique slug to use in code."))
+    num_of_retries = models.PositiveIntegerField(_("Number of retries"), default=1)
+    priority = models.SmallIntegerField(_("Priority"), default=DEFAULT_PRIORITY, choices=PRIORITY_STEPS)
+    is_html = models.BooleanField(_("Is html"), default=True, help_text=_("For sms/tts/push must be text not html"))
+    is_admin = models.BooleanField(_("For admin"), default=False)
+    is_active = models.BooleanField(_("Is active"), default=True)
+    enable_log = models.BooleanField(_("Logging enabled"), default=True)
     category = models.ForeignKey(
-        MailCategory, null=True, blank=True,
-        verbose_name=_('Category'), default=DEFAULT_CATEGORY,
-        on_delete=models.CASCADE)
+        MailCategory,
+        null=True,
+        blank=True,
+        verbose_name=_("Category"),
+        default=DEFAULT_CATEGORY,
+        on_delete=models.CASCADE,
+    )
     base = models.ForeignKey(
-        MailBaseTemplate, null=True, blank=True,
-        verbose_name=_('Basic template'), on_delete=models.CASCADE)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+        MailBaseTemplate, null=True, blank=True, verbose_name=_("Basic template"), on_delete=models.CASCADE
+    )
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
     context_note = models.TextField(
-        _('Context note'), null=True, blank=True,
-        help_text=_(
-            'This is simple note field for context variables with description.'
-        )
+        _("Context note"),
+        null=True,
+        blank=True,
+        help_text=_("This is simple note field for context variables with description."),
     )
     interval = models.PositiveIntegerField(
-        _('Send interval'), default=0,
+        _("Send interval"),
+        default=0,
         help_text=_(
             """
             Specify interval to send messages after sometime.
             Interval must be set in the seconds.
             """
-        ))
+        ),
+    )
+
+    objects = natural_key_manager("slug")
+
+    def natural_key(self):
+        return (self.slug,)
 
     def _clean_cache(self):
         cache.delete(self.slug, version=1)
@@ -235,11 +306,11 @@ class MailTemplate(models.Model):
     def _clean_non_html(self):
         if not self.is_html:
             self.message = strip_tags(self.message)
-            if hasattr(settings, 'MODELTRANSLATION_LANGUAGES'):
+            if hasattr(settings, "MODELTRANSLATION_LANGUAGES"):
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    message = strip_tags(getattr(self, 'message_%s' % lang))
+                    message = strip_tags(getattr(self, "message_%s" % lang))
                     if message:
-                        setattr(self, 'message_%s' % lang, message)
+                        setattr(self, "message_%s" % lang, message)
 
     def _premailer_transform(self):
         if self.is_html:
@@ -252,14 +323,14 @@ class MailTemplate(models.Model):
         if obj is not None:
             return obj
 
-        obj = cls.objects.select_related('from_email', 'base').get(slug=slug)
+        obj = cls.objects.select_related("from_email", "base").get(slug=slug)
         bcc_list = [o.email for o in obj.bcc_email.filter(is_active=1)]
         files_list = list(obj.files.all())
         auth_credentials = obj.from_email and obj.from_email.get_auth()
 
-        obj.__dict__['bcc_list'] = bcc_list
-        obj.__dict__['files_list'] = files_list
-        obj.__dict__['auth_credentials'] = auth_credentials
+        obj.__dict__["bcc_list"] = bcc_list
+        obj.__dict__["files_list"] = files_list
+        obj.__dict__["auth_credentials"] = auth_credentials
 
         cache.set(slug, obj, timeout=CACHE_TTL, version=1)
 
@@ -268,62 +339,65 @@ class MailTemplate(models.Model):
     def save(self, *args, **kwargs):
         self._premailer_transform()
         self._clean_non_html()
-        self.slug = re.sub(r'[^0-9a-zA-Z._-]', '', self.slug)
-        super(MailTemplate, self).save(*args, **kwargs)
+        self.slug = re.sub(r"[^0-9a-zA-Z._-]", "", self.slug)
+        super().save(*args, **kwargs)
         self._clean_cache()
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self._clean_cache()
-        super(MailTemplate, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail template')
-        verbose_name_plural = _('Mail templates')
+        verbose_name = _("Mail template")
+        verbose_name_plural = _("Mail templates")
 
 
-@python_2_unicode_compatible
 class MailFile(models.Model):
     template = models.ForeignKey(
-        MailTemplate, verbose_name=_('Template'), related_name='files',
-        on_delete=models.CASCADE)
-    name = models.CharField(_('Name'), max_length=100)
-    filename = models.FileField(_('File'), upload_to=_upload_mail_file)
+        MailTemplate, verbose_name=_("Template"), related_name="files", on_delete=models.CASCADE
+    )
+    name = models.CharField(_("Name"), max_length=100)
+    filename = models.FileField(_("File"), upload_to=_upload_mail_file)
 
     def _clean_cache(self):
         MailTemplate.clean_cache(pk=self.template.pk)
 
     def save(self, *args, **kwargs):
-        super(MailFile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self._clean_cache()
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self._clean_cache()
-        super(MailFile, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail file')
-        verbose_name_plural = _('Mail files')
+        verbose_name = _("Mail file")
+        verbose_name_plural = _("Mail files")
 
 
-@python_2_unicode_compatible
 class MailLogException(models.Model):
-    cache_key = 'ignored_exceptions'
+    cache_key = "ignored_exceptions"
     cache_version = 1
 
-    name = models.CharField(_('Exception'), max_length=150, unique=True)
-    ignore = models.BooleanField(_('Ignore'), default=False)
+    name = models.CharField(_("Exception"), max_length=150, unique=True)
+    ignore = models.BooleanField(_("Ignore"), default=False)
+
+    objects = natural_key_manager("name")
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        super(MailLogException, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self._clean_cache()
 
     @classmethod
@@ -331,9 +405,8 @@ class MailLogException(models.Model):
         obj = cache.get(cls.cache_key, version=cls.cache_version)
         if obj is not None:
             return obj
-        obj = cls.objects.values_list('name', flat=True).filter(ignore=True)
-        cache.set(
-            cls.cache_key, obj, timeout=CACHE_TTL, version=cls.cache_version)
+        obj = frozenset(cls.objects.values_list("name", flat=True).filter(ignore=True))
+        cache.set(cls.cache_key, obj, timeout=CACHE_TTL, version=cls.cache_version)
         return obj
 
     @classmethod
@@ -349,58 +422,78 @@ class MailLogException(models.Model):
         cls.get_ignored_exceptions()
 
     class Meta:
-        verbose_name = _('Mail Exception')
-        verbose_name_plural = _('Mail Exception')
+        verbose_name = _("Mail Exception")
+        verbose_name_plural = _("Mail Exception")
 
 
-@python_2_unicode_compatible
 class MailLog(models.Model):
-    is_sent = models.BooleanField(_('Is sent'), default=True, db_index=True)
-    template = models.ForeignKey(MailTemplate, verbose_name=_('Template'),
-                                 on_delete=models.CASCADE)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    user = models.ForeignKey(
-        AUTH_USER_MODEL, verbose_name=_('User'),
-        null=True, blank=True, on_delete=models.CASCADE)
-    error_message = models.TextField(_('Error message'), null=True, blank=True)
+    is_sent = models.BooleanField(_("Is sent"), default=True, db_index=True)
+    template = models.ForeignKey(MailTemplate, verbose_name=_("Template"), on_delete=models.CASCADE)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    user = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_("User"), null=True, blank=True, on_delete=models.CASCADE)
+    error_message = models.TextField(_("Error message"), null=True, blank=True)
     error_exception = models.ForeignKey(
-        MailLogException, null=True, blank=True, verbose_name=_('Exception'),
-        on_delete=models.CASCADE)
-    num_of_retries = models.PositiveIntegerField(
-        _('Number of retries'), default=1)
-    log_id = models.CharField(
-        _('Log ID'), max_length=60, editable=False, db_index=True)
+        MailLogException, null=True, blank=True, verbose_name=_("Exception"), on_delete=models.CASCADE
+    )
+    num_of_retries = models.PositiveIntegerField(_("Number of retries"), default=1)
+    log_id = models.CharField(_("Log ID"), max_length=60, editable=False, db_index=True)
     backend = models.CharField(
-        _('Backend'), max_length=25, editable=False, db_index=True,
-        choices=SORTED_BACKEND_CHOICES, default='mail')
+        _("Backend"), max_length=25, editable=False, db_index=True, choices=SORTED_BACKEND_CHOICES, default="mail"
+    )
     provider = models.CharField(
-        _('Provider'), max_length=250, editable=False, db_index=True,
-        default=None, null=True, blank=True)
+        _("Provider"), max_length=250, editable=False, db_index=True, default=None, null=True, blank=True
+    )
+    correlation_id = models.CharField(
+        _("Correlation ID"),
+        max_length=64,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text=_("Business correlation key (e.g. order_id, request_id)."),
+    )
 
     @staticmethod
     def store_email_log(log, email_list, mail_type):
         if log and email_list:
             for email in email_list:
-                MailLogEmail.objects.create(
-                    log=log, email=email, mail_type=mail_type
-                )
+                MailLogEmail.objects.create(log=log, email=email, mail_type=mail_type)
 
     @classmethod
-    def store(cls, to, cc, bcc, is_sent, template,
-              user, num, msg='', ex=None, log_id=None,
-              backend=None, provider=None):
+    def store(
+        cls,
+        to,
+        cc,
+        bcc,
+        is_sent,
+        template,
+        user,
+        num,
+        msg="",
+        ex=None,
+        log_id=None,
+        backend=None,
+        provider=None,
+        *,
+        correlation_id=None,
+    ):
         if ex is not None:
             ex = MailLogException.get_or_create(ex)
 
         log = cls.objects.create(
-            template=template, is_sent=is_sent, user=user,
-            log_id=log_id, num_of_retries=num, error_message=msg,
-            error_exception=ex, backend=_BACKEND.get(backend, backend),
-            provider=provider
+            template=template,
+            is_sent=is_sent,
+            user=user,
+            log_id=log_id,
+            num_of_retries=num,
+            error_message=msg,
+            error_exception=ex,
+            backend=_BACKEND.get(backend, backend),
+            provider=provider,
+            correlation_id=correlation_id,
         )
-        cls.store_email_log(log, to, 'to')
-        cls.store_email_log(log, cc, 'cc')
-        cls.store_email_log(log, bcc, 'bcc')
+        cls.store_email_log(log, to, "to")
+        cls.store_email_log(log, cc, "cc")
+        cls.store_email_log(log, bcc, "bcc")
 
     @classmethod
     def cleanup(cls, days=7):
@@ -411,34 +504,47 @@ class MailLog(models.Model):
         return self.template.name
 
     class Meta:
-        verbose_name = _('Mail log')
-        verbose_name_plural = _('Mail logs')
+        verbose_name = _("Mail log")
+        verbose_name_plural = _("Mail logs")
+        indexes = [
+            # Cleanup query: cls.objects.filter(created__lte=date).delete()
+            models.Index(fields=["created"], name="dbmail_maillog_created_idx"),
+            # Operational query: filter by template + sent flag.
+            models.Index(fields=["template", "is_sent"], name="dbmail_maillog_tpl_sent_idx"),
+        ]
 
 
-@python_2_unicode_compatible
 class MailLogEmail(models.Model):
     log = models.ForeignKey(MailLog, on_delete=models.CASCADE)
-    email = models.CharField(_('Recipient'), max_length=350)
-    mail_type = models.CharField(_('Mail type'), choices=(
-        ('cc', 'CC'),
-        ('bcc', 'BCC'),
-        ('to', 'TO'),
-    ), max_length=3)
+    email = models.CharField(_("Recipient"), max_length=350)
+    mail_type = models.CharField(
+        _("Mail type"),
+        choices=(
+            ("cc", "CC"),
+            ("bcc", "BCC"),
+            ("to", "TO"),
+        ),
+        max_length=3,
+    )
 
     def __str__(self):
         return self.email
 
     class Meta:
-        verbose_name = _('Mail log email')
-        verbose_name_plural = _('Mail log emails')
+        verbose_name = _("Mail log email")
+        verbose_name_plural = _("Mail log emails")
 
 
-@python_2_unicode_compatible
 class MailGroup(models.Model):
-    name = models.CharField(_('Group name'), max_length=100)
-    slug = models.SlugField(_('Slug'), unique=True)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    name = models.CharField(_("Group name"), max_length=100)
+    slug = models.SlugField(_("Slug"), unique=True)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+
+    objects = natural_key_manager("slug")
+
+    def natural_key(self):
+        return (self.slug,)
 
     def clean_cache(self):
         cache.delete(self.slug, version=4)
@@ -450,260 +556,438 @@ class MailGroup(models.Model):
         if emails is not None:
             return emails
 
-        emails = MailGroupEmail.objects.values_list(
-            'email', flat=True).filter(group__slug=slug)
+        emails = list(MailGroupEmail.objects.values_list("email", flat=True).filter(group__slug=slug))
 
         cache.set(slug, emails, timeout=CACHE_TTL, version=4)
         return emails
 
     def save(self, *args, **kwargs):
-        self.slug = re.sub(r'[^0-9a-zA-Z._-]', '', self.slug)
-        super(MailGroup, self).save(*args, **kwargs)
+        self.slug = re.sub(r"[^0-9a-zA-Z._-]", "", self.slug)
+        super().save(*args, **kwargs)
         self.clean_cache()
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self.clean_cache()
-        super(MailGroup, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail group')
-        verbose_name_plural = _('Mail groups')
+        verbose_name = _("Mail group")
+        verbose_name_plural = _("Mail groups")
 
 
-@python_2_unicode_compatible
 class MailGroupEmail(models.Model):
-    name = models.CharField(_('Username'), max_length=100)
-    email = models.CharField(
-        _('Email'), max_length=75,
-        help_text='For sms/tts you must specify number')
-    group = models.ForeignKey(
-        MailGroup, verbose_name=_('Group'), related_name='emails',
-        on_delete=models.CASCADE)
+    name = models.CharField(_("Username"), max_length=100)
+    email = models.CharField(_("Email"), max_length=75, help_text="For sms/tts you must specify number")
+    group = models.ForeignKey(MailGroup, verbose_name=_("Group"), related_name="emails", on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        super(MailGroupEmail, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.group.clean_cache()
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self.group.clean_cache()
-        super(MailGroupEmail, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.email
 
     class Meta:
-        verbose_name = _('Mail group email')
-        verbose_name_plural = _('Mail group emails')
-        unique_together = (('email', 'group',),)
+        verbose_name = _("Mail group email")
+        verbose_name_plural = _("Mail group emails")
+        unique_together = (
+            (
+                "email",
+                "group",
+            ),
+        )
 
 
-@python_2_unicode_compatible
 class Signal(models.Model):
+    # Legacy short names kept for backwards-compatible reads only.
+    # The active choice list is ``SIGNAL_CHOICES`` (dotted paths). See C2.
     SIGNALS = (
-        'pre_save',
-        'post_save',
-        'pre_delete',
-        'post_delete',
-        'm2m_changed',
+        "pre_save",
+        "post_save",
+        "pre_delete",
+        "post_delete",
+        "m2m_changed",
     )
-    name = models.CharField(_('Name'), max_length=100)
-    model = models.ForeignKey(
-        'contenttypes.ContentType', verbose_name=_('Model'),
-        on_delete=models.CASCADE)
+    name = models.CharField(_("Name"), max_length=100)
+    model = models.ForeignKey("contenttypes.ContentType", verbose_name=_("Model"), on_delete=models.CASCADE)
     signal = models.CharField(
-        _('Signal'), choices=zip(SIGNALS, SIGNALS),
-        max_length=15, default='post_save')
-    template = models.ForeignKey(MailTemplate, verbose_name=_('Template'),
-                                 on_delete=models.CASCADE)
+        _("Signal"),
+        choices=SIGNAL_CHOICES,
+        max_length=255,
+        default="django.db.models.signals.post_save",
+    )
+    template = models.ForeignKey(MailTemplate, verbose_name=_("Template"), on_delete=models.CASCADE)
     group = models.ForeignKey(
-        MailGroup, verbose_name=_('Email group'), blank=True, null=True,
-        help_text=_('You can use group email or rules for recipients.'),
-        on_delete=models.CASCADE)
+        MailGroup,
+        verbose_name=_("Email group"),
+        blank=True,
+        null=True,
+        help_text=_("You can use group email or rules for recipients."),
+        on_delete=models.CASCADE,
+    )
     rules = models.TextField(
         help_text=_(
-            'Template should return email to send message. Example:'
-            '{% if instance.is_active %}{{ instance.email }}{% endif %}.'
-            'You can return a multiple emails separated by commas.'
-        ), default='{{ instance.email }}', verbose_name=_('Rules'),
-        null=True, blank=True
+            "Template should return email to send message. Example:"
+            "{% if instance.is_active %}{{ instance.email }}{% endif %}."
+            "You can return a multiple emails separated by commas."
+        ),
+        default="{{ instance.email }}",
+        verbose_name=_("Rules"),
+        null=True,
+        blank=True,
     )
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
-    is_active = models.BooleanField(_('Is active'), default=True)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+    is_active = models.BooleanField(_("Is active"), default=True)
     receive_once = models.BooleanField(
-        _('Receive once'), default=True,
-        help_text=_('Signal will be receive and send once for new db row.'))
+        _("Receive once"), default=True, help_text=_("Signal will be receive and send once for new db row.")
+    )
     interval = models.PositiveIntegerField(
-        _('Send interval'), default=0,
+        _("Send interval"),
+        default=0,
         help_text=_(
-            'Specify interval to send messages after sometime. '
-            'That very helpful for mailing on enterprise products.'
-            'Interval must be set in the seconds.'
-        ))
+            "Specify interval to send messages after sometime. "
+            "That very helpful for mailing on enterprise products."
+            "Interval must be set in the seconds."
+        ),
+    )
     update_model = models.BooleanField(
-        _('Update model state'), default=False,
+        _("Update model state"),
+        default=False,
         help_text=_(
             """
             If you are using interval and want to update object state,
             you can use this flag and refer to the variable
             {{current_instance}}
-            """))
+            """
+        ),
+    )
 
     def is_sent(self, pk):
         if pk is not None:
             if self.receive_once is True:
-                return SignalLog.objects.filter(
-                    model=self.model, model_pk=pk, signal=self).exists()
+                return SignalLog.objects.filter(model=self.model, model_pk=pk, signal=self).exists()
             return False
 
     def mark_as_sent(self, pk):
-        if pk is not None:
-            SignalLog.objects.create(
-                model=self.model, model_pk=pk, signal=self
-            )
+        if pk is None:
+            return
+        try:
+            with transaction.atomic():
+                SignalLog.objects.create(model=self.model, model_pk=pk, signal=self)
+        except IntegrityError:
+            # Lost the race to a parallel worker; idempotent return.
+            pass
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail signal')
-        verbose_name_plural = _('Mail signals')
+        verbose_name = _("Mail signal")
+        verbose_name_plural = _("Mail signals")
 
 
-@python_2_unicode_compatible
 class SignalLog(models.Model):
-    model = models.ForeignKey('contenttypes.ContentType',
-                              on_delete=models.CASCADE)
+    model = models.ForeignKey("contenttypes.ContentType", on_delete=models.CASCADE)
     model_pk = models.BigIntegerField()
     signal = models.ForeignKey(Signal, on_delete=models.CASCADE)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
 
     def __str__(self):
         return self.signal.name
 
     class Meta:
-        verbose_name = _('Signal log')
-        verbose_name_plural = _('Signal logs')
+        verbose_name = _("Signal log")
+        verbose_name_plural = _("Signal logs")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["model", "model_pk", "signal"],
+                name="dbmail_signallog_unique_send",
+            ),
+        ]
 
 
 class SignalDeferredDispatch(models.Model):
-    args = models.TextField()
-    kwargs = models.TextField()
-    params = models.TextField()
+    """Deferred Celery payloads for the dbmail signal pipeline.
+
+    Step 1 of the pickle → JSONField migration (ADR-0003). JSONField
+    columns ``*_json`` live next to the legacy TextField pickle blobs.
+    Writes are dual-write (JSON best-effort + pickle); reads are
+    JSON-first with pickle fallback for legacy rows. Pickle path is
+    removed in 4.0.
+    """
+
+    # Legacy pickle storage (kept until 4.0 — see ADR-0003). Bytes,
+    # not text: pickle.dumps returns bytes and Postgres `bytea` /
+    # MySQL `LONGBLOB` round-trip them losslessly. Pre-3.0.0 stored
+    # them as str via Django's TextField, which corrupted the payload.
+    args = models.BinaryField(default=b"")
+    kwargs = models.BinaryField(default=b"")
+    params = models.BinaryField(default=b"")
+
+    # JSONField storage (ADR-0003 step 1). NULL for rows written before
+    # 3.0 or for rows whose payload could not be JSON-serialized.
+    args_json = models.JSONField(null=True, blank=True, default=None)
+    kwargs_json = models.JSONField(null=True, blank=True, default=None)
+    params_json = models.JSONField(null=True, blank=True, default=None)
+
     eta = models.DateTimeField(db_index=True)
-    done = models.NullBooleanField(default=None)
+    done = models.BooleanField(null=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    def _load_field(self, json_value, pickle_blob):
+        """Prefer JSON; fall back to pickle for legacy rows.
+
+        Pickle deserialization is gated by
+        ``settings.DB_MAILER_ALLOW_PICKLE_LEGACY`` (default ``False``).
+        Operators upgrading from 2.x must explicitly opt in until they
+        run ``manage.py dbmail_migrate_pickle`` (introduced in 3.1) to
+        rewrite legacy rows.
+
+        See ADR-0003. Pickle path is removed in 4.0.
+        """
+        if json_value is not None:
+            return json_value
+        from django.conf import settings as _settings
+
+        if not getattr(_settings, "DB_MAILER_ALLOW_PICKLE_LEGACY", False):
+            raise RuntimeError(
+                f"SignalDeferredDispatch row pk={self.pk} has only legacy "
+                "pickle payload. Set DB_MAILER_ALLOW_PICKLE_LEGACY=True or "
+                "rewrite the row to JSON. See ADR-0003."
+            )
+        return pickle.loads(pickle_blob)  # legacy data only, ADR-0003
 
     def run_task(self):
         if self.done is False:
             from dbmail import tasks
 
-            tasks.deferred_signal.apply_async(
-                args=pickle.loads(self.args),
-                kwargs=pickle.loads(self.kwargs),
-                **pickle.loads(self.params)
-            )
+            args = self._load_field(self.args_json, self.args)
+            kwargs = self._load_field(self.kwargs_json, self.kwargs)
+            params = self._load_field(self.params_json, self.params)
+            tasks.deferred_signal.apply_async(args=args, kwargs=kwargs, **params)
+
+    @staticmethod
+    def _to_json_or_none(payload):
+        """Return ``payload`` if JSON-serializable, otherwise ``None``.
+
+        Caller falls back to pickle when ``None`` is returned. Uses
+        ``DjangoJSONEncoder`` so the probe matches the encoder
+        ``JSONField.save()`` will use — anything that survives the probe
+        is safe to store in ``args_json`` / ``kwargs_json`` /
+        ``params_json``. Common Django-friendly extras (``datetime``,
+        ``UUID``, ``Decimal``, ``Promise``) pass; model classes,
+        callables, sockets, etc. are rejected.
+        """
+        try:
+            json.dumps(payload, cls=DjangoJSONEncoder)
+        except (TypeError, ValueError):
+            return None
+        return payload
 
     @classmethod
     def add_task(cls, args, kwargs, params, interval):
         eta = now() + datetime.timedelta(seconds=interval)
-        dump = pickle.dumps
+        args_json = cls._to_json_or_none(args)
+        kwargs_json = cls._to_json_or_none(kwargs)
+        params_json = cls._to_json_or_none(params)
+        if None in (args_json, kwargs_json, params_json):
+            logger.warning(
+                "SignalDeferredDispatch: payload not JSON-serializable, "
+                "falling back to pickle for legacy compatibility (ADR-0003)."
+            )
         return cls.objects.create(
-            args=dump(args), kwargs=dump(kwargs),
-            params=dump(params), eta=eta
+            args=pickle.dumps(args),
+            kwargs=pickle.dumps(kwargs),
+            params=pickle.dumps(params),
+            args_json=args_json,
+            kwargs_json=kwargs_json,
+            params_json=params_json,
+            eta=eta,
         )
 
     class Meta:
-        index_together = (('eta', 'done'),)
+        indexes = [
+            models.Index(fields=["eta", "done"], name="dbmail_signaldef_eta_done_idx"),
+        ]
 
 
-@python_2_unicode_compatible
 class ApiKey(models.Model):
-    name = models.CharField(_('Name'), max_length=25)
-    api_key = models.CharField(_('Api key'), max_length=32, unique=True)
-    is_active = models.BooleanField(_('Is active'), default=True)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    """Authenticator for the public ``send_by_dbmail`` endpoint.
+
+    See ADR-0006. Plain ``api_key`` column is kept for the 3.x
+    compatibility window; ``password_hash`` is the canonical credential
+    store and is rehashed on first successful authentication for legacy
+    rows. The plain column is removed in 4.0.
+    """
+
+    name = models.CharField(_("Name"), max_length=25)
+    # Legacy plain-text key. Kept in 3.x for installations migrating
+    # from 2.5 — populated as a fallback while password_hash is empty.
+    # Removed in 4.0 (ADR-0006).
+    api_key = models.CharField(_("Api key"), max_length=32, unique=True)
+    # Argon2 / PBKDF2 hash via django.contrib.auth.hashers.
+    # Empty for legacy rows until first successful authentication.
+    password_hash = models.CharField(_("Password hash"), max_length=255, blank=True, default="")
+    is_active = models.BooleanField(_("Is active"), default=True)
+    last_used_at = models.DateTimeField(_("Last used at"), null=True, blank=True, db_index=True)
+    last_used_ip = models.GenericIPAddressField(_("Last used IP"), null=True, blank=True)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+
+    @staticmethod
+    def _cache_key(raw_key):
+        """Cache key derived from the raw API key, never stores raw key."""
+        return "dbmail:apikey:" + hashlib.sha256(raw_key.encode("utf-8")).hexdigest()
 
     def _clean_cache(self):
+        # Drop both legacy (plain) and current (hashed) cache entries.
         cache.delete(self.api_key)
+        cache.delete(self._cache_key(self.api_key))
 
     @classmethod
     def clean_cache(cls):
-        for api in cls.objects.all():
-            api._clean_cache()
+        # Collect every cache key (legacy plain + hashed) and drop them
+        # in a single cache.delete_many call. iterator() keeps the
+        # queryset off-heap for large ApiKey tables.
+        keys: list[str] = []
+        for raw_key in cls.objects.values_list("api_key", flat=True).iterator(chunk_size=500):
+            keys.append(raw_key)
+            keys.append(cls._cache_key(raw_key))
+        if keys:
+            cache.delete_many(keys)
+
+    def is_valid_key(self, raw_key):
+        """Constant-time check ``raw_key`` against ``password_hash``.
+
+        Falls back to plain-text comparison for legacy rows that have
+        not been rehashed yet (``password_hash`` empty). On a successful
+        legacy match, rehash the key in place so subsequent calls go
+        the secure path. Returns ``True`` / ``False``.
+        """
+        from django.contrib.auth.hashers import check_password, make_password
+
+        if self.password_hash:
+            return check_password(raw_key, self.password_hash)
+        # Legacy row — plain compare, rehash on success.
+        if raw_key == self.api_key:
+            self.password_hash = make_password(raw_key)
+            type(self).objects.filter(pk=self.pk).update(password_hash=self.password_hash)
+            return True
+        return False
+
+    def mark_used(self, ip=None):
+        """Record successful authentication metadata."""
+        type(self).objects.filter(pk=self.pk).update(last_used_at=now(), last_used_ip=ip)
 
     def save(self, *args, **kwargs):
-        super(ApiKey, self).save(*args, **kwargs)
+        # Maintain password_hash in sync with the raw key whenever
+        # an admin updates the row.
+        if self.api_key and not self.password_hash:
+            from django.contrib.auth.hashers import make_password
+
+            self.password_hash = make_password(self.api_key)
+        super().save(*args, **kwargs)
         self._clean_cache()
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         self._clean_cache()
-        super(ApiKey, self).delete(using)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _('Mail API')
-        verbose_name_plural = _('Mail API')
+        verbose_name = _("Mail API")
+        verbose_name_plural = _("Mail API")
 
 
-@python_2_unicode_compatible
+class ApiKeyUsageAudit(models.Model):
+    """Persistent audit trail for ``/api/dbmail/`` requests (ADR-0006).
+
+    The ``send_by_dbmail`` view previously logged outcomes via
+    :mod:`logging` only — sufficient for forensics when log shipping is
+    in place, useless when an operator inherits a project without one.
+    This model records every authentication / authorisation outcome so
+    operators can answer "who sent what, when, from where" from the
+    Django admin or a SQL query.
+
+    ``api_key`` uses ``on_delete=PROTECT`` so a delete attempt on
+    ``ApiKey`` surfaces the audit history instead of silently shedding
+    it. ``api_key_name`` duplicates :attr:`ApiKey.name` to keep the
+    audit line readable if the FK is ever set to NULL via a future
+    schema change.
+    """
+
+    api_key = models.ForeignKey(
+        ApiKey,
+        verbose_name=_("API key"),
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+    api_key_name = models.CharField(_("API key name"), max_length=25, null=True, blank=True)
+    ip = models.CharField(_("IP"), max_length=45, null=True, blank=True)
+    ua = models.CharField(_("User-Agent"), max_length=512, null=True, blank=True)
+    action = models.CharField(_("Action"), max_length=32, db_index=True)
+    success = models.BooleanField(_("Success"), default=False)
+    detail = models.CharField(_("Detail"), max_length=255, null=True, blank=True)
+    created = models.DateTimeField(_("Created"), auto_now_add=True, db_index=True)
+
+    class Meta:
+        verbose_name = _("API key usage audit")
+        verbose_name_plural = _("API key usage audit")
+        ordering = ("-created",)
+
+    def __str__(self):
+        return f"{self.created} {self.action} {self.api_key_name}"
+
+
 class MailLogTrack(models.Model):
-    mail_log = models.ForeignKey(MailLog, verbose_name=_('Log'),
-                                 on_delete=models.CASCADE)
-    counter = models.PositiveIntegerField(_('Counter'), default=0)
-    ip = models.GenericIPAddressField(_('IP'))
-    ua = models.CharField(
-        _('User Agent'), max_length=350, blank=True, null=True)
+    mail_log = models.ForeignKey(MailLog, verbose_name=_("Log"), on_delete=models.CASCADE)
+    counter = models.PositiveIntegerField(_("Counter"), default=0)
+    ip = models.GenericIPAddressField(_("IP"))
+    ua = models.CharField(_("User Agent"), max_length=350, blank=True, null=True)
 
-    ua_os = models.CharField(_('OS'), max_length=100, blank=True, null=True)
-    ua_os_version = models.CharField(
-        _('OS version'), max_length=100, blank=True, null=True)
+    ua_os = models.CharField(_("OS"), max_length=100, blank=True, null=True)
+    ua_os_version = models.CharField(_("OS version"), max_length=100, blank=True, null=True)
 
-    ua_dist = models.CharField(
-        _('Dist name'), max_length=20, blank=True, null=True)
-    ua_dist_version = models.CharField(
-        _('Dist version'), max_length=100, blank=True, null=True)
-    ua_browser = models.CharField(
-        _('Browser'), max_length=100, blank=True, null=True)
-    ua_browser_version = models.CharField(
-        _('Browser version'), max_length=20, blank=True, null=True)
-    ip_area_code = models.CharField(
-        _('Area code'), max_length=255, blank=True, null=True)
-    ip_city = models.CharField(
-        _('City'), max_length=255, blank=True, null=True)
-    ip_country_code = models.CharField(
-        _('Country code'), max_length=255, blank=True, null=True)
-    ip_country_code3 = models.CharField(
-        _('Country code3'), max_length=255, blank=True, null=True)
-    ip_country_name = models.CharField(
-        _('Country name'), max_length=255, blank=True, null=True)
-    ip_dma_code = models.CharField(
-        _('Dma code'), max_length=255, blank=True, null=True)
-    ip_latitude = models.CharField(
-        _('Latitude'), max_length=255, blank=True, null=True)
-    ip_longitude = models.CharField(
-        _('Longitude'), max_length=255, blank=True, null=True)
-    ip_postal_code = models.CharField(
-        _('Postal code'), max_length=255, blank=True, null=True)
-    ip_region = models.CharField(
-        _('Region'), max_length=255, blank=True, null=True)
+    ua_dist = models.CharField(_("Dist name"), max_length=20, blank=True, null=True)
+    ua_dist_version = models.CharField(_("Dist version"), max_length=100, blank=True, null=True)
+    ua_browser = models.CharField(_("Browser"), max_length=100, blank=True, null=True)
+    ua_browser_version = models.CharField(_("Browser version"), max_length=20, blank=True, null=True)
+    ip_area_code = models.CharField(_("Area code"), max_length=255, blank=True, null=True)
+    ip_city = models.CharField(_("City"), max_length=255, blank=True, null=True)
+    ip_country_code = models.CharField(_("Country code"), max_length=255, blank=True, null=True)
+    ip_country_code3 = models.CharField(_("Country code3"), max_length=255, blank=True, null=True)
+    ip_country_name = models.CharField(_("Country name"), max_length=255, blank=True, null=True)
+    ip_dma_code = models.CharField(_("Dma code"), max_length=255, blank=True, null=True)
+    ip_latitude = models.CharField(_("Latitude"), max_length=255, blank=True, null=True)
+    ip_longitude = models.CharField(_("Longitude"), max_length=255, blank=True, null=True)
+    ip_postal_code = models.CharField(_("Postal code"), max_length=255, blank=True, null=True)
+    ip_region = models.CharField(_("Region"), max_length=255, blank=True, null=True)
 
-    is_read = models.BooleanField(_('Is read'), default=False)
-    created = models.DateTimeField(_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(_('Updated'), auto_now=True)
+    is_read = models.BooleanField(_("Is read"), default=False)
+    created = models.DateTimeField(_("Created"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
 
     def __str__(self):
         return self.mail_log.template.name
 
     class Meta:
-        verbose_name = _('Mail Tracking')
-        verbose_name_plural = _('Mail Tracking')
+        verbose_name = _("Mail Tracking")
+        verbose_name_plural = _("Mail Tracking")
+        indexes = [
+            # Tracker hot path: lookup by mail_log + ip pair.
+            models.Index(fields=["mail_log", "ip"], name="dbmail_maillogtr_ml_ip_idx"),
+        ]
 
     def detect_ua(self):
         try:
@@ -711,37 +995,34 @@ class MailLogTrack(models.Model):
                 import httpagentparser
 
                 data = httpagentparser.detect(self.ua)
-                get = lambda b, k: data.get(b, {}).get(k, '')
 
-                self.ua_os = get('os', 'name')
-                self.ua_os_version = get('os', 'version')
+                def _get(block, key):
+                    return data.get(block, {}).get(key, "")
 
-                self.ua_dist = get('platform', 'name')
-                self.ua_dist_version = get('platform', 'version')
+                get = _get
 
-                self.ua_browser = get('browser', 'name')
-                self.ua_browser_version = get('browser', 'version')
+                self.ua_os = get("os", "name")
+                self.ua_os_version = get("os", "version")
+
+                self.ua_dist = get("platform", "name")
+                self.ua_dist_version = get("platform", "version")
+
+                self.ua_browser = get("browser", "name")
+                self.ua_browser_version = get("browser", "version")
 
         except ImportError:
             pass
 
     def detect_geo(self):
         if self.ip and self.counter == 0:
-            try:
-                # Django 1.9+
-                from django.contrib.gis.geoip2 import GeoIP2 as GeoIP
-                from django.contrib.gis.geoip2 import GeoIP2Exception \
-                    as GeoIPException
-            except ImportError:
-                # Django 1.8
-                from django.contrib.gis.geoip import GeoIP
-                from django.contrib.gis.geoip import GeoIPException
+            from django.contrib.gis.geoip2 import GeoIP2 as GeoIP
+            from django.contrib.gis.geoip2 import GeoIP2Exception as GeoIPException
 
             try:
                 g = GeoIP()
                 info = g.city(self.ip) or dict()
-                for (k, v) in info.items():
-                    setattr(self, 'ip_%s' % k, v)
+                for k, v in info.items():
+                    setattr(self, "ip_%s" % k, v)
             except GeoIPException:
                 pass
 
@@ -755,12 +1036,15 @@ class MailLogTrack(models.Model):
         self.detect_ua()
         self.detect_geo()
         self.detect_open()
-        super(MailLogTrack, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @classmethod
     def track(cls, http_meta, encrypted):
-        class Request(object):
+        from django.http.request import HttpHeaders
+
+        class Request:
             META = http_meta
+            headers = HttpHeaders(http_meta)
 
         try:
             request = Request()
@@ -773,7 +1057,7 @@ class MailLogTrack(models.Model):
                 MailLogTrack.objects.create(
                     mail_log=mail_log,
                     ip=get_ip(request),
-                    ua=request.META.get('HTTP_USER_AGENT'),
+                    ua=request.headers.get("User-Agent"),
                     is_read=True,
                 )
             else:
@@ -784,32 +1068,23 @@ class MailLogTrack(models.Model):
 
 class MailSubscriptionAbstract(models.Model):
     title = models.CharField(null=True, max_length=350, blank=True)
-    user = models.ForeignKey(
-        AUTH_USER_MODEL, verbose_name=_('User'), null=True, blank=True,
-        on_delete=models.CASCADE)
-    backend = models.CharField(
-        _('Backend'), choices=BACKENDS_MODEL_CHOICES, max_length=50,
-        default=BACKEND.get('mail'))
-    start_hour = models.CharField(
-        _('Start hour'), default='00:00', max_length=5)
-    end_hour = models.CharField(_('End hour'), default='23:59', max_length=5)
-    is_enabled = models.BooleanField(
-        _('Is enabled'), default=True, db_index=True)
-    is_checked = models.BooleanField(
-        _('Is checked'), default=False, db_index=True)
-    defer_at_allowed_hours = models.BooleanField(
-        _('Defer at allowed hours'), default=False)
+    user = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_("User"), null=True, blank=True, on_delete=models.CASCADE)
+    backend = models.CharField(_("Backend"), choices=BACKENDS_MODEL_CHOICES, max_length=50, default=BACKEND.get("mail"))
+    start_hour = models.CharField(_("Start hour"), default="00:00", max_length=5)
+    end_hour = models.CharField(_("End hour"), default="23:59", max_length=5)
+    is_enabled = models.BooleanField(_("Is enabled"), default=True, db_index=True)
+    is_checked = models.BooleanField(_("Is checked"), default=False, db_index=True)
+    defer_at_allowed_hours = models.BooleanField(_("Defer at allowed hours"), default=False)
     address = models.CharField(
-        _('Address'), max_length=350, db_index=True,
-        help_text=_('Must be phone number/email/token'))
+        _("Address"), max_length=350, db_index=True, help_text=_("Must be phone number/email/token")
+    )
     data = SubscriptionDataField(null=True, blank=True)
 
-    def send_confirmation_link(
-            self, slug='subs-confirmation', *args, **kwargs):
+    def send_confirmation_link(self, slug="subs-confirmation", *args, **kwargs):
 
         from dbmail import db_sender
 
-        kwargs['backend'] = self.backend
+        kwargs["backend"] = self.backend
         db_sender(slug, self.address, *args, **kwargs)
 
     @staticmethod
@@ -826,24 +1101,27 @@ class MailSubscriptionAbstract(models.Model):
 
     @staticmethod
     def convert_to_date(value):
-        hour, minute = value.split(':')
+        hour, minute = value.split(":")
         return datetime.timedelta(hours=int(hour), minutes=int(minute))
 
     @classmethod
     def mix_hour_with_date(cls, value):
-        return datetime.datetime.strptime(
-            cls.get_now().strftime('%Y-%m-%d ') + value, '%Y-%m-%d %H:%M')
+        return datetime.datetime.strptime(cls.get_now().strftime("%Y-%m-%d ") + value, "%Y-%m-%d %H:%M")
 
     @classmethod
     def get_notification_list(cls, user_id, **kwargs):
-        kwargs.update({
-            'is_enabled': True,
-            'is_checked': True,
-        })
+        kwargs.update(
+            {
+                "is_enabled": True,
+                "is_checked": True,
+            }
+        )
         if user_id is not None:
-            kwargs.update({
-                'user_id': user_id,
-            })
+            kwargs.update(
+                {
+                    "user_id": user_id,
+                }
+            )
         return cls.objects.filter(**kwargs)
 
     @classmethod
@@ -853,36 +1131,31 @@ class MailSubscriptionAbstract(models.Model):
 
         now_hour = cls.get_current_hour()
 
-        context_dict = kwargs.pop('context', {})
-        context_instance = kwargs.pop('context_instance', None)
+        context_dict = kwargs.pop("context", {})
+        context_instance = kwargs.pop("context_instance", None)
 
         sub_filter = sub_filter if isinstance(sub_filter, dict) else {}
 
-        for method_id in cls.get_notification_list(
-                user_id, **sub_filter).values_list('pk', flat=True):
-
-            method = cls.objects.get(pk=method_id)
+        queryset = cls.get_notification_list(user_id, **sub_filter)
+        for method in queryset.iterator(chunk_size=500):
             method_kwargs = kwargs.copy()
 
-            method_kwargs['send_at_date'] = None
+            method_kwargs["send_at_date"] = None
             start_hour = cls.convert_to_date(method.start_hour)
             end_hour = cls.convert_to_date(method.end_hour)
 
             if not (start_hour <= now_hour <= end_hour):
-                if (method.defer_at_allowed_hours and
-                        method_kwargs['use_celery']):
-
-                    method_kwargs['send_at_date'] = cls.mix_hour_with_date(
-                        method.start_hour)
+                use_celery = method_kwargs.get("use_celery", False)
+                if method.defer_at_allowed_hours and use_celery:
+                    method_kwargs["send_at_date"] = cls.mix_hour_with_date(method.start_hour)
                 else:
                     continue
-            method_kwargs['backend'] = method.backend
+            method_kwargs["backend"] = method.backend
             method_kwargs = method.update_notify_kwargs(**method_kwargs)
 
             use_slug = method.get_final_slug(slug, method.get_short_type())
 
-            db_sender(use_slug, method.address, context_dict,
-                      context_instance, **method_kwargs)
+            db_sender(use_slug, method.address, context_dict, context_instance, **method_kwargs)
 
     def update_notify_kwargs(self, **kwargs):
         return kwargs
@@ -900,21 +1173,24 @@ class MailSubscriptionAbstract(models.Model):
 
     def get_extra_slugs(self, slug):
         return [
-            u'{}-{}'.format(slug, self.get_short_type()),
+            f"{slug}-{self.get_short_type()}",
         ]
 
     def get_short_type(self):
-        return self.backend.split('.')[-1]
+        return self.backend.split(".")[-1]
 
     class Meta:
         abstract = True
 
 
-@python_2_unicode_compatible
 class MailSubscription(MailSubscriptionAbstract):
     class Meta:
-        verbose_name = _('Mail Subscription')
-        verbose_name_plural = _('Mail Subscriptions')
+        verbose_name = _("Mail Subscription")
+        verbose_name_plural = _("Mail Subscriptions")
+        indexes = [
+            # Unsubscribe / dedup lookup is keyed on (address, backend).
+            models.Index(fields=["address", "backend"], name="dbmail_mailsub_addr_bk_idx"),
+        ]
 
     def __str__(self):
         if self.user:
@@ -922,7 +1198,7 @@ class MailSubscription(MailSubscriptionAbstract):
         return self.address
 
 
-'''
+"""
 class MailSubscriptionGroup(models.Model):
     group = models.CharField(max_length=100, unique=True)
 
@@ -939,4 +1215,4 @@ class MailNotification(models.Model):
         for notify in cls.objects.filter(notify__user=user, group=group):
             send_db_subscription(
                 mail_slug, user.pk, {'pk': notify.pk}, **kwargs)
-'''
+"""

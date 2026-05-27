@@ -1,0 +1,14 @@
+# Production scales web up — HPA can grow further on demand.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbmail-web
+spec:
+  replicas: 3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbmail-worker
+spec:
+  replicas: 3

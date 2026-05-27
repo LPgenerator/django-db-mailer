@@ -1,18 +1,13 @@
-# -*- encoding: utf-8 -*-
-
-try:
-    from httplib import HTTPConnection
-    from urllib import urlencode
-except ImportError:
-    from http.client import HTTPConnection
-    from urllib.parse import urlencode
+from __future__ import annotations
 
 from base64 import b64encode
+from http.client import HTTPSConnection
+from urllib.parse import urlencode
 
 from django.conf import settings
 
-from dbmail.providers.prowl.push import from_unicode
 from dbmail import get_version
+from dbmail.providers._compat import from_unicode
 
 
 class IQSMSError(Exception):
@@ -26,27 +21,28 @@ def send(sms_to, sms_body, **kwargs):
     """
     headers = {
         "User-Agent": "DBMail/%s" % get_version(),
-        'Authorization': 'Basic %s' % b64encode(
-            "%s:%s" % (
-                settings.IQSMS_API_LOGIN, settings.IQSMS_API_PASSWORD
-            )).decode("ascii")
+        "Authorization": "Basic %s"
+        % b64encode(("%s:%s" % (settings.IQSMS_API_LOGIN, settings.IQSMS_API_PASSWORD)).encode("ascii")).decode(
+            "ascii"
+        ),
     }
 
-    kwargs.update({
-        'phone': sms_to,
-        'text': from_unicode(sms_body),
-        'sender': kwargs.pop('sms_from', settings.IQSMS_FROM)
-    })
+    kwargs.update(
+        {"phone": sms_to, "text": from_unicode(sms_body), "sender": kwargs.pop("sms_from", settings.IQSMS_FROM)}
+    )
 
-    http = HTTPConnection(kwargs.pop("api_url", "gate.iqsms.ru"))
-    http.request("GET", "/send/?" + urlencode(kwargs), headers=headers)
-    response = http.getresponse()
+    http = HTTPSConnection(kwargs.pop("api_url", "gate.iqsms.ru"), timeout=10)
+    try:
+        http.request("GET", "/send/?" + urlencode(kwargs), headers=headers)
+        response = http.getresponse()
 
-    if response.status != 200:
-        raise IQSMSError(response.reason)
+        if response.status != 200:
+            raise IQSMSError(response.reason)
 
-    body = response.read().strip()
-    if '=accepted' not in body:
+        body = response.read().decode("utf-8").strip()
+    finally:
+        http.close()
+    if "=accepted" not in body:
         raise IQSMSError(body)
 
-    return int(body.split('=')[0])
+    return int(body.split("=")[0])

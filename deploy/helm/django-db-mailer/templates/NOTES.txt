@@ -1,0 +1,21 @@
+Thanks for installing {{ .Chart.Name }} v{{ .Chart.AppVersion }}.
+
+1. Wait for the rollout to finish:
+
+   kubectl rollout status deployment/{{ include "dbmail.fullname" . }}-web \
+     -n {{ .Release.Namespace }} --timeout=180s
+
+2. Forward the web service to localhost:
+
+   kubectl port-forward -n {{ .Release.Namespace }} \
+     svc/{{ include "dbmail.fullname" . }}-web {{ .Values.service.port }}:{{ .Values.service.port }}
+
+3. Open http://127.0.0.1:{{ .Values.service.port }}/admin/ in your browser.
+
+4. Run the test suite that ships with the chart:
+
+   helm test {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+For full configuration options:
+
+   helm show values oci://ghcr.io/lpgenerator/charts/django-db-mailer

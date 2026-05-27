@@ -1,19 +1,13 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
-try:
-    from httplib import HTTPSConnection
-    from urlparse import urlparse
-    from urllib import urlencode
-except ImportError:
-    from http.client import HTTPSConnection
-    from urllib.parse import urlparse, urlencode
-
+from http.client import HTTPSConnection
 from json import dumps
+from urllib.parse import urlencode, urlparse
 
 from django.conf import settings
 
 from dbmail import get_version
-from dbmail.providers.prowl.push import from_unicode
+from dbmail.providers._compat import from_unicode
 
 
 class SlackError(Exception):
@@ -44,22 +38,22 @@ def send(channel, message, **kwargs):
         "icon_emoji": emoji,
     }
 
-    _data = kwargs.pop('data', None)
+    _data = kwargs.pop("data", None)
     if _data is not None:
         data.update(_data)
 
     up = urlparse(hook_url)
-    http = HTTPSConnection(up.netloc)
-    http.request(
-        "POST", up.path,
-        headers=headers,
-        body=urlencode({"payload": dumps(data)}))
-    response = http.getresponse()
+    http = HTTPSConnection(up.netloc, timeout=10)
+    try:
+        http.request("POST", up.path, headers=headers, body=urlencode({"payload": dumps(data)}))
+        response = http.getresponse()
 
-    if response.status != 200:
-        raise SlackError(response.reason)
+        if response.status != 200:
+            raise SlackError(response.reason)
 
-    body = response.read()
-    if body != "ok":
-        raise SlackError(repr(body))
+        body = response.read()
+        if body != b"ok":
+            raise SlackError(repr(body))
+    finally:
+        http.close()
     return True

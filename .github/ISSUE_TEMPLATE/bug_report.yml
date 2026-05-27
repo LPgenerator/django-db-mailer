@@ -1,0 +1,102 @@
+name: Bug report
+description: Something is broken in django-db-mailer.
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. The more
+        precise the reproduction, the faster the fix.
+
+        For private security reports, please open a private
+        [GitHub Security Advisory](https://github.com/LPgenerator/django-db-mailer/security/advisories/new)
+        instead of a public issue.
+
+  - type: input
+    id: dbmail_version
+    attributes:
+      label: django-db-mailer version
+      placeholder: "3.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version
+      placeholder: "3.12.7"
+    validations:
+      required: true
+
+  - type: input
+    id: django_version
+    attributes:
+      label: Django version
+      placeholder: "5.2.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: database
+    attributes:
+      label: Database engine
+      options:
+        - PostgreSQL
+        - MySQL / MariaDB
+        - SQLite
+        - Other / not relevant
+    validations:
+      required: true
+
+  - type: dropdown
+    id: upgrade_path
+    attributes:
+      label: Upgrading from 2.x?
+      description: |
+        If you are upgrading, did you follow the four-step procedure in
+        [MIGRATION.md](https://github.com/LPgenerator/django-db-mailer/blob/master/MIGRATION.md)?
+      options:
+        - "No — fresh install on 3.x"
+        - "Yes — followed MIGRATION.md exactly"
+        - "Yes — but I improvised the migration steps"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happens
+    attributes:
+      label: What happens
+      description: What you observed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: |
+        A 10-line snippet, command or `manage.py` invocation that
+        reliably reproduces the issue. Please do **not** paste a
+        pointer to your private project — extract a small example.
+      render: python
+    validations:
+      required: true
+
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Full traceback (if any)
+      render: shell
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else relevant?

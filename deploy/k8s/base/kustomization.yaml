@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dbmail
+
+commonLabels:
+  app.kubernetes.io/name: django-db-mailer
+  app.kubernetes.io/part-of: dbmail
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  # secret.example.yaml is intentionally NOT in resources — it is a
+  # template for operators to copy. Production drives secrets from
+  # external-secrets-operator or sealed-secrets.
+  - pvc.yaml
+  - deployment-web.yaml
+  - deployment-worker.yaml
+  - deployment-beat.yaml
+  - service.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - networkpolicy.yaml
+  - migration-job.yaml

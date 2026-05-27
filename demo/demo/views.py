@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 from pprint import pprint
 
 from django.shortcuts import render
@@ -16,9 +14,9 @@ def web_push_notification(request):
 
 
 def _dump_push_signals(**kwargs):
-    kwargs.pop('instance', None)
-    kwargs.pop('sender', None)
-    kwargs.pop('signal', None)
+    kwargs.pop("instance", None)
+    kwargs.pop("sender", None)
+    kwargs.pop("signal", None)
     pprint(kwargs)
 
 

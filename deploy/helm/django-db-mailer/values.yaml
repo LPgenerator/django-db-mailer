@@ -1,0 +1,103 @@
+# Default values for django-db-mailer Helm chart.
+# Override per-environment via -f my-values.yaml.
+
+image:
+  repository: ghcr.io/lpgenerator/django-db-mailer-demo
+  tag: ""              # default: .Chart.AppVersion
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+# Replicas per role. Beat MUST stay at 1 (multiple beats duplicate jobs).
+replicaCount:
+  web: 2
+  worker: 2
+  beat: 1
+
+resources:
+  web:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
+  worker:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits:   { cpu: 1000m, memory: 1024Mi }
+  beat:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits:   { cpu: 200m, memory: 256Mi }
+
+autoscaling:
+  enabled: true
+  web:
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+  worker:
+    minReplicas: 2
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 70
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: dbmail.example.com
+      paths: [{ path: /, pathType: Prefix }]
+  tls:
+    - secretName: dbmail-tls
+      hosts: [dbmail.example.com]
+
+migrations:
+  runOnInstall: true
+  runOnUpgrade: true
+
+service:
+  type: ClusterIP
+  port: 8000
+
+# Pod-level security context (applied to all workloads).
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  runAsNonRoot: true
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container-level security context.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: ["ALL"]
+
+env:
+  DJANGO_SETTINGS_MODULE: demo.settings
+  DJANGO_DEBUG: "0"
+  DJANGO_ALLOWED_HOSTS: dbmail.example.com
+  DBMAIL_API_RATE_LIMIT: "60,60"
+  DBMAIL_LOG_LEVEL: INFO
+  TIME_ZONE: UTC
+
+# Secret values. In production keep this empty and load secrets from
+# external-secrets-operator or sealed-secrets.
+existingSecret: ""
+secret:
+  DJANGO_SECRET_KEY: ""
+  DATABASE_URL: ""
+  CELERY_BROKER_URL: ""
+  CELERY_RESULT_BACKEND: ""
+  DBMAIL_API_HMAC_SECRET: ""
+
+persistence:
+  media:
+    enabled: true
+    size: 5Gi
+    accessModes: [ReadWriteOnce]
+
+networkPolicy:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

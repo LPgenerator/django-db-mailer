@@ -1,0 +1,12 @@
+{{- if .Values.persistence.media.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "dbmail.fullname" . }}-media
+spec:
+  accessModes:
+    {{- toYaml .Values.persistence.media.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.media.size }}
+{{- end -}}

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbmail-beat
+  labels: { app: dbmail, role: beat }
+spec:
+  # MUST be 1 — celery-beat does not support multiple replicas.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: { app: dbmail, role: beat }
+  template:
+    metadata:
+      labels: { app: dbmail, role: beat }
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: beat
+          image: ghcr.io/lpgenerator/django-db-mailer-demo:3.0.0
+          command: ["celery"]
+          args: ["-A", "demo", "beat", "-l", "info"]
+          envFrom:
+            - configMapRef: { name: dbmail-config }
+            - secretRef: { name: dbmail-secret }
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits: { cpu: 200m, memory: 256Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }

@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "dbmail.fullname" . }}-test-connection
+  labels:
+    {{- include "dbmail.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+    - name: curl
+      image: curlimages/curl:8.10.1
+      command:
+        - "sh"
+        - "-c"
+        - |
+          set -eu
+          for i in $(seq 1 20); do
+            if curl -fsS http://{{ include "dbmail.fullname" . }}-web:{{ .Values.service.port }}/admin/login/ > /dev/null; then
+              echo "OK"
+              exit 0
+            fi
+            echo "waiting for web... ($i/20)"
+            sleep 3
+          done
+          echo "web did not respond on /admin/login/"
+          exit 1
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]

@@ -1,12 +1,11 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
+from importlib import import_module
+
+from dbmail.backends.sms import Sender as SenderBase
+from dbmail.backends.sms import SenderDebug as SenderDebugBase
 from dbmail.defaults import BOT_PROVIDER, DEFAULT_BOT_FROM
-from dbmail.backends.sms import (
-    Sender as SenderBase,
-    SenderDebug as SenderDebugBase
-)
 from dbmail.utils import clean_html
-from dbmail import import_module
 
 
 class Sender(SenderBase):

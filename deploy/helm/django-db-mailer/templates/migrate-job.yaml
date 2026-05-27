@@ -1,0 +1,42 @@
+{{- if or .Values.migrations.runOnInstall .Values.migrations.runOnUpgrade -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "dbmail.fullname" . }}-migrate-{{ .Release.Revision }}
+  labels:
+    {{- include "dbmail.labels" . | nindent 4 }}
+    role: migrate
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels: { role: migrate }
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: migrate
+          image: {{ include "dbmail.image" . }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              cd demo &&
+              python manage.py migrate --noinput &&
+              python manage.py collectstatic --noinput
+          envFrom:
+            - configMapRef: { name: {{ include "dbmail.fullname" . }}-config }
+            - secretRef: { name: {{ include "dbmail.secretName" . }} }
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }
+{{- end -}}

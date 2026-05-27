@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dbmail.fullname" . }}-web
+  labels:
+    {{- include "dbmail.labels" . | nindent 4 }}
+    role: web
+spec:
+  replicas: {{ .Values.replicaCount.web }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "dbmail.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      role: web
+  template:
+    metadata:
+      labels:
+        {{- include "dbmail.labels" . | nindent 8 }}
+        role: web
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: web
+          image: {{ include "dbmail.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["gunicorn"]
+          args:
+            - "demo.wsgi:application"
+            - "--chdir=demo"
+            - "--bind=0.0.0.0:8000"
+            - "--workers=4"
+            - "--threads=2"
+            - "--timeout=30"
+            - "--access-logfile=-"
+            - "--error-logfile=-"
+          ports:
+            - { name: http, containerPort: 8000 }
+          envFrom:
+            - configMapRef: { name: {{ include "dbmail.fullname" . }}-config }
+            - secretRef: { name: {{ include "dbmail.secretName" . }} }
+          resources:
+            {{- toYaml .Values.resources.web | nindent 12 }}
+          livenessProbe:
+            httpGet: { path: /admin/login/, port: http }
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            httpGet: { path: /admin/login/, port: http }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          startupProbe:
+            httpGet: { path: /admin/login/, port: http }
+            failureThreshold: 30
+            periodSeconds: 5
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+            {{- if .Values.persistence.media.enabled }}
+            - { name: media, mountPath: /app/media }
+            {{- end }}
+      volumes:
+        - { name: tmp, emptyDir: {} }
+        {{- if .Values.persistence.media.enabled }}
+        - name: media
+          persistentVolumeClaim:
+            claimName: {{ include "dbmail.fullname" . }}-media
+        {{- end }}

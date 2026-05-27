@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, "release/**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Lint / typecheck / security — single job, fastest feedback
+  # ---------------------------------------------------------------------------
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[dev,test]"
+      - name: ruff check
+        run: ruff check .
+      - name: ruff format --check
+        run: ruff format --check .
+      - name: flake8 (dbmail)
+        run: flake8 dbmail
+      - name: bandit
+        run: bandit -r dbmail -c pyproject.toml
+      # mypy is informational at phase 10 baseline; not a gate.
+      - name: mypy (informational)
+        continue-on-error: true
+        run: mypy dbmail || true
+
+  # ---------------------------------------------------------------------------
+  # Test matrix — Python × Django, 5 cells via include-strategy.
+  # ---------------------------------------------------------------------------
+  test:
+    runs-on: ubuntu-24.04
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { python: "3.10", django: "4.2" }   # lower bound (3.10 EOL Oct 2026, drop in 3.1.0)
+          - { python: "3.11", django: "5.2" }
+          - { python: "3.12", django: "5.2" }
+          - { python: "3.13", django: "6.0" }
+          - { python: "3.14", django: "6.0" }   # head
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[dev,test,celery,demo,apns]"
+          pip install "Django~=${{ matrix.django }}.0"
+      - name: Show versions
+        run: |
+          python --version
+          python -c "import django; print('Django', django.get_version())"
+      - name: pytest
+        run: pytest --cov=dbmail --cov-report=xml --cov-report=term
+      - name: Upload coverage to Codecov
+        if: matrix.python == '3.13' && matrix.django == '6.0'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  # ---------------------------------------------------------------------------
+  # Wheel build + smoke install — verifies MANIFEST.in / package-data
+  # ---------------------------------------------------------------------------
+  wheel-smoke:
+    runs-on: ubuntu-24.04
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Build sdist+wheel
+        run: |
+          pip install --upgrade pip build twine
+          python -m build
+          twine check dist/*
+      - name: Install wheel into a fresh venv
+        run: |
+          python -m venv /tmp/wheel-smoke
+          /tmp/wheel-smoke/bin/pip install --upgrade pip
+          /tmp/wheel-smoke/bin/pip install dist/*.whl Django celery
+          /tmp/wheel-smoke/bin/python -c "
+          import dbmail, pkgutil
+          from dbmail import send_db_mail, send_db_sms, send_db_push
+          assert dbmail.__version__.startswith('3.'), dbmail.__version__
+          assert pkgutil.get_data('dbmail', 'fixtures/mailgun_base_templates.json'), 'fixtures missing'
+          assert pkgutil.get_data('dbmail', 'locale/ru/LC_MESSAGES/django.po'), 'locale missing'
+          print('wheel smoke OK')
+          "
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  # ---------------------------------------------------------------------------
+  # diff-cover — new code in PR must be 100% covered
+  # ---------------------------------------------------------------------------
+  diff-cover:
+    runs-on: ubuntu-24.04
+    needs: test
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev,test,celery,demo,apns]" diff-cover
+      - name: Generate coverage.xml
+        run: pytest --cov=dbmail --cov-report=xml --cov-report=term
+      - name: diff-cover (100% on new code)
+        run: |
+          diff-cover coverage.xml \
+            --compare-branch=origin/${{ github.base_ref }} \
+            --fail-under=100

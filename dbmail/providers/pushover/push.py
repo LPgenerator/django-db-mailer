@@ -1,18 +1,13 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
-try:
-    from httplib import HTTPSConnection
-    from urllib import urlencode
-except ImportError:
-    from http.client import HTTPSConnection
-    from urllib.parse import urlencode
-
+from http.client import HTTPSConnection
 from json import loads
+from urllib.parse import urlencode
 
 from django.conf import settings
 
 from dbmail import get_version
-from dbmail.providers.prowl.push import from_unicode
+from dbmail.providers._compat import from_unicode
 
 
 class PushOverError(Exception):
@@ -38,24 +33,24 @@ def send(user, message, **kwargs):
         "user": user,
         "message": message,
         "title": title,
-        "priority": kwargs.pop("priority", 0)
+        "priority": kwargs.pop("priority", 0),
     }
 
-    _data = kwargs.pop('data', None)
+    _data = kwargs.pop("data", None)
     if _data is not None:
         data.update(_data)
 
-    http = HTTPSConnection(kwargs.pop("api_url", "api.pushover.net"))
-    http.request(
-        "POST", "/1/messages.json",
-        headers=headers,
-        body=urlencode(data))
-    response = http.getresponse()
+    http = HTTPSConnection(kwargs.pop("api_url", "api.pushover.net"), timeout=10)
+    try:
+        http.request("POST", "/1/messages.json", headers=headers, body=urlencode(data))
+        response = http.getresponse()
 
-    if response.status != 200:
-        raise PushOverError(response.reason)
+        if response.status != 200:
+            raise PushOverError(response.reason)
 
-    body = loads(response.read())
-    if body.get('status') != 1:
+        body = loads(response.read())
+    finally:
+        http.close()
+    if body.get("status") != 1:
         raise PushOverError(repr(body))
     return True

@@ -1,0 +1,36 @@
+name: E2E — Kubernetes (kind)
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  kind:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: helm/kind-action@v1
+        with:
+          cluster_name: dbmail-e2e
+          version: v0.24.0
+      - name: Build demo image
+        run: docker build -t dbmail-demo:e2e --target production .
+      - name: Load image into kind
+        run: kind load docker-image dbmail-demo:e2e --name dbmail-e2e
+      - name: Apply kustomize overlay (dev)
+        run: kubectl apply -k deploy/k8s/overlays/dev
+      - name: Wait for rollout
+        run: |
+          kubectl wait --for=condition=available deployment/dbmail-web \
+            -n dbmail-dev --timeout=180s || true
+          kubectl get all -n dbmail-dev
+      - name: Static analysis (kubeconform)
+        uses: docker://ghcr.io/yannh/kubeconform:latest
+        with:
+          args: -strict -summary -ignore-missing-schemas deploy/k8s/base
+      - name: Logs on failure
+        if: failure()
+        run: |
+          kubectl describe pods -n dbmail-dev || true
+          kubectl logs -l app=dbmail -n dbmail-dev --all-containers --tail 200 || true

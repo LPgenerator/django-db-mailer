@@ -1,17 +1,28 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
-<head lang="en">
+{% load i18n %}<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>{% trans "Browse template variables" %}</title>
+    <style>
+        body { font-family: -apple-system, "Segoe UI", sans-serif; padding: 1em; }
+        h2 { font-size: 1.1em; margin-top: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: .25em; }
+        ul { padding-left: 1.5em; }
+        a { color: #2b6cb0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .empty { color: #888; }
+    </style>
 </head>
 <body>
-{% for app, data in apps_list.items %}
-    <strong>{{app|upper}}</strong><br/>
+<h1>{% trans "Browse template variables" %}</h1>
+{% for app, models in apps_list.items %}
+    <h2>{{ app|upper }}</h2>
     <ul>
-        {% for obj in data %}
-            <li><a href="./{{app}}/{{ obj.model }}/">{{ obj.name|capfirst }}</a><br/></li>
+        {% for obj in models %}
+            <li><a href="./{{ app }}/{{ obj.model }}/">{{ obj.name|capfirst }}</a></li>
         {% endfor %}
     </ul>
+{% empty %}
+    <p class="empty">{% trans "No models available. Check INSTALLED_APPS or DB_MAILER_IGNORE_BROWSE_APP." %}</p>
 {% endfor %}
 </body>
 </html>

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "django-db-mailer Helm values",
+  "type": "object",
+  "required": ["image", "replicaCount"],
+  "properties": {
+    "image": {
+      "type": "object",
+      "required": ["repository"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "tag":        { "type": "string" },
+        "pullPolicy": { "enum": ["Always", "IfNotPresent", "Never"] },
+        "pullSecrets": { "type": "array" }
+      }
+    },
+    "replicaCount": {
+      "type": "object",
+      "properties": {
+        "web":    { "type": "integer", "minimum": 1 },
+        "worker": { "type": "integer", "minimum": 1 },
+        "beat":   { "type": "integer", "const": 1, "description": "MUST be 1 — celery-beat does not support multiple replicas." }
+      }
+    }
+  }
+}

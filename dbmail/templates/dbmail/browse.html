@@ -1,16 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
+{% load i18n %}<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>{% trans "Model fields" %}</title>
+    <style>
+        body { font-family: -apple-system, "Segoe UI", sans-serif; padding: 1em; }
+        dt { font-family: ui-monospace, "SF Mono", Menlo, monospace; margin-top: .5em; }
+        dd { margin-left: 1.5em; color: #444; }
+        a { color: #2b6cb0; }
+        .empty { color: #888; }
+    </style>
 </head>
 <body>
-<a href="javascript:history.back()">Back</a>
+<p><a href="javascript:history.back()">&larr; {% trans "Back" %}</a></p>
 <hr>
-{% for field,description in fields_list.items %}
-    <strong>&#123;&#123;{{ field }}&#125;&#125;</strong> - {{description|capfirst}}<br/>
+<dl>
+{% for field, description in fields_list.items %}
+    <dt><code>&#123;&#123; {{ field }} &#125;&#125;</code></dt>
+    <dd>{{ description|capfirst }}</dd>
 {% empty %}
-    Fields for this application is not available
+    <p class="empty">{% trans "Fields for this model are not available." %}</p>
 {% endfor %}
+</dl>
 </body>
 </html>

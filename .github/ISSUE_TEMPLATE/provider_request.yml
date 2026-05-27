@@ -1,0 +1,71 @@
+name: Provider request
+description: Request support for a new SMS / push / voice / bot provider.
+title: "[provider] "
+labels: ["provider", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bundling a new provider is a long-term commitment — every
+        provider adds a maintenance surface (CI, deprecation,
+        secrets handling). Use this template so we can decide whether
+        the provider belongs in `dbmail.providers.*` or in your own
+        backend.
+
+  - type: input
+    id: name
+    attributes:
+      label: Provider name
+      placeholder: "Vendor name and product"
+    validations:
+      required: true
+
+  - type: input
+    id: docs
+    attributes:
+      label: API documentation URL
+    validations:
+      required: true
+
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Channel
+      options:
+        - SMS
+        - Push (mobile)
+        - Push (web)
+        - Voice / TTS
+        - Email
+        - Chat / Bot
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sdk
+    attributes:
+      label: Has an official Python SDK?
+      options:
+        - "Yes — actively maintained"
+        - "Yes — but unmaintained"
+        - "No — only HTTP API"
+    validations:
+      required: true
+
+  - type: textarea
+    id: settings
+    attributes:
+      label: Required settings
+      description: List the env vars / Django settings the provider
+        will need (e.g. `VENDOR_API_KEY`, `VENDOR_SENDER`).
+
+  - type: textarea
+    id: contributor
+    attributes:
+      label: Will you contribute the implementation?
+      description: A PR with tests is the fastest path. Otherwise the
+        request is added to the backlog and prioritised against other
+        provider requests.
+    validations:
+      required: true

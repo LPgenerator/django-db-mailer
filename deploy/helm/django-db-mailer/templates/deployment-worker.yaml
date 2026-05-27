@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dbmail.fullname" . }}-worker
+  labels:
+    {{- include "dbmail.labels" . | nindent 4 }}
+    role: worker
+spec:
+  replicas: {{ .Values.replicaCount.worker }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "dbmail.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      role: worker
+  template:
+    metadata:
+      labels:
+        {{- include "dbmail.labels" . | nindent 8 }}
+        role: worker
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: worker
+          image: {{ include "dbmail.image" . }}
+          command: ["celery"]
+          args: ["-A", "demo", "worker", "-l", "info", "-Q", "default", "-c", "4"]
+          envFrom:
+            - configMapRef: { name: {{ include "dbmail.fullname" . }}-config }
+            - secretRef: { name: {{ include "dbmail.secretName" . }} }
+          resources:
+            {{- toYaml .Values.resources.worker | nindent 12 }}
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "celery -A demo inspect ping --timeout 5"]
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }

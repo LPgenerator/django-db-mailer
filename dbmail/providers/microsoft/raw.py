@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from dbmail.providers.microsoft.base import MPNSBase
 
 
 class MPNSRaw(MPNSBase):
     NOTIFICATION_CLS = 3
-    TARGET = 'raw'
+    TARGET = "raw"
 
     def payload(self, payload):
         return payload

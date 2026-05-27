@@ -1,0 +1,25 @@
+{{- if .Values.podDisruptionBudget.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "dbmail.fullname" . }}-web
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "dbmail.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      role: web
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "dbmail.fullname" . }}-worker
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "dbmail.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      role: worker
+{{- end -}}

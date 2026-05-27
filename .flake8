@@ -1,0 +1,39 @@
+[flake8]
+# Source of truth for most linting is ruff (see pyproject.toml).
+# flake8 is kept for the few plugins ruff does not yet cover.
+max-line-length = 120
+extend-ignore = E203,E501,W503,E402,F401,F403,F405,B008,B006,B904,C901,DJ001,DJ008
+
+exclude =
+    .git,
+    .tox,
+    .venv,
+    venv,
+    .eggs,
+    *.egg-info,
+    __pycache__,
+    .pytest_cache,
+    .coverage,
+    htmlcov,
+    .mypy_cache,
+    .ruff_cache,
+    build,
+    dist,
+    docs/_build,
+    docs/legacy,
+    dbmail/migrations,
+    dbmail/locale,
+    demo/demo/migrations
+
+per-file-ignores =
+    dbmail/__init__.py:F401
+    dbmail/providers/__init__.py:F401
+    dbmail/admin.py:F811
+    dbmail/fields.py:F811
+    dbmail/models.py:E731
+    dbmail/test_cases.py:S101
+    tests/*:S101,S105,S106
+    demo/*:S105,S106
+    dbmail/migrations/*:E501,F401,F403,F405
+
+max-complexity = 15

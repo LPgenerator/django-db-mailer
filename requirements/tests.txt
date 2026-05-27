@@ -1,4 +1,4 @@
-flake8>=2.4.1
-coverage==3.7.1
-coveralls==0.3
-django-tinymce>=1.5.3
+# Test dependencies.
+# Source of truth: pyproject.toml [project.optional-dependencies] test.
+# Kept for CI and tox compatibility.
+-e .[test]

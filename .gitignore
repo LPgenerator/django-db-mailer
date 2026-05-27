@@ -1,54 +1,114 @@
-.idea
-*.sqlite
-*.py[cod]
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
-# C extensions
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
 *.so
 
-# Packages
+# Distributions / packaging
 *.egg
-*.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
+*.egg-info/
+.eggs/
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
 .installed.cfg
-lib
-lib64
+lib/
+lib64/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+MANIFEST
 *.patch
 
-# Installer logs
-pip-log.txt
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
 
-# Unit test / coverage reports
+# Tests / coverage
 .coverage
-.tox
+.coverage.*
+coverage.xml
+htmlcov/
+.cache/
+.pytest_cache/
+.tox/
+.nox/
+.hypothesis/
 nosetests.xml
+*.cover
 
-# Translations
+# Type checking
+.mypy_cache/
+.dmypy.json
+.pyre/
+.ruff_cache/
+
+# Translations (compiled)
 *.mo
 *.log
 *.current
 
-# Mr Developer
+# Django
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+local_settings.py
+mail_files/
+demo/*.zip
+demo/static/CACHE/
+
+# Sphinx
+docs/_build/
+docs/.build/
+
+# Misc
+TODO
 .mr.developer.cfg
 .project
 .pydevproject
-
-# Complexity
 output/*.html
 output/*/index.html
-
-# Sphinx
-docs/_build
-docs/.build
-TODO
-local_settings.py
-mail_files
 .vagrant
 certs/*
-demo/*.zip
+.travis.yml.log
+
+# Secrets
+.env
+.env.local
+*.pem
+*.key
+*.p8
+*.p12
+
+# AI assistant configs (local context, не в репо)
+CLAUDE.md
+.claude/
+.cursor/
+.serena/
+
+# Personal time tracking — never commit
+time.txt
+
+# Node (для html/js линтеров в dev)
+node_modules/
+package-lock.json
+compose.override.yml
+.smoke310/
+
+# Internal planning artefacts
+plan*/
+docs/adr/

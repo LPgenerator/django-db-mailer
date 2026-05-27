@@ -1,34 +1,38 @@
-Django>=2.0,<2.1
-django-bootstrap-static==2.3.2
-django-debug-toolbar==1.7
-django-extensions==1.7.8
-django-rosetta==0.7.13
-django-redis==4.7.0
-django-redis-cache==1.7.1
-django-celery==3.2.1
-celery>=3.1,<4
+# Demo project dependencies.
+# Source of truth: pyproject.toml [project.optional-dependencies] demo.
+# This file is kept as an explicit, top-level list for users who want to
+# inspect or `pip install -r demo/requirements.txt` directly without
+# touching pyproject extras.
 
-# MySQL-python>=1.2.5
-Werkzeug>=0.12.1
-ipython>=5.3.0
-tornado>=4.5
-coverage>=4.3.4
-pyzmq>=16.0.2
-Jinja2>=2.9.6
-flake8>=3.3.0
-Sphinx>=1.5.5
-redis>=2.10.5
-wheel>=0.29.0
+# Core
+Django>=4.2,<7.0
+celery[redis]>=5.4
+redis>=5
 
-django-grappelli==2.11.1
-django-suit==0.2.25
-django-ckeditor==5.2.2
-django-reversion==2.0.8
-django-reversion-compare==0.8.4
-diff-match-patch==20121119
-pytz>=2017.2
-django-sslserver==0.19
-geoip2==2.9.0
+# Admin extensions (historical set, all adapted to Django 4.2+ in 3.0).
+django-grappelli>=4.0
+django-ckeditor>=6.7
+django-reversion>=5.1
+django-reversion-compare>=0.18
+diff-match-patch>=20241021
+django-tinymce>=4.1
 
--e git+https://github.com/hint/django-admin-jqueryui.git#egg=django-admin-jqueryui
--e git+https://github.com/LPgenerator/django-db-mailer.git#egg=django-db-mailer
+# Dev tooling that ships with the demo.
+django-debug-toolbar>=4.4
+django-extensions>=3.2
+Werkzeug>=3
+ipython>=8
+
+# i18n management.
+django-rosetta>=0.10
+
+# Cache and DB drivers.
+django-redis>=5.4
+dj-database-url>=2.2
+psycopg[binary]>=3.2
+
+# Static files (production).
+whitenoise>=6.7
+
+# Geo.
+geoip2>=4

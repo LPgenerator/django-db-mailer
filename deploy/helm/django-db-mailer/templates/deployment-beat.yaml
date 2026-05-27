@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dbmail.fullname" . }}-beat
+  labels:
+    {{- include "dbmail.labels" . | nindent 4 }}
+    role: beat
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "dbmail.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      role: beat
+  template:
+    metadata:
+      labels:
+        {{- include "dbmail.labels" . | nindent 8 }}
+        role: beat
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: beat
+          image: {{ include "dbmail.image" . }}
+          command: ["celery"]
+          args: ["-A", "demo", "beat", "-l", "info"]
+          envFrom:
+            - configMapRef: { name: {{ include "dbmail.fullname" . }}-config }
+            - secretRef: { name: {{ include "dbmail.secretName" . }} }
+          resources:
+            {{- toYaml .Values.resources.beat | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }

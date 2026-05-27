@@ -1,9 +1,10 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
-from dbmail.defaults import DEFAULT_PUSH_FROM, PUSH_PROVIDER
+from importlib import import_module
+
 from dbmail.backends.sms import Sender as SenderBase
+from dbmail.defaults import DEFAULT_PUSH_FROM, PUSH_PROVIDER
 from dbmail.utils import clean_html
-from dbmail import import_module
 
 
 class Sender(SenderBase):
@@ -21,12 +22,9 @@ class Sender(SenderBase):
         message = clean_html(self._message)
 
         options = self._kwargs.copy()
-        options.update(
-            message=message,
-            event=self._kwargs.pop('event', self._subject)
-        )
+        options.update(message=message, event=self._kwargs.pop("event", self._subject))
         if self._from_email:
-            options['app'] = self._from_email
+            options["app"] = self._from_email
 
         module = import_module(self._provider)
 
@@ -36,8 +34,8 @@ class Sender(SenderBase):
 
 class SenderDebug(Sender):
     def _send(self):
-        self.debug('Provider', self._provider or self.provider)
-        self.debug('Message', clean_html(self._message))
-        self.debug('Recipients', self._recipient_list)
-        self.debug('Event', self._subject)
-        self.debug('App', self._from_email)
+        self.debug("Provider", self._provider or self.provider)
+        self.debug("Message", clean_html(self._message))
+        self.debug("Recipients", self._recipient_list)
+        self.debug("Event", self._subject)
+        self.debug("App", self._from_email)

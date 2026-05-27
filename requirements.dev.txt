@@ -1,0 +1,7 @@
+# Development dependencies for django-db-mailer.
+# Source of truth: pyproject.toml [project.optional-dependencies] dev + test.
+# Use this file as a one-shot install for a fresh dev machine:
+#   pip install -r requirements.dev.txt
+# Equivalent to:
+#   pip install -e ".[dev,test]"
+-e .[dev,test]

@@ -1,9 +1,8 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
 from json import dumps, loads
 
 from django.conf import settings
-from pywebpush import WebPusher
 
 
 class GCMError(Exception):
@@ -14,27 +13,22 @@ def send(reg_id, message, **kwargs):
     """
     Site: https://developers.google.com
     API: https://developers.google.com/web/updates/2016/03/web-push-encryption
-    Desc: Web Push notifications for Chrome and FireFox
+    Desc: Web Push notifications for Chrome and FireFox.
 
-    Installation:
-    pip install 'pywebpush>=0.4.0'
+    Requires ``pywebpush>=2``. Install via the ``[webpush]`` extra:
+    ``pip install "django-db-mailer[webpush]"``.
     """
+    from pywebpush import WebPusher
 
-    subscription_info = kwargs.pop('subscription_info')
+    subscription_info = kwargs.pop("subscription_info")
+    ttl = kwargs.pop("ttl", 60)
 
-    payload = {
-        "title": kwargs.pop("event"),
-        "body": message,
-        "url": kwargs.pop("push_url", None)
-    }
+    payload = {"title": kwargs.pop("event"), "body": message, "url": kwargs.pop("push_url", None)}
     payload.update(kwargs)
 
     wp = WebPusher(subscription_info)
-    response = wp.send(
-        dumps(payload), gcm_key=settings.GCM_KEY,
-        ttl=kwargs.pop("ttl", 60))
+    response = wp.send(dumps(payload), gcm_key=settings.GCM_KEY, ttl=ttl)
 
-    if not response.ok or (
-            response.text and loads(response.text).get("failure") > 0):
+    if not response.ok or (response.text and (loads(response.text).get("failure") or 0) > 0):
         raise GCMError(response.text)
     return True

@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    # Only semver tags (no rc/beta/wip).
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write       # OIDC for trusted publishing
+      contents: write       # GitHub release
+      attestations: write   # PEP 740 provenance attestations
+    environment:
+      name: pypi
+      url: https://pypi.org/p/django-db-mailer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build sdist+wheel
+        run: |
+          pip install --upgrade pip build twine cyclonedx-bom
+          python -m build
+          twine check dist/*
+
+      - name: Generate SBOM (CycloneDX)
+        run: cyclonedx-py environment -o dist/sbom.json || true
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "dist/*.whl"
+
+      - name: Sign with sigstore
+        uses: sigstore/gh-action-sigstore-python@v3
+        with:
+          inputs: ./dist/*.tar.gz ./dist/*.whl
+
+      - name: Publish to PyPI (trusted publishing, OIDC)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: true
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/sbom.json
+            dist/*.sigstore
+          generate_release_notes: true

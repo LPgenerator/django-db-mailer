@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      django:
+        patterns: ["Django*", "django-*"]
+      celery:
+        patterns: ["celery*", "kombu*", "billiard*"]
+      providers:
+        patterns: ["httpx*", "twilio*", "pubnub*", "vonage*", "google-auth*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly

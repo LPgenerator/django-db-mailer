@@ -1,0 +1,8 @@
+# Default owner for everything in the repo.
+*                       @gotlium
+
+# Critical paths.
+/dbmail/providers/      @gotlium
+/dbmail/migrations/     @gotlium
+/.github/               @gotlium
+/deploy/                @gotlium

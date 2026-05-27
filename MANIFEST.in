@@ -1,7 +1,37 @@
-include README.rst
+include README.md
 include LICENSE
 include AUTHORS.rst
 include CONTRIBUTING.rst
-include requirements/*
+include CHANGELOG.md
+include MIGRATION.md
+include VERSIONS.md
+include pyproject.toml
+
+# Compiled translations (.mo) and source catalogs (.po) for 18 locales.
+recursive-include dbmail/locale *.po *.mo
+
+# JSON fixtures shipped with the package (mailgun_base_templates.json, ~29 KB).
+recursive-include dbmail/fixtures *.json
+
+# Static admin assets and HTML templates.
+recursive-include dbmail/static *.js *.css *.png *.gif *.ico
+recursive-include dbmail/templates *.html *.txt
+
+# Architecture decisions are part of the source distribution
+# but documentation builds are not.
+recursive-include docs/adr *.md
+
+# Junk that should never end up in the dist.
 recursive-exclude * .DS_Store
-recursive-include dbmail *.html *.js *.py *.po *.mo *.json
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod]
+prune docs/_build
+prune docs/.build
+prune demo
+prune tests
+prune screenshots
+prune build
+prune dist
+prune .tox
+prune .venv
+prune htmlcov

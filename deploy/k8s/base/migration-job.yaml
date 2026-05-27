@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dbmail-migrate
+  annotations:
+    # Run as a Helm pre-install/pre-upgrade hook OR trigger manually:
+    #   kubectl apply -f migration-job.yaml
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels: { app: dbmail, role: migrate }
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: migrate
+          image: ghcr.io/lpgenerator/django-db-mailer-demo:3.0.0
+          command: ["sh", "-c"]
+          args:
+            - |
+              cd demo &&
+              python manage.py migrate --noinput &&
+              python manage.py collectstatic --noinput
+          envFrom:
+            - configMapRef: { name: dbmail-config }
+            - secretRef: { name: dbmail-secret }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: 500m, memory: 512Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }

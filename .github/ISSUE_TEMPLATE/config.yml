@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question — how do I do X?
+    url: https://github.com/LPgenerator/django-db-mailer/discussions/categories/q-a
+    about: Use Discussions → Q&A for "how do I" questions.
+  - name: Show your project
+    url: https://github.com/LPgenerator/django-db-mailer/discussions/categories/show-and-tell
+    about: Share an integration in Discussions → Show and tell.
+  - name: Private security report
+    url: https://github.com/LPgenerator/django-db-mailer/security/advisories/new
+    about: Open a private GitHub Security Advisory.

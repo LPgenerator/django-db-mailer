@@ -1,0 +1,57 @@
+name: E2E — Helm
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  helm:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: helm/kind-action@v1
+        with:
+          cluster_name: dbmail-helm
+          version: v0.24.0
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.16.2
+      - name: Lint
+        run: helm lint deploy/helm/django-db-mailer
+      - name: Template + kubeconform
+        uses: docker://ghcr.io/yannh/kubeconform:latest
+        with:
+          args: -strict -summary -ignore-missing-schemas deploy/helm/django-db-mailer
+      - name: Build + load image
+        run: |
+          docker build -t dbmail-demo:helm --target production .
+          kind load docker-image dbmail-demo:helm --name dbmail-helm
+      - name: Install
+        run: |
+          helm install dbmail deploy/helm/django-db-mailer \
+            --create-namespace -n dbmail-test \
+            --set image.repository=dbmail-demo \
+            --set image.tag=helm \
+            --set image.pullPolicy=Never \
+            --set ingress.enabled=false \
+            --set autoscaling.enabled=false \
+            --set persistence.media.enabled=false \
+            --set podDisruptionBudget.enabled=false \
+            --wait --timeout 5m
+      - name: helm test
+        run: helm test dbmail -n dbmail-test --timeout 2m || true
+      - name: Upgrade smoke
+        run: |
+          helm upgrade dbmail deploy/helm/django-db-mailer \
+            -n dbmail-test \
+            --reuse-values \
+            --wait --timeout 5m
+      - name: Uninstall
+        if: always()
+        run: helm uninstall dbmail -n dbmail-test || true
+      - name: Logs on failure
+        if: failure()
+        run: |
+          kubectl describe pods -n dbmail-test || true
+          kubectl logs -l app.kubernetes.io/name=django-db-mailer -n dbmail-test --all-containers --tail 200 || true

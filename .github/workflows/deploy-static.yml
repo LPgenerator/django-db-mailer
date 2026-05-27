@@ -1,0 +1,47 @@
+name: Deploy static analysis
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+
+jobs:
+  hadolint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: warning
+
+  kubeconform:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: kubeconform — base manifests
+        uses: docker://ghcr.io/yannh/kubeconform:latest
+        with:
+          args: -strict -summary -ignore-missing-schemas deploy/k8s/base
+
+  kube-score:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: kube-score
+        uses: docker://zegl/kube-score:latest
+        with:
+          args: score --output-format ci deploy/k8s/base/*.yaml
+
+  trivy-config:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy config scan (Dockerfile + k8s)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: config
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          ignore-unfixed: true
+          scan-ref: .

@@ -1,47 +1,47 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
 import datetime
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.template import Template, Context
-from django.contrib.sites.models import Site
-from django.contrib.auth.models import User
-from django.db.models import signals
 from django import dispatch
+from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import signals
+from django.template import Context, Template
 
 from dbmail.defaults import (
-    SIGNALS_QUEUE, SIGNALS_MAIL_QUEUE, SIGNAL_DEFERRED_DISPATCHER,
-    ENABLE_USERS, SEND_RETRY, SEND_RETRY_DELAY, ENABLE_CELERY
+    ENABLE_CELERY,
+    ENABLE_USERS,
+    SEND_RETRY,
+    SEND_RETRY_DELAY,
+    SIGNAL_DEFERRED_DISPATCHER,
+    SIGNALS_MAIL_QUEUE,
+    SIGNALS_QUEUE,
 )
 from dbmail.models import Signal, SignalDeferredDispatch
 
 
-class SignalReceiver(object):
+class SignalReceiver:
     def __init__(self, sender, **kwargs):
         self.sender = sender
         self.kwargs = kwargs
         self._kwargs = kwargs.copy()
         self.site = Site.objects.get_current()
-        self.instance = kwargs.get('instance')
-        self.pk = self.instance and self.instance.pk or None
+        self.instance = kwargs.get("instance")
+        self.pk = (self.instance and self.instance.pk) or None
 
         self.signal = None
-        self.signal_pk = self.kwargs.pop('signal_pk', None)
+        self.signal_pk = self.kwargs.pop("signal_pk", None)
 
-        self.kwargs['old_instance'] = self.get_old_instance()
-        self.kwargs['users'] = self.get_users()
-        self.kwargs['date'] = datetime.date.today()
-        self.kwargs['date_time'] = datetime.datetime.now()
+        self.kwargs["old_instance"] = self.get_old_instance()
+        self.kwargs["users"] = self.get_users()
+        self.kwargs["date"] = datetime.date.today()
+        self.kwargs["date_time"] = datetime.datetime.now()
 
     def get_signal_list(self):
-        if not hasattr(self.sender._meta, 'module_name'):
-            return Signal.objects.filter(
-                model__model=self.sender._meta.model_name,
-                is_active=True
-            )
         return Signal.objects.filter(
-            model__model=self.sender._meta.module_name,
-            is_active=True
+            model__model=self.sender._meta.model_name,
+            is_active=True,
         )
 
     def get_email_list(self):
@@ -49,28 +49,27 @@ class SignalReceiver(object):
             return self.signal.group.slug
 
         email_list = Template(self.signal.rules).render(Context(self.kwargs))
-        self.kwargs.pop('users', None)
-        return email_list.strip().replace('\r', '').replace('\n', '')
+        self.kwargs.pop("users", None)
+        return email_list.strip().replace("\r", "").replace("\n", "")
 
     def get_interval(self):
         options = dict()
         if self.signal.interval >= 0 and not self.signal_pk:
-            options['send_after'] = self.signal.interval
+            options["send_after"] = self.signal.interval
         return options
 
     @staticmethod
     def get_users():
         if ENABLE_USERS:
-            return User.objects.filter(
-                is_active=True, is_staff=False, is_superuser=False)
+            User = get_user_model()
+            return User.objects.filter(is_active=True, is_staff=False, is_superuser=False)
         return []
 
     def get_old_instance(self):
         try:
-            instance = self.kwargs.get('instance')
+            instance = self.kwargs.get("instance")
             if instance and instance.pk:
-                return self.sender.objects.get(
-                    pk=self.kwargs['instance'].pk)
+                return self.sender.objects.get(pk=self.kwargs["instance"].pk)
         except ObjectDoesNotExist:
             pass
 
@@ -78,7 +77,7 @@ class SignalReceiver(object):
         try:
             if self.instance and self.instance.pk and self.signal.update_model:
                 obj = self.instance._default_manager.get(pk=self.instance.pk)
-                self.kwargs['current_instance'] = obj
+                self.kwargs["current_instance"] = obj
         except ObjectDoesNotExist:
             pass
 
@@ -91,33 +90,36 @@ class SignalReceiver(object):
                 email = email.strip()
                 if email:
                     send_db_mail(
-                        self.signal.template.slug, email, self.site,
-                        self.kwargs, self.instance, queue=SIGNALS_MAIL_QUEUE,
-                        **self.get_interval()
+                        self.signal.template.slug,
+                        email,
+                        self.site,
+                        self.kwargs,
+                        self.instance,
+                        queue=SIGNALS_MAIL_QUEUE,
+                        **self.get_interval(),
                     )
             self.signal.mark_as_sent(self.pk)
 
     def _dispatch_deferred_task(self):
-        self._kwargs['signal_pk'] = self.signal.pk
+        self._kwargs["signal_pk"] = self.signal.pk
 
-        if SIGNAL_DEFERRED_DISPATCHER == 'celery':
+        if SIGNAL_DEFERRED_DISPATCHER == "celery":
             from dbmail import tasks
 
             tasks.deferred_signal.apply_async(
-                args=[self.sender], kwargs=self._kwargs,
+                args=[self.sender],
+                kwargs=self._kwargs,
                 default_retry_delay=SEND_RETRY_DELAY,
                 max_retries=SEND_RETRY,
                 queue=SIGNALS_QUEUE,
-                countdown=self.signal.interval
+                countdown=self.signal.interval,
             )
         else:
             SignalDeferredDispatch.add_task(
-                args=[self.sender], kwargs=self._kwargs,
-                params=dict(
-                    default_retry_delay=SEND_RETRY_DELAY,
-                    max_retries=SEND_RETRY,
-                    queue=SIGNALS_QUEUE
-                ), interval=self.signal.interval
+                args=[self.sender],
+                kwargs=self._kwargs,
+                params=dict(default_retry_delay=SEND_RETRY_DELAY, max_retries=SEND_RETRY, queue=SIGNALS_QUEUE),
+                interval=self.signal.interval,
             )
 
     def _run(self):
@@ -142,14 +144,15 @@ class SignalReceiver(object):
 def signal_receiver(sender, **kwargs):
     from dbmail import celery_supported
 
-    if 'signal' in kwargs:
-        kwargs.pop('signal')
+    if "signal" in kwargs:
+        kwargs.pop("signal")
 
     if celery_supported() and ENABLE_CELERY:
         from dbmail import tasks
 
         tasks.signal_receiver.apply_async(
-            args=[sender], kwargs=kwargs,
+            args=[sender],
+            kwargs=kwargs,
             default_retry_delay=SEND_RETRY_DELAY,
             max_retries=SEND_RETRY,
             queue=SIGNALS_QUEUE,
@@ -158,12 +161,30 @@ def signal_receiver(sender, **kwargs):
         SignalReceiver(sender, **kwargs).run()
 
 
+def _resolve_signal(name):
+    """Resolve a stored ``Signal.signal`` value to a Django signal object.
+
+    Accepts both the modern dotted path (e.g.
+    ``"django.db.models.signals.post_save"``) and the legacy short name
+    (e.g. ``"post_save"``) used by 2.x rows whose data migration has not
+    yet completed. The legacy branch is a defensive fallback — once
+    ``0005_signal_dotted_paths`` runs to completion, all rows resolve
+    via :func:`import_by_string`.
+    """
+    from dbmail import import_by_string
+
+    if "." in name:
+        return import_by_string(name)
+    return getattr(signals, name)
+
+
 def initial_signals():
     for signal in Signal.objects.filter(is_active=True):
-        def_signal = getattr(signals, signal.signal)
+        def_signal = _resolve_signal(signal.signal)
         def_signal.connect(
-            signal_receiver, sender=signal.model.model_class(),
-            dispatch_uid=signal.model.name
+            signal_receiver,
+            sender=signal.model.model_class(),
+            dispatch_uid=f"dbmail-signal-{signal.pk}",
         )
 
 

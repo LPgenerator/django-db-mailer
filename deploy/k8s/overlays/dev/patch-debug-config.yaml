@@ -1,0 +1,38 @@
+# Dev-only patches that conflict with production defaults.
+#
+# 1. Drop the strict NetworkPolicy — kind clusters do not have a DNS /
+#    egress controller set up by default, so SMTP relays would be blocked.
+# 2. Drop the HPAs — base sets minReplicas=2 which would immediately
+#    scale a single-replica dev deployment back up.
+# 3. Drop the PDBs — minAvailable=1 on a single-replica deployment
+#    blocks node drain on kind.
+---
+$patch: delete
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dbmail-web-default-deny
+---
+$patch: delete
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dbmail-web
+---
+$patch: delete
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dbmail-worker
+---
+$patch: delete
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dbmail-web
+---
+$patch: delete
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dbmail-worker

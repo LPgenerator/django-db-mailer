@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dbmail-config
+data:
+  DJANGO_SETTINGS_MODULE: "demo.settings"
+  DJANGO_DEBUG: "0"
+  DJANGO_ALLOWED_HOSTS: "dbmail.example.com,localhost"
+  DBMAIL_API_RATE_LIMIT: "60,60"
+  DBMAIL_LOG_LEVEL: "INFO"
+  TIME_ZONE: "UTC"

@@ -1,0 +1,56 @@
+name: Feature request
+description: Suggest a new capability for django-db-mailer.
+title: "[feature] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! A short, concrete description with a real
+        use case is much more actionable than a generic wish.
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+      description: What are you trying to do? Why does the current API
+        not let you do it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Sketch the API or behaviour you have in mind.
+        A small Python snippet helps.
+      render: python
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Existing settings, third-party packages, or
+        workarounds you tried.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Where would this live?
+      options:
+        - dbmail core (models, views, signals)
+        - dbmail.backends (mail/sms/push/tts/bot)
+        - dbmail.providers (specific provider)
+        - demo project
+        - tooling (Makefile, CI, packaging)
+        - documentation
+        - not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?

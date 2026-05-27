@@ -1,7 +1,7 @@
-# -*- encoding: utf-8 -*-
+from __future__ import annotations
 
-from dbmail.backends.sms import SenderDebug as SenderDebugBase
 from dbmail.backends.sms import Sender as SenderBase
+from dbmail.backends.sms import SenderDebug as SenderDebugBase
 from dbmail.defaults import TTS_PROVIDER
 
 

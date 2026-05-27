@@ -1,0 +1,12 @@
+# Local-only overrides. Copy to ``compose.override.yml`` (gitignored)
+# to expose Postgres/Redis on the host or to mount additional code.
+#
+# Docker Compose merges this on top of ``compose.yml`` automatically.
+
+services:
+    postgres:
+        ports:
+            - "127.0.0.1:5432:5432"
+    redis:
+        ports:
+            - "127.0.0.1:6379:6379"

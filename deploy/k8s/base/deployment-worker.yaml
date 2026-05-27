@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbmail-worker
+  labels: { app: dbmail, role: worker }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: dbmail, role: worker }
+  template:
+    metadata:
+      labels: { app: dbmail, role: worker }
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: worker
+          image: ghcr.io/lpgenerator/django-db-mailer-demo:3.0.0
+          command: ["celery"]
+          args:
+            - "-A"
+            - "demo"
+            - "worker"
+            - "-l"
+            - "info"
+            - "-Q"
+            - "default"
+            - "-c"
+            - "4"
+          envFrom:
+            - configMapRef: { name: dbmail-config }
+            - secretRef: { name: dbmail-secret }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: 1000m, memory: 1024Mi }
+          livenessProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "celery -A demo inspect ping --timeout 5"
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }

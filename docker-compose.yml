@@ -1,0 +1,114 @@
+x-restart-policy: &restart_policy
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 10s
+
+x-healthcheck-defaults: &hc_defaults
+    interval: 30s
+    timeout: 5s
+    retries: 5
+    start_period: 20s
+
+services:
+    postgres:
+        <<: *restart_policy
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:-dbmail}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dbmail}
+            POSTGRES_DB: ${POSTGRES_DB:-dbmail}
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        healthcheck:
+            <<: *hc_defaults
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dbmail}"]
+
+    redis:
+        <<: *restart_policy
+        image: redis:7-alpine
+        healthcheck:
+            <<: *hc_defaults
+            test: ["CMD", "redis-cli", "ping"]
+
+    web:
+        <<: *restart_policy
+        build:
+            context: .
+            target: development
+        environment:
+            DJANGO_DEBUG: "1"
+            DJANGO_SETTINGS_MODULE: demo.settings
+            DATABASE_URL: postgres://${POSTGRES_USER:-dbmail}:${POSTGRES_PASSWORD:-dbmail}@postgres:5432/${POSTGRES_DB:-dbmail}
+            REDIS_URL: redis://redis:6379/0
+            CELERY_BROKER_URL: redis://redis:6379/0
+            CELERY_RESULT_BACKEND: redis://redis:6379/1
+        volumes:
+            - .:/app
+        ports:
+            - "127.0.0.1:8000:8000"
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        healthcheck:
+            <<: *hc_defaults
+            test: ["CMD", "curl", "-fsS", "http://localhost:8000/admin/login/"]
+        security_opt:
+            - no-new-privileges:true
+        cap_drop:
+            - ALL
+
+    celery-worker:
+        <<: *restart_policy
+        build:
+            context: .
+            target: development
+        working_dir: /app/demo
+        command: celery -A demo.celery worker -l info -Q default -c 4
+        environment:
+            DJANGO_SETTINGS_MODULE: demo.settings
+            DATABASE_URL: postgres://${POSTGRES_USER:-dbmail}:${POSTGRES_PASSWORD:-dbmail}@postgres:5432/${POSTGRES_DB:-dbmail}
+            REDIS_URL: redis://redis:6379/0
+            CELERY_BROKER_URL: redis://redis:6379/0
+            CELERY_RESULT_BACKEND: redis://redis:6379/1
+        volumes:
+            - .:/app
+        depends_on:
+            redis:
+                condition: service_healthy
+            postgres:
+                condition: service_healthy
+        healthcheck:
+            <<: *hc_defaults
+            test: ["CMD-SHELL", "celery -A demo.celery inspect ping --timeout 15 || exit 1"]
+        security_opt:
+            - no-new-privileges:true
+        cap_drop:
+            - ALL
+
+    celery-beat:
+        <<: *restart_policy
+        build:
+            context: .
+            target: development
+        working_dir: /app/demo
+        command: celery -A demo.celery beat -l info
+        environment:
+            DJANGO_SETTINGS_MODULE: demo.settings
+            DATABASE_URL: postgres://${POSTGRES_USER:-dbmail}:${POSTGRES_PASSWORD:-dbmail}@postgres:5432/${POSTGRES_DB:-dbmail}
+            CELERY_BROKER_URL: redis://redis:6379/0
+            CELERY_RESULT_BACKEND: redis://redis:6379/1
+        volumes:
+            - .:/app
+        profiles: ["beat"]
+        depends_on:
+            redis:
+                condition: service_healthy
+        security_opt:
+            - no-new-privileges:true
+        cap_drop:
+            - ALL
+
+volumes:
+    postgres-data:

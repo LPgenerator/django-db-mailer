@@ -1,15 +1,17 @@
-# -*- encoding: utf-8 -*-
+from modeltranslation.translator import TranslationOptions, translator
 
-from modeltranslation.translator import translator, TranslationOptions
-from dbmail.models import MailTemplate, MailBaseTemplate
+from dbmail.models import MailBaseTemplate, MailTemplate
 
 
 class MailTemplateTranslationOptions(TranslationOptions):
-    fields = ('subject', 'message',)
+    fields = (
+        "subject",
+        "message",
+    )
 
 
 class MailBaseTemplateTranslationOptions(TranslationOptions):
-    fields = ('message',)
+    fields = ("message",)
 
 
 translator.register(MailTemplate, MailTemplateTranslationOptions)

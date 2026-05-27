@@ -1,7 +1,88 @@
-.vagrant
-.tox
-*.egg-info
-.coverage
-screenshots
-.idea
+# Source control
 .git
+.gitignore
+.gitmodules
+
+# Local IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Python bytecode
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv
+venv
+env
+ENV
+.python-version
+
+# Distributions / packaging
+*.egg
+*.egg-info
+.eggs
+dist
+build
+sdist
+develop-eggs
+wheels
+pip-wheel-metadata
+
+# Tests / coverage / type checking caches
+.coverage
+.coverage.*
+coverage.xml
+htmlcov
+.pytest_cache
+.tox
+.nox
+.hypothesis
+.mypy_cache
+.ruff_cache
+
+# Local data
+*.sqlite
+*.sqlite3
+local_settings.py
+mail_files
+demo/db.sqlite
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+*.p8
+*.p12
+
+# AI assistant local context
+CLAUDE.md
+.claude
+.cursor
+.serena
+
+# Documentation builds (not needed inside the image)
+docs/_build
+docs/.build
+
+# Plan and ADRs are documentation, not runtime — exclude from image.
+plan
+docs/adr
+docs/legacy
+
+# Project files unrelated to the runtime
+screenshots
+.travis.yml
+.travis.yml.log
+.landscape.yaml
+TODO.RU
+TODO
+
+# Node (for JS/HTML linters in local dev)
+node_modules
+package-lock.json

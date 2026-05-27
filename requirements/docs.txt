@@ -1,2 +1,5 @@
-Django>1.8,<1.9
-django-db-mailer
+# Documentation build dependencies.
+# Source of truth: pyproject.toml [project.optional-dependencies] docs.
+# This file is kept for ReadTheDocs and CI compatibility — uses editable
+# install of the package itself plus the [docs] extra.
+-e .[docs]
