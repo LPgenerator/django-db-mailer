@@ -9,7 +9,7 @@ jobs:
   hadolint:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
@@ -18,7 +18,7 @@ jobs:
   kubeconform:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: kubeconform — base manifests
         uses: docker://ghcr.io/yannh/kubeconform:latest
         with:
@@ -27,7 +27,7 @@ jobs:
   kube-score:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: kube-score
         uses: docker://zegl/kube-score:latest
         with:
@@ -36,7 +36,7 @@ jobs:
   trivy-config:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Trivy config scan (Dockerfile + k8s)
         uses: aquasecurity/trivy-action@0.28.0
         with:
