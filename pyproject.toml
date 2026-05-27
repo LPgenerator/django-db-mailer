@@ -55,8 +55,8 @@ classifiers = [
 dynamic = ["version"]
 
 dependencies = [
-    "Django>=4.2,<7.0",
-    "django-ipware>=7.0,<8",
+    "Django>=5.2.14,<7.0",
+    "django-ipware>=7.0.1,<8",
 ]
 
 [project.urls]
@@ -76,7 +76,7 @@ dev = [
     "ruff>=0.6",
     "flake8>=7",
     "mypy>=1.10",
-    "django-stubs[compatible-mypy]>=5.0",
+    "django-stubs[compatible-mypy]>=6.0.5",
     "bandit[toml]>=1.7",
     "pre-commit>=3.7",
     "build>=1.2",
@@ -93,7 +93,7 @@ test = [
     "freezegun>=1.5",
     "responses>=0.25",
     "respx>=0.21",
-    "django-test-migrations>=1.4",
+    "django-test-migrations>=1.5.0",
     "hypothesis>=6.108",
     "diff-cover>=9",
 ]
@@ -112,18 +112,18 @@ demo = [
     "celery[redis]>=5.4",
     "redis>=5",
     "psycopg[binary]>=3.2",
-    "django-grappelli>=4.0",
-    "django-ckeditor>=6.7",
-    "django-reversion>=5.1",
+    "django-grappelli>=5.0.0",
+    "django-ckeditor>=6.7.3",
+    "django-reversion>=6.2.0",
     "django-reversion-compare>=0.16",
     "diff-match-patch>=20241021",
-    "django-tinymce>=4.1",
-    "django-debug-toolbar>=4.4",
-    "django-extensions>=3.2",
+    "django-tinymce>=5.0.0",
+    "django-debug-toolbar>=6.3.0",
+    "django-extensions>=4.1",
     "Werkzeug>=3",
     "ipython>=8",
-    "django-rosetta>=0.10",
-    "django-redis>=5.4",
+    "django-rosetta>=0.10.3",
+    "django-redis>=6.0.0",
     "dj-database-url>=2.2",
     "whitenoise>=6.7",
 ]
