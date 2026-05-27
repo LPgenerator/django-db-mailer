@@ -151,7 +151,7 @@ html = ["html2text>=2024", "premailer>=3.10"]
 
 # Email open-tracking enrichment (User-Agent parser populates
 # MailLogTrack.os/browser/device).
-tracking = ["httpagentparser>=1.9"]
+tracking = ["httpagentparser>=1.9.9"]
 
 # Convenience meta-extra: every optional provider SDK at once.
 all-providers = [
