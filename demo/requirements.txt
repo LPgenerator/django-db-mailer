@@ -29,7 +29,7 @@ django-rosetta>=0.10
 # Cache and DB drivers.
 django-redis>=5.4
 dj-database-url>=2.2
-psycopg[binary]>=3.2
+psycopg[binary]>=3.3.4
 
 # Static files (production).
 whitenoise>=6.7
