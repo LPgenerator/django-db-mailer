@@ -136,11 +136,11 @@ celery = ["celery[redis]>=5.4"]
 sandbox = ["jinja2>=3.1"]
 
 # Per-provider extras. SDKs are imported lazily inside send().
-apns = ["httpx[http2]>=0.27", "pyjwt[crypto]>=2.8"]
-fcm = ["google-auth>=2.30", "requests>=2.32"]
-twilio = ["twilio>=9"]
-pubnub = ["pubnub>=7"]
-vonage = ["vonage>=3"]
+apns = ["httpx[http2]>=0.28.1", "pyjwt[crypto]>=2.8"]
+fcm = ["google-auth>=2.53.0", "requests>=2.32"]
+twilio = ["twilio>=9.10.9"]
+pubnub = ["pubnub>=10.6.3"]
+vonage = ["vonage>=4.8.0"]
 brevo = ["getbrevo-brevo-python>=1"]
 sendinblue = ["mailin>=1"]
 webpush = ["pywebpush>=2"]
@@ -155,13 +155,13 @@ tracking = ["httpagentparser>=1.9"]
 
 # Convenience meta-extra: every optional provider SDK at once.
 all-providers = [
-    "httpx[http2]>=0.27",
+    "httpx[http2]>=0.28.1",
     "pyjwt[crypto]>=2.8",
-    "google-auth>=2.30",
+    "google-auth>=2.53.0",
     "requests>=2.32",
-    "twilio>=9",
-    "pubnub>=7",
-    "vonage>=3",
+    "twilio>=9.10.9",
+    "pubnub>=10.6.3",
+    "vonage>=4.8.0",
     "getbrevo-brevo-python>=1",
     "pywebpush>=2",
 ]
