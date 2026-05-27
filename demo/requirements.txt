@@ -6,7 +6,7 @@
 
 # Core
 Django>=4.2,<7.0
-celery[redis]>=5.4
+celery[redis]>=5.6.3
 redis>=5
 
 # Admin extensions (historical set, all adapted to Django 4.2+ in 3.0).
